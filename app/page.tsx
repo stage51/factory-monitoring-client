@@ -1,15 +1,11 @@
-import { Title } from "@/components/shared/title"
-import { Header } from "@/components/shared/header"
-import { CardList } from "@/components/shared/card-list"
-import Footer from "@/components/shared/footer"
+import Title from "@/components/shared/title"
+import CardList from "@/components/shared/card-list"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white rounded-3xl">
-      <Header />
-      <Title />
+    <div>
+      <Title title="Здравствуйте, Иван Иванов" subtitle="Добро пожаловать в ЕГАИС Мониторинг. Вы авторизованы как клиент. Выберите действие." />
       <CardList />
-      <Footer />
-    </main>
+    </div>
   )
 }
