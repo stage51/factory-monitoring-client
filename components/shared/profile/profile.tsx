@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
+import { useToast } from "@/components/hooks/use-toast"
 
 export default function Profile() {
+  const { toast } = useToast()
   return (
     <div className="py-4">
       <Card className="flex flex-col md:flex-row md:gap-6 p-6">
@@ -125,7 +127,11 @@ export default function Profile() {
                       <Label htmlFor="confirm-password">Подтвердите пароль</Label>
                       <Input id="confirm-password" type="password" placeholder="Подтвердите новый пароль" />
                     </div>
-                    <Button className="mt-4">Сохранить изменения</Button>
+                    <Button className="mt-4" onClick={() => {
+                      toast({
+                        title: "Настройки аккаунта",
+                        description: "Настройки сохранены",
+                      })}}>Сохранить изменения</Button>
                   </div>
                 </CardContent>
               </Card>

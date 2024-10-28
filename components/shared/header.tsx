@@ -4,6 +4,7 @@ import Container from './container';
 import { CircleUser, Mail, MailOpen, DoorClosed, DoorOpen, List } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import MailDialog from './mail/mail-dialog';
 
 interface Props {
   className?: string;
@@ -32,7 +33,7 @@ export default function Header({ className }: Props) {
                 <div className="hidden md:flex items-center justify-between gap-16">
                     <Link href="/askp" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">АСКП</Link>
                     <Link href="/egais" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">ЕГАИС</Link>
-                    <Link href="/mode" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">РЕЖИМЫ</Link>
+                    <Link href="/modes" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">РЕЖИМЫ</Link>
                     <Link href="/events" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">СОБЫТИЯ</Link>
                 </div>
 
@@ -51,10 +52,12 @@ export default function Header({ className }: Props) {
                     <Link href="/profile" className="group relative h-6 w-6">
                         <CircleUser className="absolute cursor-pointer inset-0 flex items-center transition duration-150 group-hover:animate-spin-element" color="white" />
                     </Link>
-                    <Link href="/mail" className="group relative h-6 w-6">
-                        <Mail className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
-                        <MailOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
-                    </Link>
+                    <MailDialog>
+                        <div className="group relative h-6 w-6">
+                            <Mail className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
+                            <MailOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
+                        </div>
+                    </MailDialog>
                     <Link href="/logout" className="group relative h-6 w-6">
                         <DoorClosed className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
                         <DoorOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
@@ -69,7 +72,7 @@ export default function Header({ className }: Props) {
                     <nav className="flex flex-col gap-4">
                         <Link href="/askp" className="text-sm uppercase cursor-pointer font-light hover:underline">АСКП</Link>
                         <Link href="/egais" className="text-sm uppercase cursor-pointer font-light hover:underline">ЕГАИС</Link>
-                        <Link href="/mode" className="text-sm uppercase cursor-pointer font-light hover:underline">РЕЖИМЫ</Link>
+                        <Link href="/modes" className="text-sm uppercase cursor-pointer font-light hover:underline">РЕЖИМЫ</Link>
                         <Link href="/events" className="text-sm uppercase cursor-pointer font-light hover:underline">СОБЫТИЯ</Link>
                     </nav>
                 </div>

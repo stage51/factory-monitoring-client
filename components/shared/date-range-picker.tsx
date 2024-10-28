@@ -14,12 +14,14 @@ interface DatePickerWithRangeProps{
     value: DateRange | undefined;
     onChange: (dateRange: DateRange | undefined) => void;
     className?: string;
+    placeholder?: string;
 }
 
 export function DatePickerWithRange({
     className,
     value,
     onChange,
+    placeholder = "Выберите дату"
 }: DatePickerWithRangeProps) {
     const [date, setDate] = React.useState<DateRange | undefined>(value);
     React.useEffect(() => {
@@ -37,7 +39,7 @@ export function DatePickerWithRange({
                     id="date"
                     variant={"outline"}
                     className={cn(
-                    "md:w-[300px] w-auto justify-start text-left font-normal",
+                    "lg:w-[300px] min-[1800px]:w-full w-auto justify-start text-left font-normal",
                     !date && "text-muted-foreground"
                     )}
                 >
@@ -51,7 +53,7 @@ export function DatePickerWithRange({
                         format(date.from, "LLL dd, y")
                     )
                     ) : (
-                    <span>Выберите дату</span>
+                    <span>{placeholder}</span>
                     )}
                 </Button>
                 </PopoverTrigger>
