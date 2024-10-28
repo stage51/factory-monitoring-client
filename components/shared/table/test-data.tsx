@@ -1,4 +1,4 @@
-import { askpReport } from "@/components/shared/table/columns"
+import { askpReport } from "@/components/shared/askp/columns"
 
 export const testData: askpReport[] = [
     {

@@ -1,26 +1,17 @@
 "use client";
-
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
 import Container from './container';
 import { CircleUser, Mail, MailOpen, DoorClosed, DoorOpen, List } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface Props {
   className?: string;
 }
 
 export default function Header({ className }: Props) {
-    const [animate, setAnimate] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setAnimate(true);
-        }, 100); 
-
-        return () => clearTimeout(timer);
-    }, []);
 
     return (
         <header className={cn('sticky top-0 z-50 border-gray-100 bg-gray-900', className)}>
@@ -29,9 +20,9 @@ export default function Header({ className }: Props) {
             <Container className="relative flex h-20 items-center justify-between py-6 bg-gray-900 z-10">
                 {/* Main Logo Section (hidden on md and below) */}
                 <Link href="/" className="hidden md:flex">
-                    <div className={`cursor-pointer w-48 h-20 flex flex-col justify-center ps-4 group relative ${animate ? 'animate-slide-element' : ''}`}>
+                    <div className={"cursor-pointer w-48 h-20 flex flex-col justify-center ps-4 group relative animate-slide-element"}>
                         <h1 className="text-3xl uppercase text-white font-bold">ЕГАИС</h1>
-                        <h3 className={`text-sm uppercase text-white font-medium ms-12 transition duration-300 -translate-x-2 opacity-0 ${animate ? 'opacity-100 translate-x-0' : ''}`}>
+                        <h3 className={"text-sm uppercase text-white font-medium ms-12"}>
                             МОНИТОРИНГ
                         </h3>
                     </div>

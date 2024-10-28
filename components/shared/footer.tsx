@@ -13,14 +13,14 @@ export default function Footer({ companyName = "ООО «Центр ИКТ»" }:
       <Container className="p-6">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
           <div className="space-y-4">
-            <h3 className="text-lg text-gray-300">Решения</h3>
+            <h3 className="text-base text-gray-300">Решения</h3>
             <ul className="space-y-2 text-sm font-light">
               <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Комплексы измерительные автоматизированного учета алкогольной продукции  «ALCOSPOT» АСИиУ</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Система мониторинга сохранности перевозимых автотранспортом жидкостей</Link></li>
             </ul>
           </div>
           <div className="space-y-4">
-            <h3 className="text-lg text-gray-300">Оборудование</h3>
+            <h3 className="text-base text-gray-300">Оборудование</h3>
             <ul className="space-y-2 text-sm font-light">
               <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Оборудование для перевозки спирта</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Оборудование для производителей этилового спирта и алкогольной продукции</Link></li>
@@ -28,7 +28,7 @@ export default function Footer({ companyName = "ООО «Центр ИКТ»" }:
             </ul>
           </div>
           <div className="space-y-4">
-            <h3 className="text-lg text-gray-300">Контакты</h3>
+            <h3 className="text-base text-gray-300">Контакты</h3>
             <ul className="space-y-2 text-sm font-light">
               <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Адрес для писем: 115280, Москва, ул.Ленинская Слобода, дом 19, этаж 1, комн. 41x1д, офис 23</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Адрес: Москва, 2-я Синичкина, 9А, строение 10, 1 этаж, комната 7</Link></li>

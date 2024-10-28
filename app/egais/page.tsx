@@ -1,6 +1,6 @@
 
 import Title from "@/components/shared/title"
-import AskpTable from "@/components/shared/askp/askp-table"
+import EgaisTable from "@/components/shared/egais/egais-table"
 import Container from "@/components/shared/container"
 
 
@@ -8,9 +8,9 @@ export default function Page() {
   
     return (
       <div>
-        <Title title = "АСКП" subtitle="Управление пятиминутной отчетностью"/>
+        <Title title = "ЕГАИС" subtitle="Управление суточной отчетностью"/>
         <Container className="mb-40 p-6 pt-0 animate-slide-element">
-            <AskpTable />
+            <EgaisTable />
         </Container>
       </div>
     )

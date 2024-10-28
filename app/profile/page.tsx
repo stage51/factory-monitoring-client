@@ -1,18 +1,17 @@
 
 import Title from "@/components/shared/title"
-import AskpTable from "@/components/shared/askp/askp-table"
+import Profile from "@/components/shared/profile/profile"
 import Container from "@/components/shared/container"
 
 
 export default function Page() {  
-  
     return (
       <div>
-        <Title title = "АСКП" subtitle="Управление пятиминутной отчетностью"/>
+        <Title title = "Профиль"/>
         <Container className="mb-40 p-6 pt-0 animate-slide-element">
-            <AskpTable />
+            <Profile />
         </Container>
       </div>
     )
-}
+  }
   

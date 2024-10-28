@@ -40,6 +40,19 @@ export type askpReport = {
     "Остановка АСИиУ" | "Прием (возврат)" | "Прием (закупка)" | "Внутреннее перемещение" | "Отгрузка (покупателю)" | "Отгрузка (возврат)"
 }
 
+export const mobileHeaders = [
+    "Дата/время",
+    "Объем спирта",
+    "Объем",
+    "Концентрация",
+    "Кол-во",
+    "Температура",
+    "Код режима",
+    "Продукт"
+  ];
+export const visibleHeaders = ["Дата/время", "Объем", "Код режима"];
+
+
 export const columns: ColumnDef<askpReport>[] = [
     {
         accessorKey: "controlDate",
@@ -95,9 +108,9 @@ export const columns: ColumnDef<askpReport>[] = [
           return (
             <Popover>
                 <PopoverTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
+                    <Button variant="ghost" className="h-8 w-8 p-0 group">
                     <span className="sr-only">Продукт</span>
-                    <Package className="h-4 w-4 flex" />
+                    <Package className="h-4 w-4 flex group-hover:animate-spin-element" />
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent align="end">
