@@ -22,7 +22,8 @@ export const testData: askpReport[] = [
       percentAlc: 40.0,
       bottleCountControl: 50,
       temperature: 18.5,
-      mode: "Отгрузка (покупателю)"
+      mode: "Отгрузка (покупателю)",
+      status: "Неизвестно"
     },
     {
       id: 2,
@@ -45,7 +46,8 @@ export const testData: askpReport[] = [
       percentAlc: 96.0,
       bottleCountControl: 200,
       temperature: 20.0,
-      mode: "Производство продукции"
+      mode: "Производство продукции",
+      status: "Принято в РАР"
     },
     {
       id: 3,
@@ -68,7 +70,8 @@ export const testData: askpReport[] = [
       percentAlc: 70.0,
       bottleCountControl: 150,
       temperature: 22.0,
-      mode: "Калибровка АСИиУ"
+      mode: "Калибровка АСИиУ",
+      status: "Принято в РАР"
     },
     {
       id: 4,
@@ -91,7 +94,8 @@ export const testData: askpReport[] = [
       percentAlc: 96.0,
       bottleCountControl: 75,
       temperature: 21.5,
-      mode: "Промывка АСИиУ"
+      mode: "Промывка АСИиУ",
+      status: "Не принято в УТМ"
     },
     {
       id: 5,
@@ -114,7 +118,8 @@ export const testData: askpReport[] = [
       percentAlc: 5.0,
       bottleCountControl: 100,
       temperature: 19.0,
-      mode: "Остановка АСИиУ"
+      mode: "Остановка АСИиУ",
+      status: "Принято в УТМ"
     },
     {
       id: 6,
@@ -137,7 +142,8 @@ export const testData: askpReport[] = [
       percentAlc: 40.0,
       bottleCountControl: 80,
       temperature: 23.0,
-      mode: "Прием (возврат)"
+      mode: "Прием (возврат)",
+      status: "Принято в РАР"
     },
     {
       id: 7,
@@ -160,7 +166,8 @@ export const testData: askpReport[] = [
       percentAlc: 80.0,
       bottleCountControl: 60,
       temperature: 20.5,
-      mode: "Внутреннее перемещение"
+      mode: "Внутреннее перемещение",
+      status: "Неизвестно"
     },
     {
       id: 8,
@@ -183,7 +190,8 @@ export const testData: askpReport[] = [
       percentAlc: 70.0,
       bottleCountControl: 200,
       temperature: 21.0,
-      mode: "Прием (закупка)"
+      mode: "Прием (закупка)",
+      status: "Не принято в УТМ"
     },
     {
       id: 9,
@@ -206,7 +214,8 @@ export const testData: askpReport[] = [
       percentAlc: 40.0,
       bottleCountControl: 100,
       temperature: 18.0,
-      mode: "Отгрузка (возврат)"
+      mode: "Отгрузка (возврат)",
+      status: "Принято в УТМ"
     },
     {
       id: 10,
@@ -229,7 +238,8 @@ export const testData: askpReport[] = [
       percentAlc: 90.0,
       bottleCountControl: 120,
       temperature: 22.5,
-      mode: "Производство продукции"
+      mode: "Производство продукции",
+      status: "Не принято в УТМ"
     },
     {
       id: 11,
@@ -252,7 +262,8 @@ export const testData: askpReport[] = [
       percentAlc: 40.0,
       bottleCountControl: 60,
       temperature: 19.0,
-      mode: "Калибровка АСИиУ"
+      mode: "Калибровка АСИиУ",
+      status: "Неизвестно"
     },
     {
       id: 12,
@@ -275,7 +286,8 @@ export const testData: askpReport[] = [
       percentAlc: 75.0,
       bottleCountControl: 90,
       temperature: 24.0,
-      mode: "Остановка АСИиУ"
+      mode: "Остановка АСИиУ",
+      status: "Принято в РАР"
     },
     {
       id: 13,
@@ -298,7 +310,8 @@ export const testData: askpReport[] = [
       percentAlc: 30.0,
       bottleCountControl: 100,
       temperature: 21.0,
-      mode: "Прием (возврат)"
+      mode: "Прием (возврат)",
+      status: "Не принято в РАР"
     },
     {
       id: 14,
@@ -321,7 +334,8 @@ export const testData: askpReport[] = [
       percentAlc: 50.0,
       bottleCountControl: 80,
       temperature: 22.0,
-      mode: "Прием (закупка)"
+      mode: "Прием (закупка)",
+      status: "Не принято в УТМ"
     },
     {
       id: 15,
@@ -344,6 +358,7 @@ export const testData: askpReport[] = [
       percentAlc: 12.0,
       bottleCountControl: 110,
       temperature: 19.5,
-      mode: "Технологический прогон"
+      mode: "Технологический прогон",
+      status: "Неизвестно"
     },
   ];

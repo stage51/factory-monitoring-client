@@ -1,9 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { DataTablePagination } from "./data-table-pagination";
+import { DataTablePagination } from "../table/data-table-pagination";
 import { DatePickerWithRange } from "../date-range-picker"
 import { DateRange } from "react-day-picker";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -17,6 +19,7 @@ import {
   getCoreRowModel,
   useReactTable,
   SortingState,
+  VisibilityState,
   getSortedRowModel,
   ColumnFiltersState,
   getFilteredRowModel,
@@ -27,6 +30,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Table,
   TableBody,
@@ -59,6 +68,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [isMobile, setIsMobile] = React.useState<boolean>(false);
   const [openRow, setOpenRow] = React.useState<string | null>(null);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
   const table = useReactTable({
     data,
@@ -68,9 +78,11 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       columnFilters,
+      columnVisibility,
     },
     getPaginationRowModel: getPaginationRowModel(),
   });
@@ -90,7 +102,44 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4 gap-4">
+      <div className="flex lg:flex-row flex-col items-center py-4 gap-4">
+        <Input
+          placeholder="Код продукта"
+          value={(table.getColumn("product")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("product")?.setFilterValue(event.target.value)
+          }
+          className="w-full"
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="hidden md:flex lg:max-w-[250px] w-full">
+              Колонки
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter(
+                (column) => column.getCanHide()
+              )
+              .map((column, index) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {mobileHeaders.at(index)}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="flex lg:flex-row flex-col items-center pb-4 gap-4">
         {/* Селекторы для фильтров */}
         <Select
           onValueChange={(value) => {
@@ -102,7 +151,7 @@ export function DataTable<TData, TValue>({
           }}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Выберите режим" />
+            <SelectValue placeholder="Режим" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Все</SelectItem>
@@ -118,10 +167,38 @@ export function DataTable<TData, TValue>({
             <SelectItem value="Отгрузка (возврат)">Отгрузка (возврат)</SelectItem>
           </SelectContent>
         </Select>
+        <Select
+          onValueChange={(value) => {
+            if (value === "all") {
+              table.getColumn("status")?.setFilterValue(undefined);
+            } else {
+              table.getColumn("status")?.setFilterValue(value);
+            }
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Статус" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Все</SelectItem>
+            <SelectItem value="Неизвестно">Неизвестно</SelectItem>
+            <SelectItem value="Принято в УТМ">Принято в УТМ</SelectItem>
+            <SelectItem value="Не принято в УТМ">Не принято в УТМ</SelectItem>
+            <SelectItem value="Принято в РАР">Принято в РАР</SelectItem>
+            <SelectItem value="Не принято в РАР">Не принято в РАР</SelectItem>
+          </SelectContent>
+        </Select>
         <DatePickerWithRange
-          value={table.getColumn("controlDate")?.getFilterValue() as DateRange | undefined}
-          onChange={(newDateRange) => table.getColumn("controlDate")?.setFilterValue(newDateRange)}
-          className="max-w-sm"
+          value={table.getColumn("startDate")?.getFilterValue() as DateRange | undefined}
+          onChange={(newDateRange) => table.getColumn("startDate")?.setFilterValue(newDateRange)}
+          className="lg:max-w-sm max-w-none w-full"
+          placeholder="Начальная дата"
+        />
+        <DatePickerWithRange
+          value={table.getColumn("endDate")?.getFilterValue() as DateRange | undefined}
+          onChange={(newDateRange) => table.getColumn("endDate")?.setFilterValue(newDateRange)}
+          className="lg:max-w-sm max-w-none w-full"
+          placeholder="Конечная дата"
         />
       </div>
 

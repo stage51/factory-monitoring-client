@@ -25,7 +25,7 @@ export type Product = {
     productVCode: string
 }
 
-export type egaisReport = {
+export type modesReport = {
     id: number
     product: Product
     startDate: Date
@@ -65,7 +65,7 @@ export const mobileHeaders = [
 export const visibleHeaders = ["Начало измерений", "Конец измерений", "Код режима", "Статус"];
 
 
-export const columns: ColumnDef<egaisReport>[] = [
+export const columns: ColumnDef<modesReport>[] = [
     {
         accessorKey: "startDate",
         header: ({ column }) => {

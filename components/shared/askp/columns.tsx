@@ -38,6 +38,7 @@ export type askpReport = {
     temperature: number
     mode: "Промывка АСИиУ" | "Калибровка АСИиУ" | "Технологический прогон" | "Производство продукции" | 
     "Остановка АСИиУ" | "Прием (возврат)" | "Прием (закупка)" | "Внутреннее перемещение" | "Отгрузка (покупателю)" | "Отгрузка (возврат)"
+    status: "Неизвестно" | "Принято в РАР" | "Не принято в РАР" | "Принято в УТМ" | "Не принято в УТМ"
 }
 
 export const mobileHeaders = [
@@ -48,9 +49,10 @@ export const mobileHeaders = [
     "Кол-во",
     "Температура",
     "Код режима",
+    "Статус",
     "Продукт"
   ];
-export const visibleHeaders = ["Дата/время", "Объем", "Код режима"];
+export const visibleHeaders = ["Дата/время", "Объем", "Код режима", "Статус"];
 
 
 export const columns: ColumnDef<askpReport>[] = [
@@ -97,9 +99,24 @@ export const columns: ColumnDef<askpReport>[] = [
     {
         accessorKey: "mode",
         header: "Код режима",
+        filterFn: (row, columnId, filterValue) => {
+            if (!filterValue) return true;
+            const status = row.getValue(columnId);
+            return status === filterValue;
+        },
     },
     {
-        id: "actions",
+        accessorKey: "status",
+        header: "Статус",
+        filterFn: (row, columnId, filterValue) => {
+            if (!filterValue) return true;
+            const status = row.getValue(columnId);
+            return status === filterValue;
+        },
+    },
+    {
+        id: "product",
+        accessorKey: "product",
         header: "Продукт",
         cell: ({ row }) => {
           const report = row.original
@@ -129,6 +146,10 @@ export const columns: ColumnDef<askpReport>[] = [
                 </PopoverContent>
             </Popover>
           );
+        },
+        filterFn: (row, columnId, filterValue) => {
+            const alcCode = row.getValue<Product>(columnId).alcCode as string;
+            return alcCode.includes(filterValue);
         },
     }
 ]

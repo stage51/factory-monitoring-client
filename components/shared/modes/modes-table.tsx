@@ -6,7 +6,7 @@ import { columns } from "./columns";
 import { visibleHeaders, mobileHeaders } from "./columns";
 import { TableFull } from "@/components/shared/table/table-full"
 
-export default function AskpTable() {  
+export default function ModesTable() {  
     const [data, setData] = useState<typeof testData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
   
@@ -18,13 +18,13 @@ export default function AskpTable() {
     }, []);
   
       return (
-          <div className=" gap-8 flex flex-col">
-            <DataTable columns={columns} data={data || []} isLoading={isLoading} 
-            visibleHeaders={visibleHeaders} mobileHeaders={mobileHeaders}/>
-            <TableFull className="lg:flex hidden">
+        <div className="gap-8 flex flex-col">
+            <DataTable columns={columns} data={data || []} isLoading={isLoading}
+            visibleHeaders={visibleHeaders} mobileHeaders={mobileHeaders} />
+            <TableFull className="2xl:flex hidden">
               <DataTable columns={columns} data={data || []} isLoading={isLoading}
               visibleHeaders={visibleHeaders} mobileHeaders={mobileHeaders} />
             </TableFull>
-          </div>
+        </div>
       )
 }

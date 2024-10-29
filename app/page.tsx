@@ -1,5 +1,5 @@
 import Title from "@/components/shared/title"
-import CardList from "@/components/shared/card-list"
+import CardList from "@/components/shared/main/card-list"
 
 export default function Home() {
   return (
