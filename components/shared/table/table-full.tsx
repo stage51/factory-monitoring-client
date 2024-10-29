@@ -25,6 +25,10 @@ export function TableFull({className, children} : Props) {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-none max-h-[95vh] p-6 overflow-auto">
+        <DialogHeader className="hidden">
+          <DialogTitle />
+          <DialogDescription />
+        </DialogHeader>
           {children}
           <DialogClose asChild>
             <Button className="max-w-screen" type="button" variant="secondary">
