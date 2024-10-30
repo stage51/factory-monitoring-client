@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import Container from '../container';
-import Card from './card';
+import Card from '../card';
 import { LaptopMinimal, CloudDownload, CloudUpload, Settings, Joystick } from 'lucide-react';
 import { useRouter } from 'next/navigation'
 import { useState } from 'react';
