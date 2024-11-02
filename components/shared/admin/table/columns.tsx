@@ -5,14 +5,6 @@ import { DateRange } from "react-day-picker";
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
-import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -20,15 +12,22 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useState } from "react";
 
 interface Props<HeadersTypes> {
     headers: Array<{ key: keyof HeadersTypes; label: string }>;
 }
 
 export default function generateColumns<HeadersTypes>({ headers }: Props<HeadersTypes>) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleDelete = () => {
+        setIsOpen(false);
+    }
     const columns: ColumnDef<HeadersTypes>[] = headers.map(({ key, label }) => ({
         accessorKey: key,
         header: label,
@@ -65,9 +64,11 @@ export default function generateColumns<HeadersTypes>({ headers }: Props<Headers
               const data = row.original as HeadersTypes
          
               return (
-                <Dialog>
+                <Dialog open={isOpen} onOpenChange={setIsOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => {
+                                console.log("Dialog must be opened")
+                                setIsOpen(true)}}>
                                 <span className="sr-only">Открыть диалог</span>
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
@@ -76,7 +77,7 @@ export default function generateColumns<HeadersTypes>({ headers }: Props<Headers
                             <DialogHeader>
                             <DialogTitle>Редактирование</DialogTitle>
                             <DialogDescription>
-                                Make changes to your profile here. Click save when you're done.
+                                Редактирование элемента
                             </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
@@ -96,8 +97,32 @@ export default function generateColumns<HeadersTypes>({ headers }: Props<Headers
                                 ))}
                             </div>
                             <DialogFooter className="justify-between">
-                                <Button variant="default">Сохранить</Button>
-                                <Button variant="destructive">Удалить</Button>
+                                <DialogClose asChild>
+                                    <Button variant="default" type="submit">Сохранить</Button>
+                                </DialogClose>    
+                                <DialogClose asChild>
+                                <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button variant="destructive">Удалить</Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-[600px]">
+                                            <DialogHeader>
+                                            <DialogTitle>Удаление</DialogTitle>
+                                            <DialogDescription>
+                                                Вы действительно хотите удалить элемент?
+                                            </DialogDescription>
+                                            </DialogHeader>
+                                            <DialogFooter className="justify-between">
+                                                <DialogClose asChild>
+                                                    <Button variant="outline">Отмена</Button>
+                                                </DialogClose>
+                                                <DialogClose asChild>
+                                                    <Button variant="destructive" type="submit" onClick={() => handleDelete()}>Удалить</Button>
+                                                </DialogClose>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                </Dialog>
+                                </DialogClose>
                             </DialogFooter>
                         </DialogContent>
                 </Dialog>
