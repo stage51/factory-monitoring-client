@@ -68,7 +68,7 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
   const [isMobile, setIsMobile] = React.useState<boolean>(false);
   const [openRow, setOpenRow] = React.useState<string | null>(null);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-
+  
   const table = useReactTable({
     data,
     columns,
@@ -85,7 +85,6 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
     },
     getPaginationRowModel: getPaginationRowModel(),
   });
-
   React.useImperativeHandle(ref, () => table, [table]);
 
   React.useEffect(() => {
@@ -145,6 +144,14 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       {row.getVisibleCells().map((cell, index) => {
+                        if (index > mobileHeaders.length - 1){
+                          return (
+                            <div className="flex justify-between">
+                              <span className="font-normal">Действия:</span>
+                              <span className="font-light">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
+                            </div>
+                          );
+                        }
                         if (!visibleHeaders.includes(mobileHeaders[index])) {
                           return (
                             <div key={cell.id} className="flex justify-between">

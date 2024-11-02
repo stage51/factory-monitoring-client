@@ -1,20 +1,19 @@
+import UserRoleTable from "@/components/shared/admin/users/roles/user-role-table"
 import Title from "@/components/shared/title"
-import CardList from "@/components/shared/admin/users/card-list"
 import Container from "@/components/shared/container"
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+  } from "@/components/ui/breadcrumb"
 
 export default function Page() {
   return (
     <div>
-      <Container className="p-6 pb-0 animate-slide-element">
+        <Container className="p-6 pb-0 animate-slide-element">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -26,13 +25,19 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Пользователи</BreadcrumbPage>
+                <BreadcrumbLink href="/admin/users">Пользователи</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Список ролей</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </Container>
-      <Title title="Пользователи" />
-      <CardList />
+      <Title title="Список ролей" />
+      <Container className="mb-40 p-6 pt-0 animate-slide-element">
+          <UserRoleTable />
+      </Container>
     </div>
   )
 }

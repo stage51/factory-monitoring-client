@@ -1,14 +1,13 @@
 "use client";
 import { testData } from "./test-data";
 import { useState, useEffect, useRef } from "react";
-import { DataTable } from "./data-table";
-import generateColumns from "./columns";
-import { Input } from "@/components/ui/input";
+import { DataTable } from "../../table/data-table";
+import generateColumns from "../../table/columns";
 import { ColumnDef } from "@tanstack/react-table";
-import { DatePickerWithRange } from "../../date-range-picker";
-import { DateRange } from "react-day-picker";
+import InputFilter from "../../table/input-filter";
+import DateFilter from "../../table/date-filter";
 
-export default function AdminTable() {  
+export default function UserListTable() {  
     const [data, setData] = useState<typeof testData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const tableRef = useRef<any>(null);
@@ -59,34 +58,12 @@ export default function AdminTable() {
           defaultHeaders={headers.map((h) => h.label)}
         >
           <div className="flex flex-col w-full gap-4">
-            <Input
-              placeholder="Поиск по email"
-              onChange={(event) =>
-                tableRef.current?.getColumn("email")?.setFilterValue(event.target.value)
-              }
-              className="w-full"
-            />
-            <Input
-              placeholder="Поиск по имени"
-              onChange={(event) =>
-                tableRef.current?.getColumn("username")?.setFilterValue(event.target.value)
-              }
-              className="w-full"
-            />
+            <InputFilter placeholder='Поиск по email' column="email" table={tableRef} />
+            <InputFilter placeholder='Поиск по имени' column="username" table={tableRef} />
           </div>
           <div className="flex flex-col w-full gap-4">
-            <DatePickerWithRange
-            value={tableRef.current?.getColumn("createdDate")?.getFilterValue() as DateRange | undefined}
-            onChange={(newDateRange) => tableRef.current?.getColumn("createdDate")?.setFilterValue(newDateRange)}
-            className="w-full"
-            placeholder="Дата создания"
-            />
-            <DatePickerWithRange
-            value={tableRef.current?.getColumn("activityDate")?.getFilterValue() as DateRange | undefined}
-            onChange={(newDateRange) => tableRef.current?.getColumn("activityDate")?.setFilterValue(newDateRange)}
-            className="w-full"
-            placeholder="Дата последней активности"
-            />
+            <DateFilter placeholder="Дата создания" column="createdDate" table={tableRef}/>
+            <DateFilter placeholder="Дата последней активности" column="activityDate" table={tableRef}/>
           </div>
         </DataTable>
       </div>

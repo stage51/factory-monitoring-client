@@ -1,6 +1,6 @@
 import Title from "@/components/shared/title"
-import CardList from "@/components/shared/admin/users/card-list"
 import Container from "@/components/shared/container"
+import UserOnlineTable from "@/components/shared/admin/users/online/user-online-table"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,13 +26,19 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Пользователи</BreadcrumbPage>
+                <BreadcrumbLink href="/admin/users">Пользователи</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Список онлайна</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </Container>
-      <Title title="Пользователи" />
-      <CardList />
+      <Title title="Список онлайна" />
+      <Container className="mb-40 p-6 pt-0 animate-slide-element">
+          <UserOnlineTable />
+      </Container>
     </div>
   )
 }
