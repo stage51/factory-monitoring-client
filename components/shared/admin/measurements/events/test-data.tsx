@@ -1,0 +1,48 @@
+export const testData = [
+  {
+    id: 1,
+    organization: "ООО Автотранспорт",
+    imei: "356938035643809",
+    govNumber: "A123BC",
+    type: "Проверка",
+    eventDate: new Date(2024, 0, 15, 10, 30),
+    serverDate: new Date(2024, 0, 15, 10, 32),
+  },
+  {
+    id: 2,
+    organization: "Транспорт-Сервис",
+    imei: "356938035643810",
+    govNumber: "B456DE",
+    type: "Перемещение",
+    eventDate: new Date(2024, 1, 10, 8, 45),
+    serverDate: new Date(2024, 1, 10, 8, 47),
+  },
+  {
+    id: 3,
+    organization: "Грузовые Перевозки",
+    imei: "356938035643811",
+    govNumber: "C789FG",
+    type: "Загрузка",
+    eventDate: new Date(2024, 2, 20, 13, 15),
+    serverDate: new Date(2024, 2, 20, 13, 17),
+  },
+  {
+    id: 4,
+    organization: "АвтоЭкспресс",
+    imei: "356938035643812",
+    govNumber: "D012HI",
+    type: "Выход на маршрут",
+    eventDate: new Date(2024, 3, 5, 7, 30),
+    serverDate: new Date(2024, 3, 5, 7, 32),
+  },
+  {
+    id: 5,
+    organization: "Логистика Плюс",
+    imei: "356938035643813",
+    govNumber: "E345JK",
+    type: "Фиксация прибытия",
+    eventDate: new Date(2024, 4, 15, 16, 0),
+    serverDate: new Date(2024, 4, 15, 16, 2),
+  },
+];
+  

@@ -9,6 +9,11 @@ import {
     DialogTrigger,
     DialogClose
 } from "@/components/ui/dialog";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover"
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,6 +21,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DatePicker } from "../../date-picker";
 import { DateRange } from "react-day-picker";
+import { Package } from "lucide-react"
+
+interface withObjectProps<HeadersTypes, ObjectHeaders> {
+    headers: Array<{ key: keyof HeadersTypes; label: string }>;
+    editable?: boolean;
+    objectHeaders?: Array<{ key: keyof ObjectHeaders; label: string }>;
+    
+}
 
 interface Props<HeadersTypes> {
     headers: Array<{ key: keyof HeadersTypes; label: string }>;
@@ -106,7 +119,7 @@ function EditDialog<HeadersTypes>({ data, headers }: { data: HeadersTypes; heade
 }
 
 
-export default function generateColumns<HeadersTypes>({ headers, editable = true }: Props<HeadersTypes>) {
+export default function generateColumns<HeadersTypes>({ headers, editable = true}: Props<HeadersTypes>) {
     const columns = headers.map(({ key, label }) => ({
         id: key,
         accessorKey: key,
@@ -116,6 +129,76 @@ export default function generateColumns<HeadersTypes>({ headers, editable = true
             const value = original[key];
             if (typeof value === "boolean") return value ? "Да" : "Нет";
             if (value instanceof Date) return value.toLocaleString();
+            return value;
+        },
+        filterFn: (row, columnId, filterValue) => {
+            const value = row.getValue(columnId);
+            if (value instanceof Date) {
+                const { from, to } = filterValue as DateRange;
+                return (!from || value >= from) && (!to || value <= to);
+            } else if (typeof value === "string") {
+                return filterValue ? value.toLowerCase().includes(filterValue.toLowerCase()) : true;
+            }
+            return false;
+        },
+    }));
+
+    if (editable) {
+        columns.push({
+            id: "actions",
+            accessorKey: "actions",
+            header: "Действия",
+            cell: ({ row }) => (
+                <EditDialog 
+                    data={row.original as HeadersTypes} 
+                    headers={headers}
+                    onChange={(key, value) => {
+                        row.original[key] = value;
+                    }}
+                />
+            ) as HeadersTypes[keyof HeadersTypes],
+        });
+    }
+
+
+    return columns;
+}
+
+export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers, editable = true,  objectHeaders}: withObjectProps<HeadersTypes, ObjectHeaders>) {
+    const columns = headers.map(({ key, label }) => ({
+        id: key,
+        accessorKey: key,
+        header: label,
+        cell: ({ row }) => {
+            const original = row.original as HeadersTypes;
+            const value = original[key];
+            if (typeof value === "boolean") return value ? "Да" : "Нет";
+            if (value instanceof Date) return value.toLocaleString();
+            if (typeof value === "object") {
+                return (
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0 group">
+                            <span className="sr-only">{label}</span>
+                            <Package className="h-4 w-4 flex group-hover:animate-spin-element" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end">
+                            <div className="flex flex-col gap-2">
+                            <span className="font-semibold">{label}</span>
+                            {objectHeaders?.map(({ key, label }) => {
+                                const objectValue = (value as ObjectHeaders)[key];
+                                return (
+                                    <span key={key.toString()} className="text-sm">
+                                        {label}: {String(objectValue)}
+                                    </span>
+                                );
+                            })}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+          );
+            }
             return value;
         },
         filterFn: (row, columnId, filterValue) => {
