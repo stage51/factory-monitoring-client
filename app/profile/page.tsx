@@ -1,4 +1,3 @@
-
 import Title from "@/components/shared/title"
 import Profile from "@/components/shared/profile/profile"
 import Container from "@/components/shared/container"

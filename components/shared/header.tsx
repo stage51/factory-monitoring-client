@@ -58,7 +58,7 @@ export default function Header({ className }: Props) {
                             <MailOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
                         </div>
                     </MailDialog>
-                    <Link href="/logout" className="group relative h-6 w-6">
+                    <Link href="/sign-in" className="group relative h-6 w-6">
                         <DoorClosed className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
                         <DoorOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
                     </Link>

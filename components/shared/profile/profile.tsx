@@ -87,42 +87,35 @@ export default function Profile() {
                   <CardTitle className="text-lg">Настройки аккаунта</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid gap-4">
+                  <div className="grid gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="first-name">Имя</Label>
                       <Input id="first-name" type="text" placeholder="Введите имя" defaultValue="Иван" />
                     </div>
-                    <Separator />
                     <div className="space-y-2">
                       <Label htmlFor="last-name">Фамилия</Label>
                       <Input id="last-name" type="text" placeholder="Введите фамилию" defaultValue="Петров" />
                     </div>
-                    <Separator />
                     <div className="space-y-2">
                       <Label htmlFor="middle-name">Отчество</Label>
                       <Input id="middle-name" type="text" placeholder="Введите отчество" defaultValue="Сергеевич" />
                     </div>
-                    <Separator />
                     <div className="space-y-2">
                       <Label htmlFor="phone">Телефон</Label>
                       <Input id="phone" type="text" placeholder="Введите телефон" defaultValue="+7 (999) 123-45-67" />
                     </div>
-                    <Separator />
                     <div className="space-y-2">
                       <Label htmlFor="timezone">Часовой пояс</Label>
                       <Input id="timezone" type="text" placeholder="Введите часовой пояс" defaultValue="UTC+3" />
                     </div>
-                    <Separator />
                     <div className="space-y-2">
                       <Label htmlFor="about">О себе</Label>
                       <Textarea id="about" placeholder="Расскажите о себе" defaultValue="Опытный разработчик с страстью к созданию инновационных решений. Люблю путешествовать и изучать новые технологии." />
                     </div>
-                    <Separator />
                     <div className="space-y-2">
                       <Label htmlFor="password">Новый пароль</Label>
                       <Input id="password" type="password" placeholder="Введите новый пароль" />
                     </div>
-                    <Separator />
                     <div className="space-y-2">
                       <Label htmlFor="confirm-password">Подтвердите пароль</Label>
                       <Input id="confirm-password" type="password" placeholder="Подтвердите новый пароль" />

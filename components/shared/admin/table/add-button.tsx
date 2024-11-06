@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DatePicker } from "@/components/shared/date-picker";
 import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
 
 interface Props<HeadersTypes> {
     className?: string;
@@ -21,6 +22,7 @@ interface Props<HeadersTypes> {
         <Dialog>
             <DialogTrigger asChild>
                 <Button className={cn("w-full", className)}>
+                    <Plus />
                     {text}
                 </Button>
             </DialogTrigger>

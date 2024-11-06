@@ -14,14 +14,14 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover"
-import { MoreHorizontal } from "lucide-react";
+import { Eye, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DatePicker } from "../../date-picker";
 import { DateRange } from "react-day-picker";
-import { Package } from "lucide-react"
+
 
 interface withObjectProps<HeadersTypes, ObjectHeaders> {
     headers: Array<{ key: keyof HeadersTypes; label: string }>;
@@ -180,7 +180,7 @@ export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers
                         <PopoverTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0 group">
                             <span className="sr-only">{label}</span>
-                            <Package className="h-4 w-4 flex group-hover:animate-spin-element" />
+                            <Eye className="h-4 w-4 flex group-hover:animate-spin-element" />
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent align="end">

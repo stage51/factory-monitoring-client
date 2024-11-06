@@ -49,7 +49,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Организации"
                         className="content-center"
-                        onClick={() => {handleCardClick("config/organisations")}}
+                        onClick={() => {handleCardClick("config/organizations")}}
                     />
                     <Card 
                         icon={
