@@ -5,7 +5,7 @@ import { DataTable } from "../../table/data-table";
 import generateColumns from "../../table/columns";
 import { ColumnDef } from "@tanstack/react-table";
 import InputFilter from "../../table/input-filter";
-import DateFilter from "../../table/date-filter";
+import AddButton from "../../table/add-button";
 
 export default function UserRoleTable() {  
     const [data, setData] = useState<typeof testData | null>(null);
@@ -50,6 +50,9 @@ export default function UserRoleTable() {
         >
           <div className="flex flex-col w-full gap-4">
             <InputFilter placeholder='Поиск по названию' column="name" table={tableRef} />
+          </div>
+          <div className="flex flex-col w-full gap-4">
+            <AddButton headers={headers} sampleData={testData[0]}/>
           </div>
         </DataTable>
       </div>

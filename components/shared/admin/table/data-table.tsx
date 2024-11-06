@@ -6,6 +6,7 @@ import { DatePickerWithRange } from "@/components/shared/date-range-picker"
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -50,6 +51,7 @@ interface DataTableProps<TData, TValue> {
   isLoading : boolean
   visibleHeaders : string[]
   defaultHeaders : string[]
+  className? : string
 }
 
 export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
@@ -60,6 +62,7 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
     isLoading,
     visibleHeaders,
     defaultHeaders: mobileHeaders,
+    className
 }: DataTableProps<TData, TValue> & { isLoading?: boolean },
   ref: React.Ref<any>) 
   {
@@ -102,7 +105,7 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
 
   return (
     <div>
-      <div className="flex lg:flex-row flex-col items-center py-4 gap-4">
+      <div className={cn("flex lg:flex-row flex-col items-start py-4 gap-4", className)}>
         {children}
       </div>
 

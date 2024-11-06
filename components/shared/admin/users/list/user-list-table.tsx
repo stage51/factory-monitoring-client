@@ -6,6 +6,7 @@ import generateColumns from "../../table/columns";
 import { ColumnDef } from "@tanstack/react-table";
 import InputFilter from "../../table/input-filter";
 import DateFilter from "../../table/date-filter";
+import AddButton from "../../table/add-button";
 
 export default function UserListTable() {  
     const [data, setData] = useState<typeof testData | null>(null);
@@ -64,6 +65,7 @@ export default function UserListTable() {
           <div className="flex flex-col w-full gap-4">
             <DateFilter placeholder="Дата создания" column="createdDate" table={tableRef}/>
             <DateFilter placeholder="Дата последней активности" column="activityDate" table={tableRef}/>
+            <AddButton headers={headers} sampleData={testData[0]}/>
           </div>
         </DataTable>
       </div>

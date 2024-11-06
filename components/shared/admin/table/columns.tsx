@@ -222,9 +222,6 @@ export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers
                 <EditDialog 
                     data={row.original as HeadersTypes} 
                     headers={headers}
-                    onChange={(key, value) => {
-                        row.original[key] = value;
-                    }}
                 />
             ) as HeadersTypes[keyof HeadersTypes],
         });
