@@ -79,12 +79,10 @@ export const columns: ColumnDef<egaisReport>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => row.original.startDate.toLocaleString(),
-        filterFn: (row, columnId, filterValue) => {
-            const date = row.getValue(columnId) as Date;
-            const { from, to } = filterValue as DateRange;
-            return (!from || date >= from) && (!to || date <= to);
-        },
+        cell: ({ row }) => {
+            const date = new Date(row.original.startDate);
+            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
     },
     {
         accessorKey: "endDate",
@@ -99,12 +97,10 @@ export const columns: ColumnDef<egaisReport>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => row.original.endDate.toLocaleString(),
-        filterFn: (row, columnId, filterValue) => {
-            const date = row.getValue(columnId) as Date;
-            const { from, to } = filterValue as DateRange;
-            return (!from || date >= from) && (!to || date <= to);
-        },
+        cell: ({ row }) => {
+            const date = new Date(row.original.endDate);
+            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
     },
     {
         accessorKey: "vbsStart",
@@ -149,20 +145,10 @@ export const columns: ColumnDef<egaisReport>[] = [
     {
         accessorKey: "mode",
         header: "Код режима",
-        filterFn: (row, columnId, filterValue) => {
-            if (!filterValue) return true;
-            const mode = row.getValue(columnId);
-            return mode === filterValue;
-        },
     },
     {
         accessorKey: "status",
         header: "Статус",
-        filterFn: (row, columnId, filterValue) => {
-            if (!filterValue) return true;
-            const status = row.getValue(columnId);
-            return status === filterValue;
-        },
     },
     {
         id: "product",

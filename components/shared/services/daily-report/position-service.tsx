@@ -7,13 +7,19 @@ axios.defaults.headers['Content-Type'] = 'application/json';
 
 export type PositionRequest = {
     product : ProductRequest,
-    controlDate : Date,
-    vbsControl : number,
-    aControl : number,
+    startDate : Date,
+    endDate : Date,
+    vbsStart : number,
+    vbsEnd : number,
+    aStart : number,
+    aEnd : number,
     percentAlc : number,
-    bottleCountControl : number,
+    bottleCountStart : number,
+    bottleCountEnd : number,
     temperature : number,
     mode : string,
+    crotonaldehyde : number,
+    toluene : number,
     status : string
 }
 

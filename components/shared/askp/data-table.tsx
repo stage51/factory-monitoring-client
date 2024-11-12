@@ -1,35 +1,17 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import { DataTablePagination } from "../table/data-table-pagination";
-import { DatePickerWithRange } from "../date-range-picker"
+import { DatePickerWithRange } from "../date-range-picker";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  SortingState,
-  VisibilityState,
-  getSortedRowModel,
-  ColumnFiltersState,
-  getFilteredRowModel,
-  getPaginationRowModel,
-} from "@tanstack/react-table"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable, SortingState, VisibilityState, getSortedRowModel, ColumnFiltersState, getFilteredRowModel, getPaginationRowModel, PaginationState } from "@tanstack/react-table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getPagePositions } from "../services/five-minute-report/position-service";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -37,54 +19,97 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Skeleton } from "@/components/ui/skeleton";
 
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  isLoading : boolean
-  visibleHeaders : string[]
-  mobileHeaders : string[]
+  columns: ColumnDef<TData, TValue>[];
+  visibleHeaders: string[];
+  mobileHeaders: string[];
 }
 
 export function DataTable<TData, TValue>({
-    columns,
-    data,
-    isLoading,
-    visibleHeaders,
-    mobileHeaders,
-}: DataTableProps<TData, TValue> & { isLoading?: boolean }) {
+  columns,
+  visibleHeaders,
+  mobileHeaders,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize: 10});
+  const [data, setData] = React.useState<TData[]>([]);
   const [isMobile, setIsMobile] = React.useState<boolean>(false);
-  const [openRow, setOpenRow] = React.useState<string | null>(null);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [isLoading, setLoading] = React.useState<boolean>(true);
+  const [openRow, setOpenRow] = React.useState<string>()
+  const [totalPages, setTotalPages] = React.useState<number>(0)
+  const [totalElements, setTotalElements] = React.useState<number>(0)
+
+  const fetchData = async () => {
+    setLoading(true);
+    const params = {
+      size: pagination.pageSize,
+      number: pagination.pageIndex,
+      sortBy: sorting[0]?.id,
+      sortDirection: sorting[0]?.desc ? "DESC" : "ASC",
+      filters: Object.fromEntries(
+        columnFilters
+          .filter(filter => filter.id !== "controlDate")
+          .map(filter => [filter.id, filter.value])
+      ),
+      dateRanges: Object.fromEntries(
+        columnFilters
+          .filter(filter => filter.id === "controlDate")
+          .map(filter => {
+            const from = filter.value?.from
+              ? new Date(filter.value.from).toISOString()
+              : "null";
+            const to = filter.value?.to
+              ? new Date(filter.value.to).toISOString()
+              : "null";
+            return [filter.id, `${from},${to}`];
+          })
+      )
+    };
+
+    try {
+      const response = await getPagePositions(params);
+      setData(response.content); 
+      setTotalPages(response.totalPages)
+      setTotalElements(response.totalElements)
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, [sorting, columnFilters, pagination.pageIndex, pagination.pageSize]);
+
 
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
+    rowCount: totalElements,
+    pageCount: totalPages,
+    manualSorting: true,
+    manualFiltering: true,
+    manualPagination: true,
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
+      pagination
     },
-    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    //getSortedRowModel: getSortedRowModel(),
+    //getFilteredRowModel: getFilteredRowModel(),
+    //getPaginationRowModel: getPaginationRowModel(),
   });
 
   React.useEffect(() => {
@@ -140,7 +165,6 @@ export function DataTable<TData, TValue>({
         </DropdownMenu>
       </div>
       <div className="flex lg:flex-row flex-col items-center pb-4 gap-4">
-        {/* Селекторы для фильтров */}
         <Select
           onValueChange={(value) => {
             if (value === "all") {
@@ -190,7 +214,9 @@ export function DataTable<TData, TValue>({
         </Select>
         <DatePickerWithRange
           value={table.getColumn("controlDate")?.getFilterValue() as DateRange | undefined}
-          onChange={(newDateRange) => table.getColumn("controlDate")?.setFilterValue(newDateRange)}
+          onChange={(newDateRange) => {
+            table.getColumn("controlDate")?.setFilterValue(newDateRange)
+          }}
           className="lg:max-w-md lg:w-[400px] max-w-none w-full"
         />
       </div>
@@ -316,7 +342,7 @@ export function DataTable<TData, TValue>({
         </div>
       )}
 
-      <DataTablePagination className="mt-4" table={table} />
+      <DataTablePagination className="mt-4" table={table}/>
     </div>
   );
 }

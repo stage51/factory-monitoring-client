@@ -24,6 +24,7 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
   getPaginationRowModel,
+  PaginationState,
 } from "@tanstack/react-table"
 import {
   Collapsible,
@@ -47,44 +48,92 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton";
+import { getPagePositions } from "../services/daily-report/position-service";
 
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  isLoading : boolean
   visibleHeaders : string[]
   mobileHeaders : string[]
 }
 
 export function DataTable<TData, TValue>({
     columns,
-    data,
-    isLoading,
     visibleHeaders,
     mobileHeaders,
 }: DataTableProps<TData, TValue> & { isLoading?: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize: 10});
+  const [data, setData] = React.useState<TData[]>([]);
   const [isMobile, setIsMobile] = React.useState<boolean>(false);
-  const [openRow, setOpenRow] = React.useState<string | null>(null);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [isLoading, setLoading] = React.useState<boolean>(true);
+  const [openRow, setOpenRow] = React.useState<string>()
+  const [totalPages, setTotalPages] = React.useState<number>(0)
+  const [totalElements, setTotalElements] = React.useState<number>(0)
+
+  const fetchData = async () => {
+    setLoading(true);
+    const params = {
+      size: pagination.pageSize,
+      number: pagination.pageIndex,
+      sortBy: sorting[0]?.id,
+      sortDirection: sorting[0]?.desc ? "DESC" : "ASC",
+      filters: Object.fromEntries(
+        columnFilters
+          .filter(filter => !["startDate", "endDate"].includes(filter.id))
+          .map(filter => [filter.id, filter.value])
+      ),
+      dateRanges: Object.fromEntries(
+        columnFilters
+          .filter(filter => ["startDate", "endDate"].includes(filter.id))
+          .map(filter => {
+            const from = filter.value?.from
+              ? new Date(filter.value.from).toISOString()
+              : "null";
+            const to = filter.value?.to
+              ? new Date(filter.value.to).toISOString()
+              : "null";
+            return [filter.id, `${from},${to}`];
+          })
+      )
+    };
+
+    try {
+      const response = await getPagePositions(params);
+      setData(response.content); 
+      setTotalPages(response.totalPages)
+      setTotalElements(response.totalElements)
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, [sorting, columnFilters, pagination.pageIndex, pagination.pageSize]);
 
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
+    rowCount: totalElements,
+    pageCount: totalPages,
+    manualSorting: true,
+    manualFiltering: true,
+    manualPagination: true,
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
+      pagination
     },
-    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    //getSortedRowModel: getSortedRowModel(),
+    //getFilteredRowModel: getFilteredRowModel(),
+    //getPaginationRowModel: getPaginationRowModel(),
   });
 
   React.useEffect(() => {

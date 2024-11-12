@@ -69,12 +69,10 @@ export const columns: ColumnDef<askpReport>[] = [
             </Button>
             )
         },
-        cell: ({ row }) => row.original.controlDate.toLocaleString(),
-        filterFn: (row, columnId, filterValue) => {
-            const date = row.getValue(columnId) as Date;
-            const { from, to } = filterValue as DateRange;
-            return (!from || date >= from) && (!to || date <= to);
-        },
+        cell: ({ row }) => {
+            const date = new Date(row.original.controlDate);
+            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
     },
     {
         accessorKey: "vbsControl",
@@ -99,20 +97,10 @@ export const columns: ColumnDef<askpReport>[] = [
     {
         accessorKey: "mode",
         header: "Код режима",
-        filterFn: (row, columnId, filterValue) => {
-            if (!filterValue) return true;
-            const status = row.getValue(columnId);
-            return status === filterValue;
-        },
     },
     {
         accessorKey: "status",
         header: "Статус",
-        filterFn: (row, columnId, filterValue) => {
-            if (!filterValue) return true;
-            const status = row.getValue(columnId);
-            return status === filterValue;
-        },
     },
     {
         id: "product",
@@ -146,10 +134,6 @@ export const columns: ColumnDef<askpReport>[] = [
                 </PopoverContent>
             </Popover>
           );
-        },
-        filterFn: (row, columnId, filterValue) => {
-            const alcCode = row.getValue<Product>(columnId).alcCode as string;
-            return alcCode.includes(filterValue);
         },
     }
 ]
