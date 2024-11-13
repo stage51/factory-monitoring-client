@@ -127,7 +127,8 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex lg:flex-row flex-col items-center py-4 gap-4">
+      <div className="flex lg:flex-row flex-col items-start py-4 gap-4">
+      <div className="flex flex-col w-full gap-4">
         <Input
           placeholder="Код продукта"
           value={(table.getColumn("product")?.getFilterValue() as string) ?? ""}
@@ -136,35 +137,6 @@ export function DataTable<TData, TValue>({
           }
           className="w-full"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="hidden md:flex lg:max-w-[250px] w-full">
-              Колонки
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter(
-                (column) => column.getCanHide()
-              )
-              .map((column, index) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {mobileHeaders.at(index)}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="flex lg:flex-row flex-col items-center pb-4 gap-4">
         <Select
           onValueChange={(value) => {
             if (value === "all") {
@@ -212,13 +184,43 @@ export function DataTable<TData, TValue>({
             <SelectItem value="Не принято в РАР">Не принято в РАР</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+      <div className="flex flex-col w-full gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="hidden md:flex w-full">
+              Колонки
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter(
+                (column) => column.getCanHide()
+              )
+              .map((column, index) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {mobileHeaders.at(index)}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <DatePickerWithRange
           value={table.getColumn("controlDate")?.getFilterValue() as DateRange | undefined}
           onChange={(newDateRange) => {
             table.getColumn("controlDate")?.setFilterValue(newDateRange)
           }}
-          className="lg:max-w-md lg:w-[400px] max-w-none w-full"
+          className="w-full"
         />
+      </div>
       </div>
 
       {/* Таблица для мобильных устройств */}
