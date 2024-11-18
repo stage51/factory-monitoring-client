@@ -24,43 +24,45 @@ import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Switch } from "@/components/ui/switch"
 import Link from "next/link"
+import { useRouter } from "next/navigation";
+import keycloak from "../services/auth/keycloak"
+import { createUser } from "../services/auth/auth"
+
 
 const formSchema = z.object({
     email: z.string().email({
-        message: "Введите корректный email",
-    }
-    ),
+      message: "Введите корректный email",
+    }),
     repeatPassword: z.string(),
-    password: z.string().min(8, {
-        message: "Пароль должен быть от 8 символов",
-    }).max(20, {
-        message: "Пароль должен быть до 20 символов ",
-    }
-    ),
-    firstName: z.string(),
-    lastName: z.string(),
-    middleName: z.string(),
+    password: z.string()
+      .min(8, { message: "Пароль должен быть от 8 символов" })
+      .max(20, { message: "Пароль должен быть до 20 символов " }),
+    firstName: z.string().min(1, { message: "Имя обязательно" }),
+    lastName: z.string().min(1, { message: "Фамилия обязательна" }),
+    middleName: z.string().optional(),
     timezone: z.string(),
     subscribe: z.boolean(),
-    policy: z.boolean()
-})
-
+    policy: z.boolean().refine(val => val, { message: "" })
+  });
+  
 export default function SignUp() {
+    const router = useRouter();
     const [isMobile, setIsMobile] = useState<boolean>(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-          email: "",
-          repeatPassword: "",
-          password: "",
-          firstName: "",
-          lastName: "",
-          middleName: "",
-          timezone: "UTC+03:00",
-          subscribe: false,
-          policy: false
-        },
-    })
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        email: "",
+        repeatPassword: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+        middleName: "",
+        timezone: "UTC+03:00",
+        subscribe: false,
+        policy: false
+      },
+    });
 
     useEffect(() => {
         const handleResize = () => {
@@ -75,10 +77,30 @@ export default function SignUp() {
         };
       }, []);
 
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        setIsSubmitting(true);
+        try {
+          // Создаем пользователя через серверное API
+          await createUser({
+            email: values.email,
+            username: values.email,  // Можно использовать email как username
+            firstName: values.firstName,
+            lastName: values.lastName,
+            password: values.password,
+          });
+          router.push("/sign-in");
+        } catch (error) {
+          console.error("Ошибка регистрации:", error);
+          alert("Ошибка при регистрации. Попробуйте снова.");
+        } finally {
+          setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="rounded-lg border bg-card text-card-foreground w-full">
             <div className="flex md:flex-row flex-col">
-            <Card className="shadow-none border-none md:w-1/2 w-full">
+            <Card className="shadow-none border-none w-full">
             <CardHeader className="">
                 <CardTitle className="text-md text-muted-foreground">Пользователь</CardTitle>
             </CardHeader>  
@@ -170,9 +192,9 @@ export default function SignUp() {
                             <FormItem>
                             <FormLabel>Часовой пояс</FormLabel>
                             <FormControl>
-                                <Select>
+                                <Select value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger>
-                                        <SelectValue {...field} placeholder="Выберите тип"/>
+                                        <SelectValue placeholder="Выберите тип"/>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="UTC-12:00">UTC-12:00</SelectItem>
@@ -225,7 +247,10 @@ export default function SignUp() {
                             <FormItem className="space-y-0 flex flex-row items-center justify-between rounded-lg border p-4">
                             <FormLabel>Подписаться на рассылку</FormLabel>
                             <FormControl>
-                                <Switch {...field} />
+                            <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
@@ -238,102 +263,24 @@ export default function SignUp() {
                             <FormItem className="space-y-0 flex flex-row items-center justify-between rounded-lg border p-4">
                             <FormLabel>Принять соглашение на обработку персональных данных</FormLabel>
                             <FormControl>
-                                <Switch {...field} />
+                            <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
                         )}
                         />
+                        <div className="flex justify-center p-6 gap-12">
+                            <Button className="w-1/2" type="submit" onClick={() => onSubmit}>Зарегистрироваться</Button>
+                            <Link href="/sign-in" className="w-1/2"><Button className="w-full" variant="outline">Вход в аккаунт</Button></Link>
+                        </div>
                     </form>
                 </Form>
             </CardContent>
             </Card>
-            {!isMobile ? (<Separator orientation="vertical" />) : (<></>)}
-            <Card className="shadow-none border-none md:w-1/2 w-full">
-            <CardHeader className="">
-                <CardTitle className="text-md text-muted-foreground">Организация</CardTitle>
-            </CardHeader>  
-            <CardContent className="flex justify-between gap-4">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
-                        <FormField
-                        control={form.control}
-                        name="shortName"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Краткое наименование</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Введите краткое наименование" type="text" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Полное наименование</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Введите полное наименование" type="text" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="type"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Тип предприятия</FormLabel>
-                            <FormControl>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue {...field} placeholder="Выберите тип"/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Производство алкогольного сырья">Производство алкогольного сырья</SelectItem>
-                                        <SelectItem value="Ликеро-водочный завод">Ликеро-водочный завод</SelectItem>
-                                        <SelectItem value="Фармацевтическое производство">Фармацевтическое производство</SelectItem>
-                                        <SelectItem value="Пивоваренная компания">Пивоваренная компания</SelectItem>
-                                        <SelectItem value="Перевозчик алкогольного сырья">Перевозчик алкогольного сырья</SelectItem>
-                                        <SelectItem value="Перевозчик газового сырья">Перевозчик газового сырья</SelectItem>
-                                        <SelectItem value="Другое">Другое</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="region"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Регион</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Введите регион" type="text" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                    </form>
-                </Form>
-            </CardContent>
-            </Card>
-            </div>
-            <div className="flex justify-center p-6 gap-12">
-                <Button className="w-1/2" type="submit">Зарегистрироваться</Button>
-                <Link href="/sign-in" className="w-1/2"><Button className="w-full" variant="outline">Вход в аккаунт</Button></Link>
             </div>
         </div>
   )
-}
-
-function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
 }

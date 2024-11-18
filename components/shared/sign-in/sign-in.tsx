@@ -21,7 +21,8 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
-
+import keycloak from "../services/auth/keycloak"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
     email: z.string().email({
@@ -44,6 +45,22 @@ export default function SignIn() {
           password: ""
         },
       })
+      const router = useRouter();
+
+      const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+          // Входим через Keycloak
+          await keycloak.login({
+            username: values.email,
+            password: values.password,
+          });
+          // После успешной авторизации редиректим на главную страницу
+          router.push("/dashboard");
+        } catch (error) {
+          console.error("Ошибка авторизации:", error);
+          alert("Неверный логин или пароль");
+        }
+      };
     return (
         <Card className="shadow-none md:w-1/2 w-full">
             <CardHeader className="flex items-center">
@@ -87,8 +104,4 @@ export default function SignIn() {
             </CardContent>
         </Card>
   )
-}
-
-function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
 }
