@@ -25,9 +25,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Switch } from "@/components/ui/switch"
 import Link from "next/link"
 import { useRouter } from "next/navigation";
-import keycloak from "../services/auth/keycloak"
-import { createUser } from "../services/auth/auth"
-
+import keycloakConfig from "../services/auth/keycloak-config"
+import axios from "axios"
 
 const formSchema = z.object({
     email: z.string().email({
@@ -77,24 +76,60 @@ export default function SignUp() {
         };
       }, []);
 
+      const handleRegister = async (email: string, password: string, firstName: string, lastName: string) => {
+        try {
+            const response = await axios.post(
+                `${keycloakConfig.baseUrl}/realms/${keycloakConfig.realm}/protocol/openid-connect/token`,
+                new URLSearchParams({
+                  client_id: keycloakConfig.clientId,
+                  client_secret: keycloakConfig.clientSecret, // (если используется secret)
+                  grant_type: 'password',
+                  username: keycloakConfig.adminUsername,
+                  password: keycloakConfig.adminPassword,
+                }),
+                {
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                }
+              );
+              
+              // Далее, получаем токен и регистрируем нового пользователя
+            const accessToken = response.data.access_token;
+
+            const userResponse = await axios.post(
+            `${keycloakConfig.baseUrl}/admin/realms/${keycloakConfig.realm}/users`,
+            {
+              username: email,
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              credentials: [
+                {
+                  type: 'password',
+                  value: password,
+                  temporary: false,
+                },
+              ],
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );     
+            alert("Вы успешно зарегистрировались!");
+            router.push("/sign-in");
+        } catch (error) {
+            console.error("Ошибка регистрации:", error);
+            alert("Ошибка регистрации. Проверьте данные.");
+        }
+      };
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true);
-        try {
-          // Создаем пользователя через серверное API
-          await createUser({
-            email: values.email,
-            username: values.email,  // Можно использовать email как username
-            firstName: values.firstName,
-            lastName: values.lastName,
-            password: values.password,
-          });
-          router.push("/sign-in");
-        } catch (error) {
-          console.error("Ошибка регистрации:", error);
-          alert("Ошибка при регистрации. Попробуйте снова.");
-        } finally {
-          setIsSubmitting(false);
-        }
+        handleRegister(values.email, values.password, values.firstName, values.lastName)
+        setIsSubmitting(false);
     };
 
     return (

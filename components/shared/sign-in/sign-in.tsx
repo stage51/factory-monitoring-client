@@ -21,8 +21,11 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
-import keycloak from "../services/auth/keycloak"
 import { useRouter } from "next/navigation"
+import axios from "axios"
+import keycloakConfig from "../services/auth/keycloak-config"
+import RegisterRedirect from "../services/auth/register-redirect"
+import LoginRedirect from "../services/auth/login-redirect"
 
 const formSchema = z.object({
     email: z.string().email({
@@ -45,20 +48,40 @@ export default function SignIn() {
           password: ""
         },
       })
-      const router = useRouter();
-
-      const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const router = useRouter();
+    const handleLogin = async (email: string, password: string) => {
         try {
-          // Входим через Keycloak
-          await keycloak.login({
-            username: values.email,
-            password: values.password,
-          });
-          // После успешной авторизации редиректим на главную страницу
-          router.push("/dashboard");
+          const response = await axios.post(
+            `${keycloakConfig.baseUrl}/realms/${keycloakConfig.realm}/protocol/openid-connect/token`,
+            new URLSearchParams({
+              client_id: keycloakConfig.clientId,
+              client_secret: keycloakConfig.clientSecret,
+              grant_type: "password",
+              username: email,
+              password: password,
+            }),
+            {
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            }
+          );
+    
+          const { access_token, refresh_token } = response.data;
+          sessionStorage.setItem("access_token", access_token);
+          sessionStorage.setItem("refresh_token", refresh_token);
+          alert("Вы успешно вошли!");
         } catch (error) {
           console.error("Ошибка авторизации:", error);
-          alert("Неверный логин или пароль");
+          alert("Ошибка авторизации. Проверьте данные.");
+        }
+      };
+
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            handleLogin(values.email, values.password)
+            router.push("/");
+        } catch (error) {
+            console.error("Ошибка авторизации:", error);
+            alert("Неверный логин или пароль");
         }
       };
     return (
@@ -96,8 +119,9 @@ export default function SignIn() {
                         )}
                         />
                         <div className="flex justify-center pt-8 gap-8">
-                            <Button className="w-1/2" type="submit">Войти</Button>
-                            <Link href="/sign-up" className="w-1/2"><Button className="w-full" variant="outline">Регистрация</Button></Link>
+                            <Button className="w-1/2" onClick={() => LoginRedirect} type="submit">Войти</Button>
+                            {/*<Link href="/sign-up" className="w-1/2"><Button className="w-full" variant="outline">Регистрация</Button></Link>*/}
+                            <Button className="w-full" onClick={() => RegisterRedirect}  variant="outline">Регистрация</Button>
                         </div>
                     </form>
                 </Form>

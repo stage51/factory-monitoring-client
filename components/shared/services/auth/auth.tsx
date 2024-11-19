@@ -1,40 +1,35 @@
-import axios from "axios";
+"use client";
+import { ReactNode, useEffect, useState } from "react";
+import keycloak from "./keycloak";
 
-// URL для получения токена
-const tokenUrl = "http://localhost:9098/realms/factory-monitoring/protocol/openid-connect/token";
-
-// Функция для получения access token
-async function getAccessToken() {
-  const response = await axios.post(tokenUrl, new URLSearchParams({
-    client_id: 'factory-monitoring-api',
-    client_secret: 'XA5xr5VZr7oyuEbRqn6358qV2FZKQz2U',
-    grant_type: 'client_credentials',
-  }), {
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-  });
-
-  return response.data.access_token;
+interface Props {
+  children?: ReactNode;
 }
 
-const createUserUrl = "http://localhost:9098/admin/realms/factory-monitoring/users";
+export default function Auth({ children }: Props) {
+  const [keycloakInitialized, setKeycloakInitialized] = useState(false);
 
-// Функция для создания пользователя
-export async function createUser(userData: { email: string, username: string, firstName: string, lastName: string, password: string }) {
-  const token = await getAccessToken();
+  useEffect(() => {
+    keycloak
+      .init({
+        onLoad: "check-sso", // Проверка на авторизацию без принудительного входа
+        silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
+      })
+      .then((authenticated) => {
+        setKeycloakInitialized(true);
 
-  const response = await axios.post(createUserUrl, {
-    username: userData.username,
-    email: userData.email,
-    firstName: userData.firstName,
-    lastName: userData.lastName,
-    enabled: true,
-    credentials: [{ type: "password", value: userData.password }],
-  }, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-  });
+        if (!authenticated) {
+          // Если пользователь не авторизован, перенаправляем на страницу входа
+          keycloak.login();
+        }
+      })
+      .catch((error) => console.error("Keycloak init failed:", error));
+  }, []);
 
-  return response.data;
+  if (!keycloakInitialized) {
+    return <div>Загрузка...</div>;
+  }
+
+  // Если пользователь не авторизован, логика login() уже обработала редирект
+  return <>{children}</>;
 }

@@ -1,9 +1,12 @@
 import axios from 'axios';
 import { API_BASE_URL } from './url';
 import { ProductRequest } from './product-service.';
+import PutAccessToken from '../auth/put-access-token';
 
 const API_URL = API_BASE_URL + '/positions';
 axios.defaults.headers['Content-Type'] = 'application/json';
+
+PutAccessToken()
 
 export type PositionRequest = {
     product : ProductRequest,
