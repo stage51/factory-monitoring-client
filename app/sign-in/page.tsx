@@ -1,7 +1,7 @@
 import Title from "@/components/shared/title"
 import Profile from "@/components/shared/profile/profile"
 import Container from "@/components/shared/container"
-import SignInKeycloak from "@/components/shared/sign-in/sign-in-keycloak"
+import SignIn from "@/components/shared/sign-in/sign-in"
 
 
 export default function Page() {  
@@ -9,7 +9,7 @@ export default function Page() {
       <div>
         <Container className="h-[85vh] w-screen p-6 pt-0 flex flex-col justify-center items-center animate-slide-element">
             <Title title = "Вход в аккаунт"/>
-            <SignInKeycloak />
+            <SignIn />
         </Container>
       </div>
     )

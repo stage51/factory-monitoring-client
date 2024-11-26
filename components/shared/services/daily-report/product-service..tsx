@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { API_BASE_URL } from './url';
+import PutAccessToken from '../auth/put-access-token';
 
 const API_URL = API_BASE_URL + '/products';
+
+PutAccessToken()
 
 export type ProductRequest = {
     unitType : string,

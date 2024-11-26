@@ -1,9 +1,8 @@
 import axios from "axios";
-import keycloak from "./keycloak";
 
 export default function PutAccessToken() {
     const getAccessToken = () => {
-        return keycloak.tokenParsed;
+        return sessionStorage.getItem("access_token");
     };
       
     axios.interceptors.request.use(

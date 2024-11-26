@@ -5,6 +5,8 @@ import { CircleUser, Mail, MailOpen, DoorClosed, DoorOpen, List } from 'lucide-r
 import Link from 'next/link';
 import { useState } from 'react';
 import MailDialog from './mail/mail-dialog';
+import { logout } from './services/auth/auth-serivce';
+import { useToast } from "@/components/hooks/use-toast"
 
 interface Props {
   className?: string;
@@ -12,7 +14,23 @@ interface Props {
 
 export default function Header({ className }: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+    const { toast } = useToast()
+    const handleLogout = async () => {
+        try {
+            await logout()
+            toast({
+              title: "Выход из аккаунт",
+              description: "Выход был успешно выполнен",
+            })
+        } catch (error) {
+            console.error("Ошибка выхода из аккаунта:", error);
+            toast({
+              title: "Ошибка выхода из аккаунта",
+              variant: "destructive",
+              description: "Вы не авторизованы",
+            })
+        }
+    }
 
     return (
         <header className={cn('sticky top-0 z-50 border-gray-100 bg-gray-900', className)}>
@@ -58,7 +76,7 @@ export default function Header({ className }: Props) {
                             <MailOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
                         </div>
                     </MailDialog>
-                    <Link href="/sign-in" className="group relative h-6 w-6">
+                    <Link href="/sign-in" onClick={() => handleLogout()} className="group relative h-6 w-6">
                         <DoorClosed className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
                         <DoorOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
                     </Link>
