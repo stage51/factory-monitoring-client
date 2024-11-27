@@ -12,11 +12,26 @@ interface Props {
 
 export default function Auth({ children }: Props) {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   useEffect(() => {
+    setupAxiosInterceptors();
     verifyAuthorization();
   }, []);
-  
+
+  const setupAxiosInterceptors = () => {
+    axios.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (error.response?.status === 403) {
+          // Если 403 - показываем сообщение о недостатке прав
+          setAccessDenied(true);
+        }
+        return Promise.reject(error);
+      }
+    )
+  };
+
   const refreshAccessToken = async () => {
     try {
       const refreshToken = sessionStorage.getItem("refresh_token");
@@ -46,10 +61,10 @@ export default function Auth({ children }: Props) {
     }
 
     try {
-      const response = await axios.get("/api/v1/auth-server/auth/profile", {
+      await axios.get("/api/v1/auth-server/auth/check", {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       setIsAuthorized(true);
@@ -66,22 +81,47 @@ export default function Auth({ children }: Props) {
 
   if (isAuthorized === null) {
     return (
-        <Title className="mt-6" title="Загрузка..." subtitle="Страница загружается" />
-      )
+      <Title className="mt-6" title="Загрузка..." subtitle="Страница загружается" />
+    );
   }
 
-  if (!isAuthorized) { 
+  if (accessDenied) {
     return (
-    <>
-      <Title className="mt-6" title="У вас недостаточно прав или вы не авторизованы" subtitle="Выполните вход в аккаунт или получите права у администратора для доступа к этому ресурсу" />
-      <Container className="p-6 animate-slide-element">
-        <div className="flex gap-6 md:flex-row flex-col">
-          <Button><Link href={"/sign-in"}>Вход в аккаунт</Link></Button>
-          <Button variant="outline" onClick={() => {window.location.reload()}}>Перезагрузить страницу</ Button>
-        </div>
-      </Container>
-    </>
-    )
+      <>
+        <Title
+          className="mt-6"
+          title="У вас недостаточно прав доступа"
+          subtitle="Получите права у администратора для доступа к этому ресурсу"
+        />
+        <Container className="p-6 animate-slide-element">
+          <Button variant="outline" onClick={() => window.location.reload()}>
+            Перезагрузить страницу
+          </Button>
+        </Container>
+      </>
+    );
+  }
+
+  if (!isAuthorized) {
+    return (
+      <>
+        <Title
+          className="mt-6"
+          title="Вы не авторизованы"
+          subtitle="Выполните вход в аккаунт для доступа к этому ресурсу"
+        />
+        <Container className="p-6 animate-slide-element">
+          <div className="flex gap-6 md:flex-row flex-col">
+            <Button>
+              <Link href={"/sign-in"}>Вход в аккаунт</Link>
+            </Button>
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Перезагрузить страницу
+            </Button>
+          </div>
+        </Container>
+      </>
+    );
   }
 
   return <>{children}</>;

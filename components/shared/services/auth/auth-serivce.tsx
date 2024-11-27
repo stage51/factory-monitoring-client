@@ -51,17 +51,3 @@ export const register = async (userData: {
     sessionStorage.setItem("access_token", accessToken);
     sessionStorage.setItem("refresh_token", refreshToken);
   };
-  
-  export const createOrganization = async (orgData: {
-    shortName: string;
-    name: string;
-    type: string;
-    region: string;
-    taxpayerNumber: string;
-    reasonCode: string;
-    address: string;
-    specialEmail: string;
-    specialPhone: string;
-  }) => {
-    const response = await axios.post(SERVER_URL + "/auth-server/auth/organization", orgData); 
-  }

@@ -1,4 +1,4 @@
-import Auth from "@/components/shared/services/auth/auth";
+import AdminAuth from "@/components/shared/services/auth/admin-auth";
 
 
 export default function RootLayout({
@@ -7,8 +7,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Auth>
+    <AdminAuth>
       {children}
-    </Auth>
+    </AdminAuth>
   )
 }

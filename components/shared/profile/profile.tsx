@@ -141,7 +141,7 @@ export default function Profile() {
                       <p className="text-sm font-medium">Фамилия</p>
                       <p className="text-sm text-muted-foreground">{data?.lastName}</p>
                     </div>
-                    {data?.middleName !== null ? (<>
+                    {!!data?.middleName === true ? (<>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Отчество</p>

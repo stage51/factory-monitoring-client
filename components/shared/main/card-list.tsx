@@ -4,17 +4,36 @@ import { cn } from '@/lib/utils';
 import Container from '../container';
 import Card from '../card';
 import { LaptopMinimal, CloudDownload, CloudUpload, Settings, Joystick } from 'lucide-react';
-import { useRouter } from 'next/navigation'
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 interface Props {
     className?: string;
 }
 
 export default function CardList({ className }: Props) {
-    const [router] = useState(useRouter())
-    function handleCardClick(href : string) {
-        router.push(href)
+    const [router] = useState(useRouter());
+    const [accessToken, setAccessToken] = useState<string | null>();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    // Декодирование токена и проверка роли
+    useEffect(() => {
+        setAccessToken(sessionStorage.getItem("access_token"))
+        if (accessToken) {
+            try {
+                const decoded: any = jwtDecode(accessToken);
+                if (decoded?.role === 'ROLE_ADMIN') {
+                    setIsAdmin(true);
+                }
+            } catch (error) {
+                console.error("Invalid token:", error);
+            }
+        }
+    }, [accessToken]);
+
+    function handleCardClick(href: string) {
+        router.push(href);
     }
 
     return (
@@ -53,18 +72,21 @@ export default function CardList({ className }: Props) {
                         title="Контроль отправки отчетности режимов"
                         subtitle='Отслеживайте отправку «отчетности по режимам» в РАР по всем точкам учёта, контроллируйте ответные сообщения.'
                         onClick={() => {handleCardClick("modes")}}
-                     />
-                     <Card
-                        icon={
-                            <div className='h-32'>
-                                <LaptopMinimal size={96} className="relative -inset-x-2 text-primary" />
-                                <Settings size={96} className="relative inset-x-6 -inset-y-16 text-primary transition-all fill-white group-hover:fill-slate-200" />
-                            </div>
-                        }
-                        title="Панель администратора"
-                        subtitle='Управляйте содержимым сервиса, изменяйте настройки и получайте данные для анализа'
-                        onClick={() => {handleCardClick("admin")}}
-                     />
+                    />
+                    {/* Показываем карточку только если роль пользователя - ADMIN */}
+                    {isAdmin && (
+                        <Card
+                            icon={
+                                <div className='h-32'>
+                                    <LaptopMinimal size={96} className="relative -inset-x-2 text-primary" />
+                                    <Settings size={96} className="relative inset-x-6 -inset-y-16 text-primary transition-all fill-white group-hover:fill-slate-200" />
+                                </div>
+                            }
+                            title="Панель администратора"
+                            subtitle='Управляйте содержимым сервиса, изменяйте настройки и получайте данные для анализа'
+                            onClick={() => {handleCardClick("admin")}}
+                        />
+                    )}
                 </div>
             </Container>
         </div>

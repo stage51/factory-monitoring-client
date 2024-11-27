@@ -50,19 +50,33 @@ export interface UserRequest {
     subscribe: boolean;
 }
 export const fetchUserProfile = async (): Promise<UserResponse> => {
-    const response = await axios.get(SERVER_URL + "/auth-server/auth/profile");
+    const response = await axios.get(SERVER_URL + "/auth-server/users/profile");
     console.log("User profile:", response.data);
     return response.data;
 };
 
+export const createOrganization = async (orgData: {
+    shortName: string;
+    name: string;
+    type: string;
+    region: string;
+    taxpayerNumber: string;
+    reasonCode: string;
+    address: string;
+    specialEmail: string;
+    specialPhone: string;
+  }) => {
+    const response = await axios.post(SERVER_URL + "/auth-server/organizations/profile", orgData); 
+};
+
 export const updateOrganization = async (data : OrganizationRequest) => {
-    await axios.put(SERVER_URL + "/auth-server/auth/organization", data)
+    await axios.put(SERVER_URL + "/auth-server/organizations/profile", data)
 };
 
 export const deleteOrganization = async () => {
-    await axios.delete(SERVER_URL + "/auth-server/auth/organization")
+    await axios.delete(SERVER_URL + "/auth-server/organizations/profile")
 }
 
 export const updateProfile = async (data : UserRequest) => {
-    await axios.put(SERVER_URL + "/auth-server/auth/profile", data)
+    await axios.put(SERVER_URL + "/auth-server/users/profile", data)
 }

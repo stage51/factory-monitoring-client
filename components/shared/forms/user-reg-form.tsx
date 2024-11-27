@@ -19,6 +19,10 @@ const formSchema = z.object({
   timezone: z.string(),
   subscribe: z.boolean(),
   policy: z.boolean().refine(val => val, { message: "" }),
+})
+.refine(data => data.password === data.repeatPassword, {
+    path: ["repeatPassword"],
+    message: "Пароли должны совпадать",
 });
 
 type UserFormProps = {

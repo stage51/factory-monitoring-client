@@ -3,7 +3,7 @@
 import { useToast } from "@/components/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { OrganizationForm } from "../../forms/organization-form"
-import { createOrganization } from "../../services/auth/auth-serivce"
+import { createOrganization } from "../../services/profile/profile-service"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -30,7 +30,7 @@ export default function FillOrganizationInfo() {
   }
 
   return (
-    <div className="rounded-lg border bg-card text-card-foreground w-full">
+    <div className="rounded-lg bg-card text-card-foreground w-full">
       <div className="flex md:flex-row flex-col">
         <OrganizationForm onSubmit={handleSubmit}>
             <div className="flex md:flex-row flex-col justify-center p-6 md:gap-12 gap-4">

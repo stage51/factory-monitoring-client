@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/breadcrumb"
 
 
-export default function Home() {
+
+export default function Page() {
   return (
     <div>
       <Container className="p-6 pb-0 animate-slide-element">
