@@ -27,21 +27,43 @@ interface withObjectProps<HeadersTypes, ObjectHeaders> {
     headers: Array<{ key: keyof HeadersTypes; label: string }>;
     editable?: boolean;
     objectHeaders?: Array<{ key: keyof ObjectHeaders; label: string }>;
+    handleUpdate: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
+    handleDelete: (id: number | string) => Promise<void>;
     
 }
 
 interface Props<HeadersTypes> {
     headers: Array<{ key: keyof HeadersTypes; label: string }>;
     editable?: boolean;
+    handleUpdate: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
+    handleDelete: (id: number | string) => Promise<void>;
 }
 
-function EditDialog<HeadersTypes>({ data, headers }: { data: HeadersTypes; headers: Array<{ key: keyof HeadersTypes; label: string }> }) {
+function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }: { 
+    data: HeadersTypes; 
+    headers: Array<{ key: keyof HeadersTypes; label: string }>;
+    handleUpdate: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
+    handleDelete: (id: number | string) => Promise<void>; }) {
     const [isOpen, setIsOpen] = useState(false);
 
-    const handleDelete = () => {
+    const updateRow = async (id: number | string, updatedData: HeadersTypes) => {
+        try {
+          await handleUpdate(id, updatedData);
+          window.location.reload()
+        } catch (error) {
+          console.error("Error updating row:", error);
+        }
+      };
+    
+      const deleteRow = async (id: number | string) => {
         setIsOpen(false);
-        console.log("Deleted item:", data);
-    };
+        try {
+          await handleDelete(id);
+          window.location.reload()
+        } catch (error) {
+          console.error("Error deleting row:", error);
+        }
+      };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -101,7 +123,7 @@ function EditDialog<HeadersTypes>({ data, headers }: { data: HeadersTypes; heade
                             </DialogHeader>
                             <DialogFooter className="justify-between gap-2">
                                 <DialogClose asChild>
-                                    <Button variant="destructive" onClick={handleDelete}>Удалить</Button>
+                                    <Button variant="destructive" onClick={() => deleteRow(data.id)}>Удалить</Button>
                                 </DialogClose>
                                 <DialogClose asChild>
                                     <Button variant="outline">Отмена</Button>
@@ -110,7 +132,7 @@ function EditDialog<HeadersTypes>({ data, headers }: { data: HeadersTypes; heade
                         </DialogContent>
                     </Dialog>
                     <DialogClose asChild>
-                        <Button variant="default">Сохранить</Button>
+                        <Button variant="default" onClick={() => updateRow(data.id, data)}>Сохранить</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>
@@ -119,7 +141,7 @@ function EditDialog<HeadersTypes>({ data, headers }: { data: HeadersTypes; heade
 }
 
 
-export default function generateColumns<HeadersTypes>({ headers, editable = true}: Props<HeadersTypes>) {
+export default function generateColumns<HeadersTypes>({ headers, editable = true, handleUpdate, handleDelete}: Props<HeadersTypes>) {
     const columns = headers.map(({ key, label }) => ({
         id: key,
         accessorKey: key,
@@ -155,6 +177,8 @@ export default function generateColumns<HeadersTypes>({ headers, editable = true
                     onChange={(key, value) => {
                         row.original[key] = value;
                     }}
+                    handleUpdate={handleUpdate}
+                    handleDelete={handleDelete}
                 />
             ) as HeadersTypes[keyof HeadersTypes],
         });
@@ -164,7 +188,7 @@ export default function generateColumns<HeadersTypes>({ headers, editable = true
     return columns;
 }
 
-export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers, editable = true,  objectHeaders}: withObjectProps<HeadersTypes, ObjectHeaders>) {
+export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers, editable = true,  objectHeaders, handleUpdate, handleDelete}: withObjectProps<HeadersTypes, ObjectHeaders>) {
     const columns = headers.map(({ key, label }) => ({
         id: key,
         accessorKey: key,
@@ -222,6 +246,8 @@ export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers
                 <EditDialog 
                     data={row.original as HeadersTypes} 
                     headers={headers}
+                    handleUpdate={handleUpdate}
+                    handleDelete={handleDelete}
                 />
             ) as HeadersTypes[keyof HeadersTypes],
         });

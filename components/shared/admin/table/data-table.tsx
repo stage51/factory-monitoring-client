@@ -25,6 +25,7 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
   getPaginationRowModel,
+  PaginationState,
 } from "@tanstack/react-table"
 import {
   Collapsible,
@@ -47,22 +48,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface DataTableProps<TData, TValue> {
   children? : React.ReactNode
   columns: ColumnDef<TData, TValue>[]
-  data: TData[]
   isLoading : boolean
   visibleHeaders : string[]
   defaultHeaders : string[]
   className? : string
+  fetchData: (filters: any, dateRanges: any, pagination: { page: number; size: number }) => Promise<any>;
 }
 
 export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
   {
     children,
     columns,
-    data,
     isLoading,
     visibleHeaders,
     defaultHeaders: mobileHeaders,
-    className
+    className,
+    fetchData,
 }: DataTableProps<TData, TValue> & { isLoading?: boolean },
   ref: React.Ref<any>) 
   {
@@ -71,22 +72,31 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
   const [isMobile, setIsMobile] = React.useState<boolean>(false);
   const [openRow, setOpenRow] = React.useState<string | null>(null);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize: 10});
+  const [totalPages, setTotalPages] = React.useState<number>(0)
+  const [totalElements, setTotalElements] = React.useState<number>(0)
+  const [data, setData] = React.useState<TData[]>([]);
   
   const table = useReactTable({
+    rowCount: totalElements,
+    pageCount: totalPages,
+    manualSorting: true,
+    manualFiltering: true,
+    manualPagination: true,
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
+    //getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
+    //getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
     },
-    getPaginationRowModel: getPaginationRowModel(),
+    //getPaginationRowModel: getPaginationRowModel(),
   });
   React.useImperativeHandle(ref, () => table, [table]);
 
@@ -102,6 +112,20 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const loadData = async () => {
+    try {
+      const response = await fetchData(pagination, sorting, columnFilters);
+      setData(response.content || []);
+      setTotalPages(response.totalPages)
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    loadData();
+  }, [pagination.pageIndex, pagination.pageSize, sorting, columnFilters]);
 
   return (
     <div>
