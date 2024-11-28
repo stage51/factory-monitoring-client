@@ -1,10 +1,10 @@
 "use client";
 import { ReactNode, useEffect, useState } from "react";
-import axios from "axios";
 import Title from "../../title";
 import Link from "next/link";
 import Container from "../../container";
 import { Button } from "@/components/ui/button";
+import apiClient from "./api-client";
 
 interface Props {
   children?: ReactNode;
@@ -20,7 +20,7 @@ export default function Auth({ children }: Props) {
   }, []);
 
   const setupAxiosInterceptors = () => {
-    axios.interceptors.response.use(
+    apiClient.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response?.status === 403) {
@@ -37,7 +37,7 @@ export default function Auth({ children }: Props) {
       const refreshToken = sessionStorage.getItem("refresh_token");
       if (!refreshToken) throw new Error("Refresh token not found");
 
-      const response = await axios.post("/api/v1/auth-server/auth/refresh-token", {
+      const response = await apiClient.post("/auth-server/auth/refresh-token", {
         refreshToken,
       });
 
@@ -61,11 +61,7 @@ export default function Auth({ children }: Props) {
     }
 
     try {
-      await axios.get("/api/v1/auth-server/auth/check", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await apiClient.get("/auth-server/auth/check");
 
       setIsAuthorized(true);
     } catch (error: any) {

@@ -1,11 +1,8 @@
 import axios from "axios";
-import { SERVER_URL } from "../server-url";
-import PutAccessToken from "./put-access-token";
-
-PutAccessToken()
+import apiClient from "./api-client";
 
 export const login = async (email: string, password: string) => {
-    const response = await axios.post(SERVER_URL + "/auth-server/auth/login", { email, password });
+    const response = await apiClient.post("/auth-server/auth/login", { email, password });
     const { accessToken, refreshToken } = response.data;
   
     sessionStorage.setItem("access_token", accessToken);
@@ -19,7 +16,7 @@ export const logout = async () => {
         new Error("Refresh token не найден.");
     }
 
-    const response = await axios.post(SERVER_URL + "/auth-server/auth/logout", {
+    const response = await apiClient.post("/auth-server/auth/logout", {
         refreshToken,
     });
   
@@ -36,12 +33,12 @@ export const register = async (userData: {
     timezone?: string;
     subscribe: boolean;
   }) => {
-    const response = await axios.post(SERVER_URL + "/auth-server/auth/register", userData);
+    const response = await apiClient.post("/auth-server/auth/register", userData);
     const userResponse = response.data;
   
     console.log("User registered successfully:", userResponse);
   
-    const loginResponse = await axios.post(SERVER_URL + "/auth-server/auth/login", {
+    const loginResponse = await apiClient.post("/auth-server/auth/login", {
         email: userData.email,
         password: userData.password,
     });

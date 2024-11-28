@@ -7,9 +7,8 @@ import { ColumnDef, ColumnFilter, ColumnFiltersState, PaginationState, SortingSt
 import InputFilter from "../../table/input-filter";
 import DateFilter from "../../table/date-filter";
 import AddButton from "../../table/add-button";
-import axios from "axios";
-import { SERVER_URL } from "@/components/shared/services/server-url";
-import PutAccessToken from "@/components/shared/services/auth/put-access-token";
+import apiClient from "@/components/shared/services/auth/api-client";
+
 
 export default function UserListTable() {  
     const [data, setData] = useState<typeof testData | null>(null);
@@ -51,11 +50,11 @@ export default function UserListTable() {
     useEffect(() => {
       
     }, []);
-    PutAccessToken()
+
     const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {
       setIsLoading(true);
       try {
-        const response = await axios.post(SERVER_URL + `/auth-server/users/fetch`, {
+        const response = await apiClient.post(`/auth-server/users/fetch`, {
           size: pagination.pageSize,
           number: pagination.pageIndex,
           sortBy: sorting[0]?.id,
@@ -89,7 +88,7 @@ export default function UserListTable() {
   
     const handleCreate = async (newUser) => {
       try {
-        const response = await axios.post(SERVER_URL + `/auth-server/users`, newUser);
+        const response = await apiClient.post(`/auth-server/users`, newUser);
         return response.data;
       } catch (error) {
         console.error("Error creating user:", error);
@@ -99,7 +98,7 @@ export default function UserListTable() {
   
     const handleUpdate = async (id, updatedUser) => {
       try {
-        const response = await axios.put(SERVER_URL + `/auth-server/users/${id}`, updatedUser);
+        const response = await apiClient.put(`/auth-server/users/${id}`, updatedUser);
         return response.data;
       } catch (error) {
         console.error("Error updating user:", error);
@@ -109,7 +108,7 @@ export default function UserListTable() {
   
     const handleDelete = async (id) => {
       try {
-        await axios.delete(SERVER_URL + `/auth-server/users/${id}`);
+        await apiClient.delete(`/auth-server/users/${id}`);
       } catch (error) {
         console.error("Error deleting user:", error);
         throw error;
