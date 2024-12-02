@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -14,7 +14,7 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover"
-import { Eye, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, Eye, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -24,46 +24,60 @@ import { DateRange } from "react-day-picker";
 
 
 interface withObjectProps<HeadersTypes, ObjectHeaders> {
-    headers: Array<{ key: keyof HeadersTypes; label: string }>;
+    headers: Array<{ key: keyof HeadersTypes; label: string; sortable?: boolean }>;
     editable?: boolean;
     objectHeaders?: Array<{ key: keyof ObjectHeaders; label: string }>;
-    handleUpdate: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
-    handleDelete: (id: number | string) => Promise<void>;
+    handleUpdate?: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
+    handleDelete?: (id: number | string) => Promise<void>;
     
 }
 
 interface Props<HeadersTypes> {
-    headers: Array<{ key: keyof HeadersTypes; label: string }>;
+    headers: Array<{ key: keyof HeadersTypes; label: string, sortable?: boolean }>;
     editable?: boolean;
-    handleUpdate: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
-    handleDelete: (id: number | string) => Promise<void>;
+    handleUpdate?: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
+    handleDelete?: (id: number | string) => Promise<void>;
 }
 
 function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }: { 
     data: HeadersTypes; 
-    headers: Array<{ key: keyof HeadersTypes; label: string }>;
+    headers: Array<{ key: keyof HeadersTypes; label: string; sortable?: boolean}> ;
     handleUpdate: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
-    handleDelete: (id: number | string) => Promise<void>; }) {
+    handleDelete: (id: number | string) => Promise<void>; 
+}) {
     const [isOpen, setIsOpen] = useState(false);
+    const [editedData, setEditedData] = useState(data);  // Состояние для редактируемых данных
+
+    // Обновляем состояние, если данные изменяются
+    useEffect(() => {
+        setEditedData(data);
+    }, [data]);
+
+    const handleFieldChange = (key: string, value: string | boolean | Date) => {
+        setEditedData(prevData => ({
+            ...prevData,
+            [key]: value,
+        }));
+    };
 
     const updateRow = async (id: number | string, updatedData: HeadersTypes) => {
         try {
-          await handleUpdate(id, updatedData);
-          window.location.reload()
+            await handleUpdate(id, updatedData);
+            window.location.reload()
         } catch (error) {
-          console.error("Error updating row:", error);
+            console.error("Error updating row:", error);
         }
-      };
-    
-      const deleteRow = async (id: number | string) => {
+    };
+
+    const deleteRow = async (id: number | string) => {
         setIsOpen(false);
         try {
-          await handleDelete(id);
-          window.location.reload()
+            await handleDelete(id);
+            window.location.reload()
         } catch (error) {
-          console.error("Error deleting row:", error);
+            console.error("Error deleting row:", error);
         }
-      };
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -85,17 +99,21 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
                                 <Label htmlFor={key.toString()} className="text-right">
                                     {label}
                                 </Label>
-                                {data[key] instanceof Date ? (
+                                {editedData[key] instanceof Date ? (
                                     <DatePicker
-                                        value={data[key] as Date} 
+                                        value={editedData[key] as Date} 
+                                        onChange={(date) => handleFieldChange(key.toString(), date)}  // Обновляем состояние
                                         className="col-span-3 w-full" 
                                     />
                                 ) : (
                                     <>
-                                        {typeof data[key] === "boolean" ? (
-                                            <Select>
+                                        {typeof editedData[key] === "boolean" ? (
+                                            <Select 
+                                                value={String(editedData[key])}
+                                                onValueChange={(value) => handleFieldChange(key.toString(), value === 'true')}
+                                            >
                                                 <SelectTrigger className="col-span-3">
-                                                    <SelectValue placeholder={data[key] ? "Да" : "Нет"} />
+                                                    <SelectValue placeholder={editedData[key] ? "Да" : "Нет"} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="true">Да</SelectItem>
@@ -103,7 +121,12 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
                                                 </SelectContent>
                                             </Select>
                                         ) : (
-                                            <Input id={key.toString()} defaultValue={String(data[key])} className="col-span-3" />
+                                            <Input 
+                                                id={key.toString()} 
+                                                defaultValue={String(editedData[key])} 
+                                                className="col-span-3" 
+                                                onChange={(e) => handleFieldChange(key.toString(), e.target.value)}  // Обновляем состояние
+                                            />
                                         )}
                                     </>
                                 )}
@@ -123,7 +146,7 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
                             </DialogHeader>
                             <DialogFooter className="justify-between gap-2">
                                 <DialogClose asChild>
-                                    <Button variant="destructive" onClick={() => deleteRow(data.id)}>Удалить</Button>
+                                    <Button variant="destructive" onClick={() => deleteRow(editedData.id)}>Удалить</Button>
                                 </DialogClose>
                                 <DialogClose asChild>
                                     <Button variant="outline">Отмена</Button>
@@ -132,7 +155,7 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
                         </DialogContent>
                     </Dialog>
                     <DialogClose asChild>
-                        <Button variant="default" onClick={() => updateRow(data.id, data)}>Сохранить</Button>
+                        <Button variant="default" onClick={() => updateRow(editedData.id, editedData)}>Сохранить</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>
@@ -142,10 +165,21 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
 
 
 export default function generateColumns<HeadersTypes>({ headers, editable = true, handleUpdate, handleDelete}: Props<HeadersTypes>) {
-    const columns = headers.map(({ key, label }) => ({
+    const columns = headers.map(({ key, label, sortable }) => ({
         id: key,
         accessorKey: key,
-        header: label,
+        header: ({ column }) => {
+            if (sortable) return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    {label}
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+            else return label
+        },
         cell: ({ row }) => {
             const original = row.original as HeadersTypes;
             const value = original[key];

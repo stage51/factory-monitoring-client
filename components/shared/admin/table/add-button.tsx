@@ -26,7 +26,7 @@ import { Plus } from "lucide-react";
 
 interface Props<HeadersTypes> {
   className?: string;
-  headers: Array<{ key: keyof HeadersTypes; label: string }>;
+  headers: Array<{ key: keyof HeadersTypes; label: string; sortable?: boolean }>;
   text?: string;
   sampleData: HeadersTypes;
   handleCreate: (data: HeadersTypes) => Promise<HeadersTypes>;

@@ -95,7 +95,9 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
       sorting,
       columnFilters,
       columnVisibility,
+      pagination
     },
+    onPaginationChange: setPagination,
     //getPaginationRowModel: getPaginationRowModel(),
   });
   React.useImperativeHandle(ref, () => table, [table]);
@@ -118,6 +120,7 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
       const response = await fetchData(pagination, sorting, columnFilters);
       setData(response.content || []);
       setTotalPages(response.totalPages)
+      setTotalElements(response.totalElements)
     } catch (error) {
       console.error("Error loading data:", error);
     }

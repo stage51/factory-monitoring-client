@@ -3,7 +3,8 @@ import { testData } from "./test-data";
 import { useState, useEffect, useRef } from "react";
 import { DataTable } from "../../table/data-table";
 import generateColumns from "../../table/columns";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState, PaginationState, SortingState } from "@tanstack/react-table";
+import apiClient from "@/components/shared/services/auth/api-client";
 import InputFilter from "../../table/input-filter";
 import DateFilter from "../../table/date-filter";
 
@@ -12,41 +13,67 @@ export default function UserOnlineTable() {
     const [isLoading, setIsLoading] = useState(true);
     const tableRef = useRef<any>(null);
 
-    const headers: Array<{ key: keyof HeadersTypes; label: string }> = [
-      { key: "id", label: "ID" },
-      { key: "username", label: "Имя пользователя" },
-      { key: "ip", label: "IP" },
-      { key: "location", label: "Расположение" },
-      { key: "activityDate", label: "Дата последней активности" },
+    const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
+      { key: "id", label: "ID", sortable: true },
+      { key: "email", label: "Электронная почта", sortable: true },
+      { key: "ipAddress", label: "IP", sortable: true },
+      { key: "activeAt", label: "Дата последней активности", sortable: true },
     ];
 
     const visibleHeaders = [
       "ID",
-      "Имя пользователя",
+      "Электронная почта",
       "IP"
     ];
 
     type HeadersTypes = {
       id: number;
-      username: string;
-      ip: string;
-      location: string;
-      activityDate: Date;
+      email: string;
+      ipAddress: string;
+      activeAt: Date;
     };
 
-    useEffect(() => {
-      setTimeout(() => {
-        setData(testData);
+    const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {
+      setIsLoading(true);
+      try {
+        const response = await apiClient.post(`/auth-server/onlines/fetch`, {
+          size: pagination.pageSize,
+          number: pagination.pageIndex,
+          sortBy: sorting[0]?.id,
+          sortDirection: sorting[0]?.desc ? "DESC" : "ASC",
+          filters: Object.fromEntries(
+            columnFilters
+              .filter(filter => !["activeAt"].includes(filter.id))
+              .map(filter => [filter.id, filter.value])
+          ),
+          dateRanges: Object.fromEntries(
+            columnFilters
+              .filter(filter => ["activeAt"].includes(filter.id))
+              .map(filter => {
+                const from = filter.value?.from
+                  ? new Date(filter.value.from).toISOString()
+                  : "null";
+                const to = filter.value?.to
+                  ? new Date(filter.value.to).toISOString()
+                  : "null";
+                return [filter.id, `${from},${to}`];
+              })
+          )
+        });
         setIsLoading(false);
-      }, 2000);
-    }, []);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+      }
+    };
 
     return (
       <div className="gap-8 flex flex-col">
         <DataTable
           ref={tableRef}
           columns={generateColumns<HeadersTypes>({ headers, editable: false }) as ColumnDef<unknown, unknown>[]}
-          data={data || []}
+          fetchData={fetchData}
           isLoading={isLoading}
           visibleHeaders={visibleHeaders}
           defaultHeaders={headers.map((h) => h.label)}

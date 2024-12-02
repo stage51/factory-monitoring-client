@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={`${commissioner.variable} antialiased`}>
         <Header />
         <main className="min-h-screen bg-white">
-          {children}
+            {children}
         </main>
         <Toaster />
         <Footer />

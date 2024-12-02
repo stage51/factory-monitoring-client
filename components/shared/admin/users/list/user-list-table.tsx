@@ -15,17 +15,17 @@ export default function UserListTable() {
     const [isLoading, setIsLoading] = useState(true);
     const tableRef = useRef<any>(null);
 
-    const headers: Array<{ key: keyof HeadersTypes; label: string }> = [
-      { key: "id", label: "ID" },
-      { key: "email", label: "Email" },
-      { key: "firstName", label: "Имя" },
-      { key: "lastName", label: "Фамилия" },
-      { key: "middleName", label: "Отчество" },
-      { key: "timezone", label: "Часовой пояс"},
-      { key: "role", label: "Роль" },
-      { key: "active", label: "Активен" },
-      { key: "createdAt", label: "Дата создания" },
-      { key: "updatedAt", label: "Дата обновления" }
+    const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
+      { key: "id", label: "ID", sortable: false },
+      { key: "email", label: "Email", sortable: true },
+      { key: "firstName", label: "Имя", sortable: false },
+      { key: "lastName", label: "Фамилия", sortable: false },
+      { key: "middleName", label: "Отчество", sortable: false },
+      { key: "timezone", label: "Часовой пояс", sortable: false },
+      { key: "role", label: "Роль", sortable: false },
+      { key: "active", label: "Активен", sortable: false },
+      { key: "createdAt", label: "Дата создания", sortable: true },
+      { key: "updatedAt", label: "Дата обновления", sortable: true }
     ];
 
     const visibleHeaders = [
@@ -35,7 +35,6 @@ export default function UserListTable() {
 
     type HeadersTypes = {
       id: number;
-      username: string;
       email: string;
       firstName: string;
       lastName: string;
@@ -47,10 +46,6 @@ export default function UserListTable() {
       updatedAt: Date;
     };
 
-    useEffect(() => {
-      
-    }, []);
-
     const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {
       setIsLoading(true);
       try {
@@ -61,12 +56,12 @@ export default function UserListTable() {
           sortDirection: sorting[0]?.desc ? "DESC" : "ASC",
           filters: Object.fromEntries(
             columnFilters
-              .filter(filter => filter.id !== "createdAt" || "updatedAt")
+              .filter(filter => !["createdAt", "updatedAt"].includes(filter.id))
               .map(filter => [filter.id, filter.value])
           ),
           dateRanges: Object.fromEntries(
             columnFilters
-              .filter(filter => filter.id === "createdAt" || "updatedAt")
+              .filter(filter => ["createdAt", "updatedAt"].includes(filter.id))
               .map(filter => {
                 const from = filter.value?.from
                   ? new Date(filter.value.from).toISOString()
