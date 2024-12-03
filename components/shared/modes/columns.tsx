@@ -128,7 +128,7 @@ export const columns: ColumnDef<modesReport>[] = [
     },
     {
         accessorKey: "mode",
-        header: "Код режима",
+        header: "Режим",
     },
     {
         accessorKey: "status",

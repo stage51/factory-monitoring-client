@@ -16,19 +16,13 @@ export default function FiveMinuteFilesTable() {
   const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
     { key: "id", label: "ID", sortable: false },
     { key: "taxpayerNumber", label: "ИНН", sortable: false},
-    { key: "startDate", label: "Начало", sortable: true },
-    { key: "endDate", label: "Конец", sortable: true },
-    { key: "vbsStart", label: "Объем безводного спирта в начале", sortable: false },
-    { key: "vbsEnd", label: "Объем безводного спирта в конце", sortable: false },
-    { key: "aStart", label: "Объем готовой продукции в начале", sortable: false },
-    { key: "aEnd", label: "Объем готовой продукции в конце", sortable: false },
-    { key: "percentAlc", label: "Концентрация спирта", sortable: false },
-    { key: "bottleCountStart", label: "Кол-во в начале", sortable: false },
-    { key: "bottleCountEnd", label: "Кол-во в конце", sortable: false },
+    { key: "controlDate", label: "Дата", sortable: true },
+    { key: "vbsControl", label: "Объем спирта", sortable: false },
+    { key: "aControl", label: "Объем", sortable: false },
+    { key: "percentAlc", label: "Концентрация", sortable: false },
+    { key: "bottleCountControl", label: "Кол-во", sortable: false },
     { key: "temperature", label: "Температура", sortable: false },
-    { key: "mode", label: "Код режима", sortable: false },
-    { key: "crotonaldehyde", label: "Кротоноальдегид", sortable: false},
-    { key: "toluene", label: "Толуол", sortable: false},
+    { key: "mode", label: "Режим", sortable: false },
     { key: "status", label: "Статус", sortable: false },
     { key: "product", label: "Продукт", sortable: false }
   ];
@@ -43,19 +37,13 @@ export default function FiveMinuteFilesTable() {
   type HeadersTypes = {
     id: number;
     taxpayerNumber: string;
-    startDate: Date;
-    endDate: Date;
-    vbsStart: number;
-    vbsEnd: number;
-    aStart: number;
-    aEnd: number;
+    controlDate: Date;
+    vbsControl: number;
+    aControl: number;
     percentAlc: number;
-    bottleCountStart: number;
-    bottleCountEnd: number;
+    bottleCountControl: number;
     temperature: number;
     mode: string;
-    crotonaldehyde: string;
-    toluene: string;
     status: string;
     product: Product;
   };
@@ -70,6 +58,8 @@ export default function FiveMinuteFilesTable() {
     capacity: number;
     alcVolume: number;
     productVCode: string;
+    crotonaldehyde: number;
+    toluene: number
   };
 
   const productHeaders: Array<{ key: keyof Product; label: string }> = [
@@ -82,6 +72,8 @@ export default function FiveMinuteFilesTable() {
     { key: "capacity", label: "Объем" },
     { key: "alcVolume", label: "Алк. объем" },
     { key: "productVCode", label: "Код продукта"},
+    { key: "crotonaldehyde", label: "Кротоноальдегид"},
+    { key: "toluene", label: "Толуол"}
   ];
 
   const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {

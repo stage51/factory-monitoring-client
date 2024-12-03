@@ -144,7 +144,7 @@ export const columns: ColumnDef<egaisReport>[] = [
     },
     {
         accessorKey: "mode",
-        header: "Код режима",
+        header: "Режим",
     },
     {
         accessorKey: "status",

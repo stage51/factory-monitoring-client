@@ -26,7 +26,7 @@ export default function SessionsTable() {
     { key: "bottleCountStart", label: "Кол-во в начале", sortable: false },
     { key: "bottleCountEnd", label: "Кол-во в конце", sortable: false},
     { key: "temperature", label: "Температура", sortable: false },
-    { key: "mode", label: "Код режима", sortable: false },
+    { key: "mode", label: "Режим", sortable: false },
     { key: "status", label: "Статус", sortable: false },
     { key: "product", label: "Продукт", sortable: false }
   ];

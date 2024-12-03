@@ -96,7 +96,7 @@ export const columns: ColumnDef<askpReport>[] = [
     },
     {
         accessorKey: "mode",
-        header: "Код режима",
+        header: "Режим",
     },
     {
         accessorKey: "status",
