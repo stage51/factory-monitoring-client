@@ -55,12 +55,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   visibleHeaders : string[]
   mobileHeaders : string[]
+  taxpayerNumber: string | undefined
 }
 
 export function DataTable<TData, TValue>({
     columns,
     visibleHeaders,
     mobileHeaders,
+    taxpayerNumber
 }: DataTableProps<TData, TValue> & { isLoading?: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -100,7 +102,7 @@ export function DataTable<TData, TValue>({
     };
 
     try {
-      const response = await getPagePositions(params);
+      const response = await getPagePositions(params, taxpayerNumber);
       setData(response.content); 
       setTotalPages(response.totalPages)
       setTotalElements(response.totalElements)

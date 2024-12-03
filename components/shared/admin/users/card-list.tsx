@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import Container from '../../container';
 import Card from '../../card';
-import { LaptopMinimal, CloudDownload, CloudUpload, Settings, Joystick, Calculator, Users, File, Cpu, Binoculars, Eye, Flashlight, CalendarSearch, Files, SquareArrowLeft, List, SquareUser, UserRound, UserRoundSearch } from 'lucide-react';
+import { LaptopMinimal, CloudDownload, CloudUpload, Settings, Joystick, Calculator, Users, File, Cpu, Binoculars, Eye, Flashlight, CalendarSearch, Files, SquareArrowLeft, List, SquareUser, UserRound, UserRoundSearch, KeyRound } from 'lucide-react';
 import { useRouter } from 'next/navigation'
 import { useState } from 'react';
 
@@ -51,6 +51,16 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("users/online")}}
                      />
+                    <Card
+                        icon={
+                            <div className='h-32'>
+                                <KeyRound size={96} className="relative text-primary" />
+                            </div>
+                        }
+                        title="Refresh токены"
+                        className="content-center"
+                        onClick={() => {handleCardClick("users/refresh-tokens")}}
+                    />
                     <Card
                         icon={
                             <div className='h-32'>

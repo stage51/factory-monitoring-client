@@ -3,95 +3,161 @@ import { testData } from "./test-data";
 import { useState, useEffect, useRef } from "react";
 import { DataTable } from "../../table/data-table";
 import { generateColumnsWithObject } from "../../table/columns";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState, PaginationState, SortingState } from "@tanstack/react-table";
 import InputFilter from "../../table/input-filter";
 import DateFilter from "../../table/date-filter";
 import SelectFilter from "../../table/select-filter";
+import apiClient from "@/components/shared/services/auth/api-client";
 
 export default function DailyFilesTable() {  
-    const [data, setData] = useState<typeof testData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const tableRef = useRef<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const tableRef = useRef<any>(null);
 
-    const headers: Array<{ key: keyof HeadersTypes; label: string }> = [
-      { key: "id", label: "ID" },
-      { key: "organization", label: "Организация" },
-      { key: "govNumber", label: "Гос номер" },
-      { key: "serialNumber", label: "Серийный номер"},
-      { key: "guid", label: "GUID"},
-      { key: "line", label: "Линия" },
-      { key: "reportDate", label: "Отчетная дата" },
-      { key: "utmStatus", label: "Ответ с УТМ"},
-      { key: "rarStatus", label: "Ответ из РАР"},
-      { key: "details", label: "Детали отчетности" }
-    ];
+  const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
+    { key: "id", label: "ID", sortable: false },
+    { key: "taxpayerNumber", label: "ИНН", sortable: false},
+    { key: "startDate", label: "Начало", sortable: true },
+    { key: "endDate", label: "Конец", sortable: true },
+    { key: "vbsStart", label: "Объем безводного спирта в начале", sortable: false },
+    { key: "vbsEnd", label: "Объем безводного спирта в конце", sortable: false },
+    { key: "aStart", label: "Объем готовой продукции в начале", sortable: false },
+    { key: "aEnd", label: "Объем готовой продукции в конце", sortable: false },
+    { key: "percentAlc", label: "Концентрация спирта", sortable: false },
+    { key: "bottleCountStart", label: "Кол-во в начале", sortable: false },
+    { key: "bottleCountEnd", label: "Кол-во в конце", sortable: false },
+    { key: "temperature", label: "Температура", sortable: false },
+    { key: "mode", label: "Код режима", sortable: false },
+    { key: "crotonaldehyde", label: "Кротоноальдегид", sortable: false},
+    { key: "toluene", label: "Толуол", sortable: false},
+    { key: "status", label: "Статус", sortable: false },
+    { key: "product", label: "Продукт", sortable: false }
+  ];
 
-    const visibleHeaders = [
-      "ID",
-      "Организация",
-      "Гос номер",
-      "Отчетная дата",
-      "Ответ с УТМ",
-      "Ответ из РАР"
-    ];
+  const visibleHeaders = [
+    "ID",
+    "Начало",
+    "Конец",
+    "Статус"
+  ];
 
-    type HeadersTypes = {
-      id: number;
-      organization: string;
-      govNumber: string;
-      serialNumber: string;
-      guid: string;
-      line: string;
-      reportDate: Date;
-      utmStatus: string;
-      rarStatus: string;
-      details: Details;
-    };
+  type HeadersTypes = {
+    id: number;
+    taxpayerNumber: string;
+    startDate: Date;
+    endDate: Date;
+    vbsStart: number;
+    vbsEnd: number;
+    aStart: number;
+    aEnd: number;
+    percentAlc: number;
+    bottleCountStart: number;
+    bottleCountEnd: number;
+    temperature: number;
+    mode: string;
+    crotonaldehyde: string;
+    toluene: string;
+    status: string;
+    product: Product;
+  };
 
-    type Details = {
-      id: number;
-      utmStatus: string;
-      utmStatusDate: Date;
-      rarStatus: string;
-      rarStatusDate: Date;
-      serverDate: Date;
-    };
+  type Product = {
+    id: number;
+    unitType: string;
+    type: string;
+    fullName: string;
+    shortName: string;
+    alcCode: string;
+    capacity: number;
+    alcVolume: number;
+    productVCode: string;
+  };
 
-    const detailsHeaders: Array<{ key: keyof Details; label: string }> = [
-      { key: "id", label: "ID" },
-      { key: "utmStatus", label: "Статус УТМ" },
-      { key: "utmStatusDate", label: "Дата оправки на УТМ" },
-      { key: "rarStatus", label: "Статус РАР" },
-      { key: "rarStatusDate", label: "Дата отправки на РАР" },
-      { key: "serverDate", label: "Время принятия данных сервером"},
-    ];
+  const productHeaders: Array<{ key: keyof Product; label: string }> = [
+    { key: "id", label: "ID" },
+    { key: "unitType", label: "Тип" },
+    { key: "type", label: "Вид" },
+    { key: "fullName", label: "Имя" },
+    { key: "shortName", label: "Короткое имя" },
+    { key: "alcCode", label: "Код" },
+    { key: "capacity", label: "Объем" },
+    { key: "alcVolume", label: "Алк. объем" },
+    { key: "productVCode", label: "Код продукта"},
+  ];
 
-    useEffect(() => {
-      setTimeout(() => {
-        setData(testData);
-        setIsLoading(false);
-      }, 2000);
-    }, []);
+  const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {
+    setIsLoading(true);
+    try {
+      const response = await apiClient.post(`/daily-report/positions/fetch`, {
+        size: pagination.pageSize,
+        number: pagination.pageIndex,
+        sortBy: sorting[0]?.id,
+        sortDirection: sorting[0]?.desc ? "DESC" : "ASC",
+        filters: Object.fromEntries(
+          columnFilters
+            .filter(filter => !["startDate", "endDate"].includes(filter.id))
+            .map(filter => [filter.id, filter.value])
+        ),
+        dateRanges: Object.fromEntries(
+          columnFilters
+            .filter(filter => ["startDate", "endDate"].includes(filter.id))
+            .map(filter => {
+              const from = filter.value?.from
+                ? new Date(filter.value.from).toISOString()
+                : "null";
+              const to = filter.value?.to
+                ? new Date(filter.value.to).toISOString()
+                : "null";
+              return [filter.id, `${from},${to}`];
+            })
+        )
+      });
+      setIsLoading(false);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+    }
+  };
 
-    return (
-      <div className="gap-8 flex flex-col">
-        <DataTable
-          ref={tableRef}
-          columns={generateColumnsWithObject<HeadersTypes, Details>({ headers, editable: false, objectHeaders: detailsHeaders}) as ColumnDef<unknown, unknown>[]}
-          data={data || []}
-          isLoading={isLoading}
-          visibleHeaders={visibleHeaders}
-          defaultHeaders={headers.map((h) => h.label)}
-        >
-          <div className="flex flex-col w-full gap-4">
-            <InputFilter placeholder='Поиск по организации' column="organization" table={tableRef} />
-            <InputFilter placeholder='Поиск по госномеру' column="govNumber" table={tableRef} />
-          </div>
-          <div className="flex flex-col w-full gap-4">
-            <DateFilter placeholder="Отчетная дата" column="reportDate" table={tableRef}/>
-            <SelectFilter placeholder='Выберите линию' column="line" values={["Приемка", "Отгрузка"]} table={tableRef} />
-          </div>
-        </DataTable>
-      </div>
-    );
+  const handleUpdate = async (id, updatedData) => {
+    try {
+      const response = await apiClient.put(`/daily-report/positions/${id}`, updatedData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating data:", error);
+      throw error;
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/daily-report/positions/${id}`);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      throw error;
+    }
+  };
+
+
+  return (
+    <div className="gap-8 flex flex-col">
+      <DataTable
+        ref={tableRef}
+        columns={generateColumnsWithObject<HeadersTypes, Product>({ headers, editable: true, objectHeaders: productHeaders, handleUpdate, handleDelete}) as ColumnDef<unknown, unknown>[]}
+        fetchData={fetchData}
+        isLoading={isLoading}
+        visibleHeaders={visibleHeaders}
+        defaultHeaders={headers.map((h) => h.label)}
+      >
+        <div className="flex flex-col w-full gap-4">
+          <InputFilter placeholder='Поиск по коду продукта' column="product" table={tableRef} />
+          <SelectFilter table={tableRef} column="status" placeholder="Выберите статус" values={["Неизвестно", "Принято в РАР", "Не принято в РАР", "Принято в УТМ", "Не принято в УТМ"]}/>
+        </div>
+        <div className="flex flex-col w-full gap-4">
+          <DateFilter placeholder="Начальная дата" column="startDate" table={tableRef}/>
+          <DateFilter placeholder="Конечная дата" column="endDate" table={tableRef}/>
+        </div>
+      </DataTable>
+    </div>
+  );
 }

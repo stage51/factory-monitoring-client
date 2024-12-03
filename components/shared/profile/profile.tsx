@@ -4,100 +4,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/components/hooks/use-toast"
 import { useEffect, useState } from "react"
-import { deleteOrganization, fetchUserProfile, updateOrganization, updateProfile, UserResponse } from "../services/profile/profile-service"
 import Link from "next/link"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { OrganizationForm } from "../forms/organization-form"
-import { UserLoginForm } from "../forms/user-login-form"
 import { UserRegForm } from "../forms/user-reg-form"
+import { observer } from "mobx-react-lite"
+import { userStore } from "../stores/user-store"
 
-export default function Profile() {
-  const { toast } = useToast()
-  const [data, setData] = useState<UserResponse>()
+const Profile: React.FC = observer(() => {
+  const { profile, isLoading, error, fetchProfile, updateProfile, updateOrganization, deleteOrganization } =
+  userStore;
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetchUserProfile();
-        setData(response);
-      } catch (error) {
-        console.error("Ошибка загрузки профиля:", error);
-        toast({
-          title: "Ошибка загрузки профиля",
-          variant: "destructive",
-          description: "Не удалось получить данные для загрузки",
-        });
-      }
-    };
-  
-    fetchProfile();
+    if (profile === null) {
+      fetchProfile()
+    }
   }, []);
-
-  const handleUpdateProfile = async (values: any) => {
-    try {
-      await updateProfile(values)
-      toast({
-        title: "Обновление профиля",
-        description: "Данные обновлены и страница будет перезагружена через 2 секунды",
-      });
-      const timer = setTimeout(() => {
-        window.location.reload()
-      }, 2000)
-    } catch (error) {
-      console.error("Ошибка обновления профиля:", error);
-        toast({
-          title: "Ошибка обновления профиля",
-          variant: "destructive",
-          description: "Не удалось обновить данные о пользователе",
-        });
-    }
-  }
-
-  const handleUpdateOrganization = async (values: any) => {
-    try {
-      await updateOrganization(values)
-      toast({
-        title: "Обновление организации",
-        description: "Данные обновлены и страница будет перезагружена через 2 секунды",
-      });
-      const timer = setTimeout(() => {
-        window.location.reload()
-      }, 2000)
-    } catch (error) {
-      console.error("Ошибка обновления организации:", error);
-        toast({
-          title: "Ошибка обновления организации",
-          variant: "destructive",
-          description: "Не удалось обновить данные об организации",
-        });
-    }
-  }
-
-  const handleDeleteOrganization = async () => {
-    try {
-      await deleteOrganization()
-      toast({
-        title: "Удаление организации",
-        description: "Данные удалены и страница будет перезагружена через 2 секунды",
-      });
-      const timer = setTimeout(() => {
-        window.location.reload()
-      }, 2000)
-    } catch (error) {
-      console.error("Ошибка удаления организации:", error);
-        toast({
-          title: "Ошибка удаления организации",
-          variant: "destructive",
-          description: "Не удалось удалить данные об организации",
-        });
-    }
-  }
 
   return (
     <div className="py-4">
@@ -110,8 +34,8 @@ export default function Profile() {
             <AvatarFallback>AB</AvatarFallback>
           </Avatar>
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">{data?.firstName} {data?.lastName}</h2>
-            <p className="text-gray-500 mb-4">{data?.email}</p>
+            <h2 className="text-2xl font-bold mb-2">{profile?.firstName} {profile?.lastName}</h2>
+            <p className="text-gray-500 mb-4">{profile?.email}</p>
           </div>
         </div>
 
@@ -134,29 +58,29 @@ export default function Profile() {
                   <div className="grid gap-4">
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Имя</p>
-                      <p className="text-sm text-muted-foreground">{data?.firstName}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.firstName}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Фамилия</p>
-                      <p className="text-sm text-muted-foreground">{data?.lastName}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.lastName}</p>
                     </div>
-                    {!!data?.middleName === true ? (<>
+                    {!!profile?.middleName === true ? (<>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Отчество</p>
-                      <p className="text-sm text-muted-foreground">{data?.middleName}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.middleName}</p>
                     </div>
                     </>) : (<></>)}
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Электронная почта</p>
-                      <p className="text-sm text-muted-foreground">{data?.email}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.email}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Часовой пояс</p>
-                      <p className="text-sm text-muted-foreground">{data?.timezone}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.timezone}</p>
                     </div>
                   </div>
                   <div className="flex gap-6 flex-col md:flex-row mt-6">
@@ -169,7 +93,7 @@ export default function Profile() {
                           <DialogTitle />
                           <DialogDescription />
                         </DialogHeader>
-                        <UserRegForm initialValues={data} onSubmit={handleUpdateProfile}>
+                        <UserRegForm initialValues={profile} onSubmit={updateProfile}>
                             <Button className="w-full" type="submit" >
                                 Изменить
                             </Button>
@@ -187,7 +111,7 @@ export default function Profile() {
             </TabsContent>
 
             <TabsContent value="organization">
-              {data?.organization === null ? (
+              {profile?.organization === null ? (
                 <div className="flex flex-col items-center py-6 gap-6">
                   <p className="text-lg text-center">Информации о вашей организации пока что нет в профиле</p>
                   <Button className="w-1/2"><Link href="sign-up/fill-organization-info">Заполнить</Link></Button>
@@ -201,47 +125,47 @@ export default function Profile() {
                   <div className="grid gap-4">
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Короткое название</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.shortName}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.shortName}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Название</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.name}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.name}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Тип</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.type}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.type}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Регион</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.region}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.region}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">12-значный ИНН</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.taxpayerNumber}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.taxpayerNumber}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">9-значный КПП</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.reasonCode}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.reasonCode}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Адрес</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.address}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.address}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Экстренная почта</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.specialEmail}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.specialEmail}</p>
                     </div>
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Экстренный телефон</p>
-                      <p className="text-sm text-muted-foreground">{data?.organization.specialPhone}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.organization.specialPhone}</p>
                     </div>
                   </div>
                   <div className="flex gap-6 flex-col md:flex-row mt-6">
@@ -254,7 +178,7 @@ export default function Profile() {
                           <DialogTitle />
                           <DialogDescription />
                         </DialogHeader>
-                        <OrganizationForm initialValues={data?.organization} onSubmit={handleUpdateOrganization}>
+                        <OrganizationForm initialValues={profile?.organization} onSubmit={updateOrganization}>
                             <Button className="w-full" type="submit" >
                                 Изменить
                             </Button>
@@ -276,7 +200,7 @@ export default function Profile() {
                           <DialogDescription>Вы действительно хотите удалить данные об организации?</DialogDescription>
                         </DialogHeader>
                         <div className="flex gap-2">
-                          <Button onClick={() => handleDeleteOrganization()} className="w-full" variant="destructive">
+                          <Button onClick={() => deleteOrganization()} className="w-full" variant="destructive">
                               Удалить
                           </Button>
                           <DialogClose asChild>
@@ -297,5 +221,7 @@ export default function Profile() {
       </Card>
     </div>
   )
-}
+});
+
+export default Profile
 

@@ -32,6 +32,8 @@
     "jwt-decode": "^4.0.0",
     "keycloak-js": "^26.0.5",
     "lucide-react": "^0.453.0",
+    "mobx": "^6.13.5",
+    "mobx-react-lite": "^4.0.7",
     "next": "14.2.15",
     "npx": "^10.2.2",
     "react": "^18",

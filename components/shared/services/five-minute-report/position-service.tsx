@@ -40,7 +40,7 @@ export const deletePosition = async (id : number) => {
 };
 
 
-export const getPagePositions = async (params: any) => {
-    const response = await apiClient.post(`${API_URL}/fetch`, params);
+export const getPagePositions = async (params: any, taxpayerNumber : string) => {
+    const response = await apiClient.post(`${API_URL}/fetch/${taxpayerNumber}`, params);
     return response.data;
 }

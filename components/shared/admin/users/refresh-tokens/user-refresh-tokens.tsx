@@ -1,5 +1,4 @@
 "use client";
-import { testData } from "./test-data";
 import { useState, useEffect, useRef } from "react";
 import { DataTable } from "../../table/data-table";
 import generateColumns from "../../table/columns";
@@ -8,32 +7,33 @@ import apiClient from "@/components/shared/services/auth/api-client";
 import InputFilter from "../../table/input-filter";
 import DateFilter from "../../table/date-filter";
 
-export default function UserOnlineTable() {  
-    const [data, setData] = useState<typeof testData | null>(null);
+export default function UserRefreshTokens() {  
     const [isLoading, setIsLoading] = useState(true);
     const tableRef = useRef<any>(null);
 
     const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
-      { key: "email", label: "Электронная почта", sortable: true },
-      { key: "ipAddress", label: "IP", sortable: true },
-      { key: "activeAt", label: "Дата последней активности", sortable: true },
+      { key: "userEmail", label: "Пользователь", sortable: true },
+      { key: "token", label: "Токен", sortable: false },
+      { key: "issuedAt", label: "Выдан с", sortable: true },
+      { key: "expiresAt", label: "Истекает до", sortable: true },
     ];
 
     const visibleHeaders = [
-      "Электронная почта",
-      "IP"
+      "Пользователь",
+      "Токен"
     ];
 
     type HeadersTypes = {
-      email: string;
-      ipAddress: string;
-      activeAt: Date;
+      userEmail: string;
+      token: string;
+      issuedAt: Date;
+      expiresAt: Date;
     };
 
     const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {
       setIsLoading(true);
       try {
-        const response = await apiClient.post(`/auth-server/onlines/fetch`, {
+        const response = await apiClient.post(`/auth-server/refresh-tokens/fetch`, {
           size: pagination.pageSize,
           number: pagination.pageIndex,
           sortBy: sorting[0]?.id,
@@ -76,10 +76,11 @@ export default function UserOnlineTable() {
           defaultHeaders={headers.map((h) => h.label)}
         >
           <div className="flex flex-col w-full gap-4">
-            <InputFilter placeholder='Поиск по email' column="email" table={tableRef} />
+            <InputFilter placeholder='Поиск по email' column="userEmail" table={tableRef} />
           </div>
           <div className="flex flex-col w-full gap-4">
-            <DateFilter placeholder="Дата активности" column="activeAt" table={tableRef}/>
+            <DateFilter placeholder="Дата выдачи" column="issuedAt" table={tableRef}/>
+            <DateFilter placeholder="Дата истечения" column="expiresAt" table={tableRef}/>
           </div>
         </DataTable>
       </div>

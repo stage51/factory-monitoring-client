@@ -6,15 +6,15 @@ import { generateColumnsWithObject } from "../../table/columns";
 import { ColumnDef, ColumnFiltersState, PaginationState, SortingState } from "@tanstack/react-table";
 import InputFilter from "../../table/input-filter";
 import DateFilter from "../../table/date-filter";
-import apiClient from "@/components/shared/services/auth/api-client";
 import SelectFilter from "../../table/select-filter";
+import apiClient from "@/components/shared/services/auth/api-client";
 
-export default function SessionsTable() {  
+export default function FiveMinuteFilesTable() {  
   const [isLoading, setIsLoading] = useState(true);
   const tableRef = useRef<any>(null);
 
   const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
-    { key: "id", label: "ID", sortable: false},
+    { key: "id", label: "ID", sortable: false },
     { key: "taxpayerNumber", label: "ИНН", sortable: false},
     { key: "startDate", label: "Начало", sortable: true },
     { key: "endDate", label: "Конец", sortable: true },
@@ -24,9 +24,11 @@ export default function SessionsTable() {
     { key: "aEnd", label: "Объем готовой продукции в конце", sortable: false },
     { key: "percentAlc", label: "Концентрация спирта", sortable: false },
     { key: "bottleCountStart", label: "Кол-во в начале", sortable: false },
-    { key: "bottleCountEnd", label: "Кол-во в конце", sortable: false},
+    { key: "bottleCountEnd", label: "Кол-во в конце", sortable: false },
     { key: "temperature", label: "Температура", sortable: false },
     { key: "mode", label: "Код режима", sortable: false },
+    { key: "crotonaldehyde", label: "Кротоноальдегид", sortable: false},
+    { key: "toluene", label: "Толуол", sortable: false},
     { key: "status", label: "Статус", sortable: false },
     { key: "product", label: "Продукт", sortable: false }
   ];
@@ -52,6 +54,8 @@ export default function SessionsTable() {
     bottleCountEnd: number;
     temperature: number;
     mode: string;
+    crotonaldehyde: string;
+    toluene: string;
     status: string;
     product: Product;
   };
@@ -59,23 +63,31 @@ export default function SessionsTable() {
   type Product = {
     id: number;
     unitType: string;
+    type: string;
     fullName: string;
+    shortName: string;
     alcCode: string;
+    capacity: number;
+    alcVolume: number;
     productVCode: string;
   };
 
   const productHeaders: Array<{ key: keyof Product; label: string }> = [
     { key: "id", label: "ID" },
     { key: "unitType", label: "Тип" },
+    { key: "type", label: "Вид" },
     { key: "fullName", label: "Имя" },
+    { key: "shortName", label: "Короткое имя" },
     { key: "alcCode", label: "Код" },
+    { key: "capacity", label: "Объем" },
+    { key: "alcVolume", label: "Алк. объем" },
     { key: "productVCode", label: "Код продукта"},
   ];
 
   const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {
     setIsLoading(true);
     try {
-      const response = await apiClient.post(`/mode-report/positions/fetch`, {
+      const response = await apiClient.post(`/five-minute-report/positions/fetch`, {
         size: pagination.pageSize,
         number: pagination.pageIndex,
         sortBy: sorting[0]?.id,
@@ -109,7 +121,7 @@ export default function SessionsTable() {
 
   const handleUpdate = async (id, updatedData) => {
     try {
-      const response = await apiClient.put(`/mode-report/positions/${id}`, updatedData);
+      const response = await apiClient.put(`/five-minute-report/positions/${id}`, updatedData);
       return response.data;
     } catch (error) {
       console.error("Error updating data:", error);
@@ -119,7 +131,7 @@ export default function SessionsTable() {
 
   const handleDelete = async (id) => {
     try {
-      await apiClient.delete(`/mode-report/positions/${id}`);
+      await apiClient.delete(`/five-minute-report/positions/${id}`);
     } catch (error) {
       console.error("Error deleting data:", error);
       throw error;
@@ -131,7 +143,7 @@ export default function SessionsTable() {
     <div className="gap-8 flex flex-col">
       <DataTable
         ref={tableRef}
-        columns={generateColumnsWithObject<HeadersTypes, Product>({ headers, editable: false, objectHeaders: productHeaders, handleUpdate, handleDelete}) as ColumnDef<unknown, unknown>[]}
+        columns={generateColumnsWithObject<HeadersTypes, Product>({ headers, editable: true, objectHeaders: productHeaders, handleUpdate, handleDelete}) as ColumnDef<unknown, unknown>[]}
         fetchData={fetchData}
         isLoading={isLoading}
         visibleHeaders={visibleHeaders}

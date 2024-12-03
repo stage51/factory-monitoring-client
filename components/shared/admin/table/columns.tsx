@@ -94,7 +94,7 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     {headers.map(({ key, label }) =>
-                        key !== "id" ? (
+                        !["id", "product"].includes(key) ? (
                             <div key={key.toString()} className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor={key.toString()} className="text-right">
                                     {label}

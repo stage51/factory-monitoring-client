@@ -16,12 +16,8 @@ import {
 export type Product = {
     id: number
     unitType: "Фасованная" | "Нефасованная"
-    type: "Алкогольная продукция" | "Спиртосодержащая пищевая продукция" | "Спиртосодержащая непищевая продукция" | "Этиловый спирт"
     fullName: string
-    shortName: string
     alcCode: string
-    capacity: number
-    alcVolume: number
     productVCode: string
 }
 
@@ -38,8 +34,6 @@ export type modesReport = {
     bottleCountStart: number
     bottleCountEnd: number
     temperature: number
-    crotonaldehyde: number
-    toluene: number
     mode: "Промывка АСИиУ" | "Калибровка АСИиУ" | "Технологический прогон" | "Производство продукции" | 
     "Остановка АСИиУ" | "Прием (возврат)" | "Прием (закупка)" | "Внутреннее перемещение" | "Отгрузка (покупателю)" | "Отгрузка (возврат)",
     status: "Неизвестно" | "Принято в РАР" | "Не принято в РАР" | "Принято в УТМ" | "Не принято в УТМ"
@@ -56,8 +50,6 @@ export const mobileHeaders = [
     "Кол-во в начале",
     "Кол-во в конце",
     "Температура",
-    "Кротоноальдегид",
-    "Толуол",
     "Код режима",
     "Статус",
     "Продукт"
@@ -79,12 +71,10 @@ export const columns: ColumnDef<modesReport>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => row.original.startDate.toLocaleString(),
-        filterFn: (row, columnId, filterValue) => {
-            const date = row.getValue(columnId) as Date;
-            const { from, to } = filterValue as DateRange;
-            return (!from || date >= from) && (!to || date <= to);
-        },
+        cell: ({ row }) => {
+            const date = new Date(row.original.startDate);
+            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
     },
     {
         accessorKey: "endDate",
@@ -99,12 +89,10 @@ export const columns: ColumnDef<modesReport>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => row.original.endDate.toLocaleString(),
-        filterFn: (row, columnId, filterValue) => {
-            const date = row.getValue(columnId) as Date;
-            const { from, to } = filterValue as DateRange;
-            return (!from || date >= from) && (!to || date <= to);
-        },
+        cell: ({ row }) => {
+            const date = new Date(row.original.endDate);
+            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
     },
     {
         accessorKey: "vbsStart",
@@ -139,30 +127,12 @@ export const columns: ColumnDef<modesReport>[] = [
         header: "Температура",
     },
     {
-        accessorKey: "crotonaldehyde",
-        header: "Кротоноальдегид",
-    },
-    {
-        accessorKey: "toluene",
-        header: "Толуол",
-    },
-    {
         accessorKey: "mode",
         header: "Код режима",
-        filterFn: (row, columnId, filterValue) => {
-            if (!filterValue) return true;
-            const mode = row.getValue(columnId);
-            return mode === filterValue;
-        },
     },
     {
         accessorKey: "status",
         header: "Статус",
-        filterFn: (row, columnId, filterValue) => {
-            if (!filterValue) return true;
-            const status = row.getValue(columnId);
-            return status === filterValue;
-        },
     },
     {
         id: "product",
@@ -183,12 +153,8 @@ export const columns: ColumnDef<modesReport>[] = [
                     <PopoverContent align="end">
                         <div className="flex flex-col gap-2">
                             <span className="font-semibold">{product.fullName}</span>
-                            <span className="text-sm text-muted-foreground">{product.shortName}</span>
                             <span className="text-sm">Код: {product.alcCode}</span>
-                            <span className="text-sm">Объем: {product.capacity} L</span>
-                            <span className="text-sm">Алк. объем: {product.alcVolume} L</span>
                             <span className="text-sm">Тип: {product.unitType}</span>
-                            <span className="text-sm">Вид: {product.type}</span>
                             <span className="text-sm">Код продукта: {product.productVCode}</span>
                         </div>
                     </PopoverContent>

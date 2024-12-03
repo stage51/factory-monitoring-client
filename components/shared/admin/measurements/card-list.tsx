@@ -44,12 +44,22 @@ export default function CardList({ className }: Props) {
                     <Card
                         icon={
                             <div className='h-32'>
-                                <Files size={96} className="relative text-primary" />
+                                <File size={96} className="relative text-primary" />
                             </div>
                         }
                         title="Суточные файлы"
                         className="content-center"
                         onClick={() => {handleCardClick("measurements/daily-files")}}
+                     />
+                     <Card
+                        icon={
+                            <div className='h-32'>
+                                <Files size={96} className="relative text-primary" />
+                            </div>
+                        }
+                        title="Пятиминутные файлы"
+                        className="content-center"
+                        onClick={() => {handleCardClick("measurements/five-minute-files")}}
                      />
                     <Card
                         icon={

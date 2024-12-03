@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { DataTable } from "../../table/data-table";
 import generateColumns from "../../table/columns";
 import { ColumnDef } from "@tanstack/react-table";
-import InputFilter from "../../table/input-filter";
-import AddButton from "../../table/add-button";
+import apiClient from "@/components/shared/services/auth/api-client";
+
 
 export default function UserRoleTable() {  
     const [data, setData] = useState<typeof testData | null>(null);
@@ -13,10 +13,8 @@ export default function UserRoleTable() {
     const tableRef = useRef<any>(null);
 
     const headers: Array<{ key: keyof HeadersTypes; label: string }> = [
-      { key: "id", label: "ID" },
-      { key: "name", label: "Название" },
-      { key: "active", label: "Активная" },
-      { key: "system", label: "Системная" },
+      { key: "role", label: "Роль" },
+      { key: "description", label: "Описание" },
     ];
 
     const visibleHeaders = [
@@ -25,35 +23,31 @@ export default function UserRoleTable() {
     ];
 
     type HeadersTypes = {
-      id: number;
-      name: string;
-      active: boolean;
-      system: boolean;
+      role: string;
+      description: string;
     };
 
-    useEffect(() => {
-      setTimeout(() => {
-        setData(testData);
+    const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {
+      setIsLoading(true);
+      try {
+        const response = await apiClient.get(`/auth-server/roles`);
         setIsLoading(false);
-      }, 2000);
-    }, []);
-
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+      }
+    };
     return (
       <div className="gap-8 flex flex-col">
         <DataTable
           ref={tableRef}
-          columns={generateColumns<HeadersTypes>({ headers }) as ColumnDef<unknown, unknown>[]}
-          data={data || []}
+          columns={generateColumns<HeadersTypes>({ headers, editable : false }) as ColumnDef<unknown, unknown>[]}
+          fetchData={fetchData}
           isLoading={isLoading}
           visibleHeaders={visibleHeaders}
           defaultHeaders={headers.map((h) => h.label)}
         >
-          <div className="flex flex-col w-full gap-4">
-            <InputFilter placeholder='Поиск по названию' column="name" table={tableRef} />
-          </div>
-          <div className="flex flex-col w-full gap-4">
-            <AddButton headers={headers} sampleData={testData[0]}/>
-          </div>
         </DataTable>
       </div>
     );
