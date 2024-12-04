@@ -40,12 +40,12 @@ export default function UserRefreshTokens() {
           sortDirection: sorting[0]?.desc ? "DESC" : "ASC",
           filters: Object.fromEntries(
             columnFilters
-              .filter(filter => !["activeAt"].includes(filter.id))
+              .filter(filter => !["issuedAt", "expiresAt"].includes(filter.id))
               .map(filter => [filter.id, filter.value])
           ),
           dateRanges: Object.fromEntries(
             columnFilters
-              .filter(filter => ["activeAt"].includes(filter.id))
+              .filter(filter => ["issuedAt", "expiresAt"].includes(filter.id))
               .map(filter => {
                 const from = filter.value?.from
                   ? new Date(filter.value.from).toISOString()

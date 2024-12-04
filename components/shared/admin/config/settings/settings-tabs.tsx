@@ -40,16 +40,8 @@ export default function SettingsTabs() {
                       <Input id="name" type="text" placeholder="Введите название" defaultValue="ЕГАИС Мониторинг" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="url">URL приложения</Label>
-                      <Input id="url" type="text" placeholder="Введите URL" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="ssl-url">SSL URL приложения</Label>
-                      <Input id="ssl-url" type="text" placeholder="Введите URL для SSL" />
-                    </div>
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="ssl">Поддержка SSL</Label>
-                      <Switch />
+                      <Label htmlFor="server-url">Адрес сервера</Label>
+                      <Input id="server-url" type="text" placeholder="Введите URL сервера" defaultValue="localhost:8080/api/v1"/>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="company-name">Название компании</Label>
@@ -80,8 +72,12 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="page-header">Заголовки страниц по умолчанию</Label>
+                      <Label htmlFor="page-title">Заголовки страниц по умолчанию</Label>
                       <Input id="page-header" type="text" placeholder="Введите текст" defaultValue="ЕГАИС Мониторинг" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="page-description">Описание страниц по умолчанию</Label>
+                      <Input id="page-header" type="text" placeholder="Введите текст" defaultValue="Управляйте вашими данными из ЕГАИС" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="keywords">Ключевые слова страниц по умолчанию</Label>
@@ -108,8 +104,20 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="cipher">Ключ шифрования</Label>
-                      <Input id="cipher" type="number" placeholder="Введите ключ" />
+                      <Label htmlFor="access-token-secret-key">Секретный ключ для access токенов</Label>
+                      <Input id="access-token-secret-key" type="text" placeholder="Введите ключ" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="api-token-secret-key">Секретный ключ для api токенов</Label>
+                      <Input id="api-token-secret-key" type="text" placeholder="Введите ключ" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="access-expiration">Время жизни access токена</Label>
+                      <Input id="api-token-secret-key" type="number" placeholder="Введите время в мс" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="access-expiration">Время жизни refresh токена</Label>
+                      <Input id="api-token-secret-key" type="number" placeholder="Введите время в мс" />
                     </div>
                     <Button className="mt-4" onClick={() => {
                       toast({
@@ -127,39 +135,18 @@ export default function SettingsTabs() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-6">
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="allow-change-username">Смена имен пользователей</Label>
-                      <Switch />
-                    </div>
                     <div className="space-y-2">
-                        <Label htmlFor="sign-up-type">Тип регистрации</Label>
+                        <Label htmlFor="sign-up-type">Верификация</Label>
                         <Select>
                             <SelectTrigger>
                                 <SelectValue id="sign-up-type" placeholder="Выберите тип"/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="admin-approval">Подтверждение администратора</SelectItem>
-                                <SelectItem value="email-validation">Подтверждение через почту</SelectItem>
-                                <SelectItem value="disable">Нет</SelectItem>
+                                <SelectItem value="email-verification">Подтверждение через почту</SelectItem>
+                                <SelectItem value="disable">Без верификации</SelectItem>
                             </SelectContent>
                         </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="password-type">Хранение паролей</Label>
-                        <Select>
-                            <SelectTrigger>
-                                <SelectValue id="password-type" placeholder="Выберите тип"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="hashed">Хэш-значение</SelectItem>
-                                <SelectItem value="encrypted">Зашифрованное</SelectItem>
-                                <SelectItem value="clear">В открытом виде</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="password-size">Минимальная длина паролей</Label>
-                        <Input id="password-size" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="password-size">Время жизни ссылки для восстановления пароля, дней</Label>
@@ -167,10 +154,6 @@ export default function SettingsTabs() {
                     </div>
                     <div className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <Label htmlFor="news-subscription">Новостная подписка для пользователей</Label>
-                      <Switch />
-                    </div>
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="send-email">Отправка email на новом личном сообщении</Label>
                       <Switch />
                     </div>
                     <div className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -209,10 +192,6 @@ export default function SettingsTabs() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-6">
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <Label htmlFor="allow-change-username">Смена часовых поясов</Label>
-                        <Switch />
-                    </div>
                     <div className="space-y-2">
                         <Label htmlFor="sign-up-type">Часовой пояс по умолчанию</Label>
                         <Select>

@@ -289,3 +289,46 @@ export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers
 
     return columns;
 }
+
+export function generateColumnsWithCustomActions<HeadersTypes>({
+    headers,
+    title,
+    description,
+    renderCustomActions,
+}: {
+    headers : Array<{ key: keyof HeadersTypes; label: string; sortable?: boolean }>;
+    title: string;
+    description: string;
+    renderCustomActions: (row: HeadersTypes) => React.ReactNode;
+}) {
+    const columns = generateColumns<HeadersTypes>({headers, editable : false})
+
+    columns.push({
+        id: "actions",
+        accessorKey: "actions",
+        header: "Действия",
+        cell: ({ row }) => {
+            return (
+                <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Открыть диалог</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[600px]">
+                            <DialogHeader className="gap-2">
+                                <DialogTitle>{title}</DialogTitle>
+                                <DialogDescription>{description}</DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter className="justify-between gap-2">
+                                {renderCustomActions(row.original)}
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+            );
+        },
+    });
+
+    return columns;
+}
