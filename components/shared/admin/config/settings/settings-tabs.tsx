@@ -12,8 +12,82 @@ import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/hooks/use-toast"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import apiClient from "@/components/shared/services/auth/api-client"
+import { useEffect, useState } from "react"
+import { se } from "date-fns/locale"
 
 export default function SettingsTabs() {
+
+  type Security = {
+    accessTokenSecretKey: string;
+    apiTokenSecretKey: string;
+    accessExpiration: number | string;
+    refreshExpiration: number | string;
+  }
+
+  type DateTime = {
+    defaultValue: string;
+  }
+
+  const [security, setSecurity] = useState<Security>({
+    accessTokenSecretKey: "",
+    apiTokenSecretKey: "",
+    accessExpiration: 0,
+    refreshExpiration: 0
+  })
+  const [dateTime, setDateTime] = useState<DateTime>({
+    defaultValue: ""
+  })
+
+  async function handleSaveSecurity(security: Security) {
+    await updateConfig('config/application/security.access-token-secret-key', security.accessTokenSecretKey);
+    await updateConfig('config/application/security.api-token-secret-key', security.apiTokenSecretKey);
+    await updateConfig('config/application/security.access-expiration', security.accessExpiration);
+    await updateConfig('config/application/security.refresh-expiration', security.refreshExpiration);
+  }
+
+  async function handleSaveDateTime(dateTime : DateTime) {
+    await updateConfig('config/application/date-time.default-value', dateTime.defaultValue);
+  }
+  
+  useEffect(() => {
+    const setData = async () => {
+      setDateTime({
+        defaultValue: await getConfig("config/application/date-time.default-value")
+      })
+      setSecurity({
+        accessTokenSecretKey: await getConfig("config/application/security.access-token-secret-key"),
+        apiTokenSecretKey: await getConfig("config/application/security.api-token-secret-key"),
+        accessExpiration: await getConfig("config/application/security.access-expiration"),
+        refreshExpiration: await getConfig("config/application/security.refresh-expiration"),
+      });
+    };
+    setData();
+  }, []);
+  
+  const updateConfig = async (key: string, value: any) => {
+    try {
+      const response = await apiClient.post(`/discovery-server/config?key=${encodeURIComponent(key)}`, value, {
+        headers: { 'Content-Type': 'text/plain' },
+      });
+      console.log('Configuration updated:', response.data);
+    } catch (error) {
+      console.error('Error updating configuration:', error);
+    }
+  };
+  
+  const getConfig = async (key: string): Promise<any> => {
+    try {
+      const response = await apiClient.get(`/discovery-server/config?key=${encodeURIComponent(key)}`);
+      console.log('Configuration fetched:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching configuration:', error);
+      return null;
+    }
+  };
+  
+
   const { toast } = useToast()
   return (
     <Container className="items-center flex-col p-6 gap-6 animate-slide-element">
@@ -105,25 +179,74 @@ export default function SettingsTabs() {
                   <div className="grid gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="access-token-secret-key">Секретный ключ для access токенов</Label>
-                      <Input id="access-token-secret-key" type="text" placeholder="Введите ключ" />
+                      <Input
+                        id="access-token-secret-key"
+                        type="text"
+                        placeholder="Введите ключ"
+                        value={security.accessTokenSecretKey || ""}
+                        onChange={(e) =>
+                          setSecurity({ ...security, accessTokenSecretKey: e.target.value })
+                        }
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="api-token-secret-key">Секретный ключ для api токенов</Label>
-                      <Input id="api-token-secret-key" type="text" placeholder="Введите ключ" />
+                      <Input
+                        id="api-token-secret-key"
+                        type="text"
+                        placeholder="Введите ключ"
+                        value={security.apiTokenSecretKey || ""}
+                        onChange={(e) =>
+                          setSecurity({ ...security, apiTokenSecretKey: e.target.value })
+                        }
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="access-expiration">Время жизни access токена</Label>
-                      <Input id="api-token-secret-key" type="number" placeholder="Введите время в мс" />
+                      <Input
+                        id="access-expiration"
+                        type="number"
+                        placeholder="Введите время в мс"
+                        value={security.accessExpiration || ""}
+                        onChange={(e) =>
+                          setSecurity({
+                            ...security,
+                            accessExpiration: e.target.value
+                              ? Number.parseInt(e.target.value)
+                              : "",
+                          })
+                        }
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="access-expiration">Время жизни refresh токена</Label>
-                      <Input id="api-token-secret-key" type="number" placeholder="Введите время в мс" />
+                      <Label htmlFor="refresh-expiration">Время жизни refresh токена</Label>
+                      <Input
+                        id="refresh-expiration"
+                        type="number"
+                        placeholder="Введите время в мс"
+                        value={security.refreshExpiration || ""}
+                        onChange={(e) =>
+                          setSecurity({
+                            ...security,
+                            refreshExpiration: e.target.value
+                              ? Number.parseInt(e.target.value)
+                              : "",
+                          })
+                        }
+                      />
                     </div>
-                    <Button className="mt-4" onClick={() => {
-                      toast({
-                        title: "Настройки",
-                        description: "Настройки сохранены",
-                      })}}>Сохранить изменения</Button>
+                    <Button
+                      className="mt-4"
+                      onClick={() => {
+                        handleSaveSecurity(security);
+                        toast({
+                          title: "Настройки",
+                          description: "Настройки сохранены",
+                        });
+                      }}
+                    >
+                      Сохранить изменения
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -193,10 +316,10 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="sign-up-type">Часовой пояс по умолчанию</Label>
-                        <Select>
+                        <Label htmlFor="default-value">Часовой пояс по умолчанию</Label>
+                        <Select onValueChange={(e) => setDateTime({...dateTime, defaultValue: e})} defaultValue={dateTime.defaultValue}>
                             <SelectTrigger>
-                                <SelectValue id="sign-up-type" placeholder="Выберите тип"/>
+                                <SelectValue id="default-value" placeholder="Выберите значение"/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="UTC-12:00">UTC-12:00</SelectItem>
@@ -239,6 +362,7 @@ export default function SettingsTabs() {
                         </Select>
                     </div>
                     <Button className="mt-4" onClick={() => {
+                      handleSaveDateTime(dateTime)
                       toast({
                         title: "Настройки",
                         description: "Настройки сохранены",
