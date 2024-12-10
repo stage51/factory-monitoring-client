@@ -16,6 +16,7 @@ export default function DailyFilesTable() {
   const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
     { key: "id", label: "ID", sortable: false },
     { key: "taxpayerNumber", label: "ИНН", sortable: false},
+    { key: "sensorNumber", label: "Сенсор", sortable: false},
     { key: "startDate", label: "Начало", sortable: true },
     { key: "endDate", label: "Конец", sortable: true },
     { key: "vbsStart", label: "Объем безводного спирта в начале", sortable: false },
@@ -43,6 +44,7 @@ export default function DailyFilesTable() {
   type HeadersTypes = {
     id: number;
     taxpayerNumber: string;
+    sensorNumber: string;
     startDate: Date;
     endDate: Date;
     vbsStart: number;

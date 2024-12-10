@@ -23,6 +23,7 @@ export type Product = {
 
 export type modesReport = {
     id: number
+    sensorNumber: string
     product: Product
     startDate: Date
     endDate: Date
@@ -93,6 +94,10 @@ export const columns: ColumnDef<modesReport>[] = [
             const date = new Date(row.original.endDate);
             return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
         }
+    },
+    {
+        accessorKey: "sensorNumber",
+        header: "Сенсор",
     },
     {
         accessorKey: "vbsStart",

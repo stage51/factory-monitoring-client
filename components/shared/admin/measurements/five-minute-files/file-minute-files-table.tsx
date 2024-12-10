@@ -16,6 +16,7 @@ export default function FiveMinuteFilesTable() {
   const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
     { key: "id", label: "ID", sortable: false },
     { key: "taxpayerNumber", label: "ИНН", sortable: false},
+    { key: "sensorNumber", label: "Сенсор", sortable: false},
     { key: "controlDate", label: "Дата", sortable: true },
     { key: "vbsControl", label: "Объем спирта", sortable: false },
     { key: "aControl", label: "Объем", sortable: false },
@@ -37,6 +38,7 @@ export default function FiveMinuteFilesTable() {
   type HeadersTypes = {
     id: number;
     taxpayerNumber: string;
+    sensorNumber: string;
     controlDate: Date;
     vbsControl: number;
     aControl: number;

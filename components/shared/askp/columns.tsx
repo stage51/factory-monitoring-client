@@ -29,6 +29,7 @@ export type Product = {
 
 export type askpReport = {
     id: number
+    sensorNumber: string
     product: Product
     controlDate: Date
     vbsControl: number
@@ -73,6 +74,10 @@ export const columns: ColumnDef<askpReport>[] = [
             const date = new Date(row.original.controlDate);
             return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
         }
+    },
+    {
+        accessorKey: "sensorNumber",
+        header: "Сенсор"
     },
     {
         accessorKey: "vbsControl",

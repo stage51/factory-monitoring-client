@@ -67,7 +67,7 @@ export default function SettingsTabs() {
   
   const updateConfig = async (key: string, value: any) => {
     try {
-      const response = await apiClient.post(`/discovery-server/config?key=${encodeURIComponent(key)}`, value, {
+      const response = await apiClient.put(`/config-server/config?key=${encodeURIComponent(key)}`, value, {
         headers: { 'Content-Type': 'text/plain' },
       });
       console.log('Configuration updated:', response.data);
@@ -78,7 +78,7 @@ export default function SettingsTabs() {
   
   const getConfig = async (key: string): Promise<any> => {
     try {
-      const response = await apiClient.get(`/discovery-server/config?key=${encodeURIComponent(key)}`);
+      const response = await apiClient.get(`/config-server/config?key=${encodeURIComponent(key)}`);
       console.log('Configuration fetched:', response.data);
       return response.data;
     } catch (error) {

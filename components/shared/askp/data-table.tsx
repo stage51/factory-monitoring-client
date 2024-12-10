@@ -215,6 +215,14 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <Input
+          placeholder="Номер сенсора"
+          value={(table.getColumn("sensorNumber")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("sensorNumber")?.setFilterValue(event.target.value)
+          }
+          className="w-full"
+        />
         <DatePickerWithRange
           value={table.getColumn("controlDate")?.getFilterValue() as DateRange | undefined}
           onChange={(newDateRange) => {
