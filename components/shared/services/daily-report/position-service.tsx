@@ -50,3 +50,8 @@ export const getPagePositions = async (params: any, taxpayerNumber : string) => 
     const response = await apiClient.post(`${API_URL}/fetch/${taxpayerNumber}`, params);
     return response.data;
 }
+
+export const checkLines = async (taxpayerNumber : string) => {
+    const response = await apiClient.get(`${API_URL}/check`, { params: {taxpayerNumber} })
+    return response.data
+}

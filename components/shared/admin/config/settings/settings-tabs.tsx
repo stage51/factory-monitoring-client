@@ -403,36 +403,40 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="green-monitoring-timing">Зеленая дата синхронизации с мониторингом, минуты</Label>
+                        <Label htmlFor="green-monitoring-timing">Зеленая дата синхронизации с мониторингом, мс</Label>
                         <Input id="green-monitoring-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-monitoring-timing">Желтая дата синхронизации с мониторингом, минуты</Label>
+                        <Label htmlFor="yellow-monitoring-timing">Желтая дата синхронизации с мониторингом, мс</Label>
                         <Input id="yellow-monitoring-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="green-navigation-rar-timing">Зеленая дата синхронизации по навигации с РАР, минуты</Label>
-                        <Input id="green-navigation-rar-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="red-monitoring-timing">Красная дата синхронизации с мониторингом, мс</Label>
+                        <Input id="red-monitoring-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-navigation-rar-timing">Желтая дата синхронизации по навигации с РАР, минуты</Label>
-                        <Input id="yellow-navigation-rar-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="green-fiveminute-timing">Зеленая дата синхронизации по пятиминутным с РАР, мс</Label>
+                        <Input id="green-fiveminute-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="green-daily-rar-timing">Зеленая дата синхронизации по суточным с РАР, минуты</Label>
-                        <Input id="green-daily-rar-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="yellow-fiveminute-timing">Желтая дата синхронизации по пятиминутным с РАР, мс</Label>
+                        <Input id="yellow-fiveminute-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="green-daily-rar-timing">Желтая дата синхронизации по суточным с РАР, минуты</Label>
-                        <Input id="green-daily-rar-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="red-fiveminute-timing">Красная дата синхронизации по пятиминутным с РАР, мс</Label>
+                        <Input id="red-fiveminute-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="green-tth-rar-timing">Зеленая дата синхронизации по ТТН с РАР, минуты</Label>
-                        <Input id="green-tth-rar-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="green-daily-timing">Зеленая дата синхронизации по суточным с РАР, мс</Label>
+                        <Input id="green-daily-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-tth-rar-timing">Желтая дата синхронизации по ТТН с РАР, минуты</Label>
-                        <Input id="yellow-tth-rar-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="yellow-daily-timing">Желтая дата синхронизации по суточным с РАР, мс</Label>
+                        <Input id="yellow-daily-timing" type="number" placeholder="Введите число" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="red-daily-timing">Красная дата синхронизации по суточным с РАР, мс</Label>
+                        <Input id="red-daily-timing" type="number" placeholder="Введите число" />
                     </div>
                     <Button className="mt-4" onClick={() => {
                       toast({
