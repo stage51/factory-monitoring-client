@@ -11,6 +11,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@keycloak/keycloak-account-ui": "^26.0.5",
+    "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-collapsible": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
@@ -31,6 +32,7 @@
     "consul": "^2.0.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.7",
+    "ioredis": "^5.4.1",
     "jwt-decode": "^4.0.0",
     "keycloak-js": "^26.0.5",
     "lucide-react": "^0.453.0",

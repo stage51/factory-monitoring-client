@@ -31,6 +31,7 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("config/settings")}}
                     />
+                    {/*
                     <Card 
                         icon={
                             <div className='h-32'>
@@ -41,6 +42,7 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("config/states")}}
                     />
+                    */}
                     <Card 
                         icon={
                             <div className='h-32'>
@@ -51,6 +53,7 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("config/organizations")}}
                     />
+                    {/*
                     <Card 
                         icon={
                             <div className='h-32'>
@@ -81,6 +84,7 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("config/emails")}}
                     />
+                    */}
                     <Card
                         icon={
                             <div className='h-32'>

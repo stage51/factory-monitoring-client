@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const SERVER_URL = 'http://localhost:8080/api/v1';
+export const SERVER_URL = process.env.NEXT_PUBLIC_API_HOST;
 
 const getAccessToken = () => {
   return sessionStorage.getItem("access_token");

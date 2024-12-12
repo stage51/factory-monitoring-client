@@ -17,27 +17,81 @@ import { useEffect, useState } from "react"
 import { se } from "date-fns/locale"
 
 export default function SettingsTabs() {
-
+  type Seo = {
+    pageTitle: string;
+    pageDescription: string;
+    keywords: string;
+    metaInfo: string;
+  };
   type Security = {
     accessTokenSecretKey: string;
     apiTokenSecretKey: string;
     accessExpiration: number | string;
     refreshExpiration: number | string;
-  }
-
+  };
   type DateTime = {
     defaultValue: string;
-  }
+  };
+  type Timing = {
+    greenMonitoringTiming: number;
+    yellowMonitoringTiming: number;
+    redMonitoringTiming: number;
+    greenFiveminuteTiming: number;
+    yellowFiveminuteTiming: number;
+    redFiveminuteTiming: number;
+    greenDailyTiming: number;
+    yellowDailyTiming: number;
+    redDailyTiming: number;
+  };
 
   const [security, setSecurity] = useState<Security>({
     accessTokenSecretKey: "",
     apiTokenSecretKey: "",
     accessExpiration: 0,
-    refreshExpiration: 0
-  })
-  const [dateTime, setDateTime] = useState<DateTime>({
-    defaultValue: ""
-  })
+    refreshExpiration: 0,
+  });
+  const [dateTime, setDateTime] = useState<DateTime>({ defaultValue: "" });
+  const [timing, setTiming] = useState<Timing>({
+    greenMonitoringTiming: 0,
+    yellowMonitoringTiming: 0,
+    redMonitoringTiming: 0,
+    greenFiveminuteTiming: 0,
+    yellowFiveminuteTiming: 0,
+    redFiveminuteTiming: 0,
+    greenDailyTiming: 0,
+    yellowDailyTiming: 0,
+    redDailyTiming: 0,
+  });
+  const [seo, setSeo] = useState<Seo>({
+    pageTitle: "",
+    pageDescription: "",
+    keywords: "",
+    metaInfo: "",
+  });
+
+  // Универсальная функция для работы с Redis API
+  const redisApi = async (
+    method: "GET" | "POST",
+    body?: { action?: string; key: string; value?: string }
+  ) => {
+    try {
+      const url = method === "GET" && body?.key ? `/api/redis?key=${encodeURIComponent(body.key)}` : "/api/redis";
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: method === "POST" ? JSON.stringify(body) : undefined,
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const json = await response.json();
+      return json.value
+    } catch (error) {
+      console.error("Redis API error:", error);
+      throw error;
+    }
+  };
+
 
   async function handleSaveSecurity(security: Security) {
     await updateConfig('config/application/security.access-token-secret-key', security.accessTokenSecretKey);
@@ -49,21 +103,62 @@ export default function SettingsTabs() {
   async function handleSaveDateTime(dateTime : DateTime) {
     await updateConfig('config/application/date-time.default-value', dateTime.defaultValue);
   }
-  
+
+  const handleSaveSeo = async (seo: Seo) => {
+    try {
+      await redisApi("POST", { action: "set", key: "page_title", value: seo.pageTitle });
+      await redisApi("POST", { action: "set", key: "page_description", value: seo.pageDescription });
+      await redisApi("POST", { action: "set", key: "keywords", value: seo.keywords });
+      await redisApi("POST", { action: "set", key: "meta_info", value: seo.metaInfo });
+    } catch (error) {
+      console.error("Failed to save SEO data:", error);
+    }
+  };
+
+  // Загрузка данных
   useEffect(() => {
     const setData = async () => {
-      setDateTime({
-        defaultValue: await getConfig("config/application/date-time.default-value")
-      })
-      setSecurity({
-        accessTokenSecretKey: await getConfig("config/application/security.access-token-secret-key"),
-        apiTokenSecretKey: await getConfig("config/application/security.api-token-secret-key"),
-        accessExpiration: await getConfig("config/application/security.access-expiration"),
-        refreshExpiration: await getConfig("config/application/security.refresh-expiration"),
-      });
+      try {
+        // Получение SEO данных
+        setSeo({
+          pageTitle: await redisApi("GET", { key: "page_title" }) || "",
+          pageDescription: await redisApi("GET", { key: "page_description" }) || "",
+          keywords: await redisApi("GET", { key: "keywords" }) || "",
+          metaInfo: await redisApi("GET", { key: "meta_info" }) || "",
+        });
+  
+        // Получение других данных
+        setDateTime({
+          defaultValue: await getConfig("config/application/date-time.default-value"),
+        });
+  
+        setSecurity({
+          accessTokenSecretKey: await getConfig("config/application/security.access-token-secret-key"),
+          apiTokenSecretKey: await getConfig("config/application/security.api-token-secret-key"),
+          accessExpiration: await getConfig("config/application/security.access-expiration"),
+          refreshExpiration: await getConfig("config/application/security.refresh-expiration"),
+        });
+  
+        setTiming({
+          greenMonitoringTiming: await getConfig("config/application/timing.green-monitoring-timing"),
+          yellowMonitoringTiming: await getConfig("config/application/timing.yellow-monitoring-timing"),
+          redMonitoringTiming: await getConfig("config/application/timing.red-monitoring-timing"),
+          greenFiveminuteTiming: await getConfig("config/application/timing.green-fiveminute-timing"),
+          yellowFiveminuteTiming: await getConfig("config/application/timing.yellow-fiveminute-timing"),
+          redFiveminuteTiming: await getConfig("config/application/timing.red-fiveminute-timing"),
+          greenDailyTiming: await getConfig("config/application/timing.green-daily-timing"),
+          yellowDailyTiming: await getConfig("config/application/timing.yellow-daily-timing"),
+          redDailyTiming: await getConfig("config/application/timing.red-daily-timing"),
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
+  
     setData();
   }, []);
+  
+  
   
   const updateConfig = async (key: string, value: any) => {
     try {
@@ -147,21 +242,42 @@ export default function SettingsTabs() {
                   <div className="grid gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="page-title">Заголовки страниц по умолчанию</Label>
-                      <Input id="page-header" type="text" placeholder="Введите текст" defaultValue="ЕГАИС Мониторинг" />
+                      <Input 
+                      value={seo.pageTitle}
+                      onChange={(e) =>
+                        setSeo({ ...seo, pageTitle: e.target.value })
+                      }
+                      id="page-header" type="text" placeholder="Введите текст" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="page-description">Описание страниц по умолчанию</Label>
-                      <Input id="page-header" type="text" placeholder="Введите текст" defaultValue="Управляйте вашими данными из ЕГАИС" />
+                      <Input 
+                      value={seo.pageDescription}
+                      onChange={(e) =>
+                        setSeo({ ...seo, pageDescription: e.target.value })
+                      }
+                      id="page-header" type="text" placeholder="Введите текст" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="keywords">Ключевые слова страниц по умолчанию</Label>
-                      <Input id="keywords" type="text" placeholder="Введите текст" />
+                      <Input 
+                      value={seo.keywords}
+                      onChange={(e) =>
+                        setSeo({ ...seo, keywords: e.target.value })
+                      }
+                      id="keywords" type="text" placeholder="Введите текст" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="meta-info">Мета информация страниц по умолчанию</Label>
-                      <Input id="meta-info" type="text" placeholder="Введите текст" />
+                      <Input 
+                      value={seo.metaInfo}
+                      onChange={(e) =>
+                        setSeo({ ...seo, metaInfo: e.target.value })
+                      }
+                      id="meta-info" type="text" placeholder="Введите текст" />
                     </div>
                     <Button className="mt-4" onClick={() => {
+                      handleSaveSeo(seo)
                       toast({
                         title: "Настройки",
                         description: "Настройки сохранены",
@@ -403,42 +519,133 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="green-monitoring-timing">Зеленая дата синхронизации с мониторингом, мс</Label>
-                        <Input id="green-monitoring-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="green-monitoring-timing">Зеленая дата синхронизации с мониторингом, минуты</Label>
+                        <Input 
+                        value={timing.greenMonitoringTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            greenMonitoringTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="green-monitoring-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-monitoring-timing">Желтая дата синхронизации с мониторингом, мс</Label>
-                        <Input id="yellow-monitoring-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="yellow-monitoring-timing">Желтая дата синхронизации с мониторингом, минуты</Label>
+                        <Input 
+                        value={timing.yellowMonitoringTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            yellowMonitoringTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="yellow-monitoring-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="red-monitoring-timing">Красная дата синхронизации с мониторингом, мс</Label>
-                        <Input id="red-monitoring-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="red-monitoring-timing">Красная дата синхронизации с мониторингом, минуты</Label>
+                        <Input 
+                        value={timing.redMonitoringTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            redMonitoringTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="red-monitoring-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="green-fiveminute-timing">Зеленая дата синхронизации по пятиминутным с РАР, мс</Label>
-                        <Input id="green-fiveminute-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="green-fiveminute-timing">Зеленая дата синхронизации по пятиминутным с РАР, минуты</Label>
+                        <Input 
+                        value={timing.greenFiveminuteTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            greenFiveminuteTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="green-fiveminute-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-fiveminute-timing">Желтая дата синхронизации по пятиминутным с РАР, мс</Label>
-                        <Input id="yellow-fiveminute-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="yellow-fiveminute-timing">Желтая дата синхронизации по пятиминутным с РАР, минуты</Label>
+                        <Input 
+                        value={timing.yellowFiveminuteTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            yellowFiveminuteTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="yellow-fiveminute-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="red-fiveminute-timing">Красная дата синхронизации по пятиминутным с РАР, мс</Label>
-                        <Input id="red-fiveminute-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="red-fiveminute-timing">Красная дата синхронизации по пятиминутным с РАР, минуты</Label>
+                        <Input 
+                        value={timing.redFiveminuteTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            redFiveminuteTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="red-fiveminute-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="green-daily-timing">Зеленая дата синхронизации по суточным с РАР, мс</Label>
-                        <Input id="green-daily-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="green-daily-timing">Зеленая дата синхронизации по суточным с РАР, минуты</Label>
+                        <Input 
+                        value={timing.greenDailyTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            greenDailyTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="green-daily-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-daily-timing">Желтая дата синхронизации по суточным с РАР, мс</Label>
-                        <Input id="yellow-daily-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="yellow-daily-timing">Желтая дата синхронизации по суточным с РАР, минуты</Label>
+                        <Input 
+                        value={timing.yellowDailyTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            yellowDailyTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="yellow-daily-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="red-daily-timing">Красная дата синхронизации по суточным с РАР, мс</Label>
-                        <Input id="red-daily-timing" type="number" placeholder="Введите число" />
+                        <Label htmlFor="red-daily-timing">Красная дата синхронизации по суточным с РАР, минуты</Label>
+                        <Input 
+                        value={timing.redDailyTiming / 1000 / 60 || 0}
+                        onChange={(e) =>
+                          setTiming({
+                            ...timing,
+                            redDailyTiming: e.target.value
+                              ? Number.parseInt(e.target.value) * 1000 * 60
+                              : 0,
+                          })
+                        }
+                        id="red-daily-timing" type="number" placeholder="Введите число" />
                     </div>
                     <Button className="mt-4" onClick={() => {
+                      handleSaveTiming(timing)
                       toast({
                         title: "Настройки",
                         description: "Настройки сохранены",

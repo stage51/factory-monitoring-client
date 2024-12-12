@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import Title from "../../title";
 import Link from "next/link";
 import Container from "../../container";
@@ -13,10 +13,17 @@ interface Props {
 export default function Auth({ children }: Props) {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const [accessDenied, setAccessDenied] = useState(false);
+  const refreshTimer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setupAxiosInterceptors();
     verifyAuthorization();
+
+    return () => {
+      if (refreshTimer.current) {
+        clearTimeout(refreshTimer.current);
+      }
+    };
   }, []);
 
   const setupAxiosInterceptors = () => {
@@ -24,12 +31,11 @@ export default function Auth({ children }: Props) {
       (response) => response,
       async (error) => {
         if (error.response?.status === 403) {
-          // Если 403 - показываем сообщение о недостатке прав
           setAccessDenied(true);
         }
         return Promise.reject(error);
       }
-    )
+    );
   };
 
   const refreshAccessToken = async () => {
@@ -44,10 +50,39 @@ export default function Auth({ children }: Props) {
       const { accessToken } = response.data;
       sessionStorage.setItem("access_token", accessToken);
 
+      scheduleTokenRefresh(accessToken);
+
       return accessToken;
     } catch (error) {
       console.error("Failed to refresh access token:", error);
       return null;
+    }
+  };
+
+  const parseJwt = (token: string) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      return JSON.parse(window.atob(base64));
+    } catch (error) {
+      console.error("Failed to parse token:", error);
+      return null;
+    }
+  };
+
+  const scheduleTokenRefresh = (token: string) => {
+    const parsedToken = parseJwt(token);
+    if (!parsedToken || !parsedToken.exp) return;
+
+    const currentTime = Math.floor(Date.now() / 1000);
+    const timeToExpire = parsedToken.exp - currentTime;
+
+    if (timeToExpire > 0) {
+      const refreshTime = Math.max(0, (timeToExpire - 60) * 1000);
+      if (refreshTimer.current) {
+        clearTimeout(refreshTimer.current);
+      }
+      refreshTimer.current = setTimeout(() => refreshAccessToken(), refreshTime);
     }
   };
 
@@ -62,8 +97,9 @@ export default function Auth({ children }: Props) {
 
     try {
       await apiClient.get("/auth-server/auth/check");
-
       setIsAuthorized(true);
+
+      scheduleTokenRefresh(token);
     } catch (error: any) {
       if (error.response?.status === 401) {
         const refreshedToken = await refreshAccessToken();

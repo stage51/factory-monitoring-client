@@ -14,7 +14,6 @@ export default function AdminAuth({ children }: Props) {
     const [accessToken, setAccessToken] = useState<string | null>();
     const [isAdmin, setIsAdmin] = useState(false);
 
-    // Декодирование токена и проверка роли
     useEffect(() => {
         setAccessToken(sessionStorage.getItem("access_token"))
         if (accessToken) {

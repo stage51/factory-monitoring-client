@@ -28,7 +28,7 @@ export default function Page() {
             </BreadcrumbList>
           </Breadcrumb>
         </Container>
-      <Title title="Здравствуйте, Иван Иванов" subtitle="Добро пожаловать в Панель управления ЕГАИС Мониторинг. Выберите действие." />
+      <Title title="Панель управления" subtitle="Добро пожаловать в Панель управления ЕГАИС Мониторинг. Выберите действие." />
       <CardList />
     </div>
   )
