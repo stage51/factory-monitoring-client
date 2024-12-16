@@ -115,15 +115,36 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
     };
   }, []);
 
-  const loadData = async () => {
-    try {
-      const response = await fetchData(pagination, sorting, columnFilters);
-      setData(response.content || []);
-      setTotalPages(response.totalPages)
-      setTotalElements(response.totalElements)
-    } catch (error) {
-      console.error("Error loading data:", error);
+  const sanitizeData = (data) => {
+    if (data === null) {
+        return "";
     }
+
+    if (Array.isArray(data)) {
+        return data.map(sanitizeData);
+    }
+
+    if (typeof data === "object" && !(data instanceof Date)) {
+        return Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [key, sanitizeData(value)])
+        );
+    }
+
+    return data;
+  };
+
+  const loadData = async () => {
+      try {
+          const response = await fetchData(pagination, sorting, columnFilters);
+
+          const sanitizedContent = sanitizeData(response.content || []);
+
+          setData(sanitizedContent);
+          setTotalPages(response.totalPages);
+          setTotalElements(response.totalElements);
+      } catch (error) {
+          console.error("Error loading data:", error);
+      }
   };
 
   React.useEffect(() => {

@@ -18,7 +18,6 @@ export default function Header({ className }: Props) {
     const handleLogout = async () => {
         try {
             await logout()
-            window.location.reload()
             toast({
               title: "Выход из аккаунт",
               description: "Выход был успешно выполнен",

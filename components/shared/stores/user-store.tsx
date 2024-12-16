@@ -10,11 +10,13 @@ import {
   OrganizationRequest,
 } from "../services/profile/profile-service";
 import { toast } from "@/components/hooks/use-toast"
+import { setTimezone } from "../timezone/date";
 
 export class UserStore {
   profile: UserResponse | null = null;
   isLoading: boolean = false;
   error: string | null = null;
+  
   constructor() {
     makeAutoObservable(this);
   }
@@ -24,6 +26,7 @@ export class UserStore {
     try {
       const profile = await fetchUserProfile();
       this.profile = profile;
+      setTimezone(profile.timezone);
       toast({
         title: "Профиль загружен",
         description: "Данные успешно получены.",

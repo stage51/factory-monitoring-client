@@ -1,9 +1,12 @@
 import axios from "axios";
 
 export const SERVER_URL = process.env.NEXT_PUBLIC_API_HOST;
+const isBrowser = typeof window !== "undefined";
 
 const getAccessToken = () => {
-  return sessionStorage.getItem("access_token");
+  if (isBrowser) {
+    return sessionStorage.getItem("access_token");
+  } else return null
 };
 
 const apiClient = axios.create({

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Title from "../title";
 import { Separator } from "@/components/ui/separator";
+import { ReadableDate } from "../timezone/date";
 
 type ReportStatus = {
     controllerNumber : string,
@@ -174,14 +175,7 @@ const StatusPanel = observer(() => {
                                                     Линия {status.lineNumber}
                                                 </AlertTitle>
                                                 <AlertDescription>
-                                                    Последний отчет был загружен в {new Date (status.lastReportTime).toLocaleString
-                                                    ("ru-RU", {
-                                                        day: "2-digit",
-                                                        month: "2-digit",
-                                                        year: "numeric",
-                                                        hour: "2-digit",
-                                                        minute: "2-digit"
-                                                    })}
+                                                    Последний отчет был загружен в {new ReadableDate(new Date (status.lastReportTime)).toReadable()}
                                                 </AlertDescription>
                                             </div>
                                         </Alert>
@@ -224,14 +218,7 @@ const StatusPanel = observer(() => {
                                                         Линия {status.lineNumber}
                                                     </AlertTitle>
                                                     <AlertDescription>
-                                                        Последний отчет был загружен в {new Date (status.lastReportTime).toLocaleString
-                                                        ("ru-RU", {
-                                                            day: "2-digit",
-                                                            month: "2-digit",
-                                                            year: "numeric",
-                                                            hour: "2-digit",
-                                                            minute: "2-digit"
-                                                        })}
+                                                        Последний отчет был загружен в {new ReadableDate(new Date (status.lastReportTime)).toReadable()}
                                                     </AlertDescription>
                                                 </div>
                                             </Alert>

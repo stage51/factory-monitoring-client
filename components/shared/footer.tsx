@@ -1,12 +1,33 @@
+"use client";
 import Link from "next/link"
 import Container from "./container"
+import { useEffect, useState } from "react";
+import { getClientConfig } from "./services/config/config";
 
-interface Props {
-  companyName?: string
+type Company = {
+  companyName: string;
+  companyAddress: string;
+  companyMailAddress: string;
+  companyPhone: string;
+  companyEmail: string;
 }
 
-export default function Footer({ companyName = "ООО «Центр ИКТ»" }: Props) {
+export default function Footer() {
+  const [company, setCompany] = useState<Company>()
   const currentYear = new Date().getFullYear()
+
+  useEffect(() => {
+    const setData = async() => {
+      setCompany({
+        companyName: await getClientConfig("config/next-app/company.company-name"),
+        companyAddress: await getClientConfig("config/next-app/company.company-address"),
+        companyMailAddress: await getClientConfig("config/next-app/company.company-mail-address"),
+        companyPhone: await getClientConfig("config/next-app/company.company-phone"),
+        companyEmail: await getClientConfig("config/next-app/company.company-email")
+      })
+    }
+    setData()
+  }, [])
 
   return (
     <footer className="border-t border-gray-600 bg-gray-900">
@@ -30,16 +51,16 @@ export default function Footer({ companyName = "ООО «Центр ИКТ»" }:
           <div className="space-y-4">
             <h3 className="text-base text-gray-300">Контакты</h3>
             <ul className="space-y-2 text-sm font-light">
-              <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Адрес для писем: 115280, Москва, ул.Ленинская Слобода, дом 19, этаж 1, комн. 41x1д, офис 23</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Адрес: Москва, 2-я Синичкина, 9А, строение 10, 1 этаж, комната 7</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Почта: info@centrikt.ru</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Телефон: +7 (499) 653-61-43</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Адрес для писем: {company?.companyMailAddress}</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Адрес: {company?.companyAddress}</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Почта: {company?.companyEmail}</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-gray-300">Телефон: {company?.companyPhone}</Link></li>
             </ul>
           </div>
         </div>
         <div className="mt-8 border-t border-gray-600 pt-8 text-center">
           <p className="text-sm text-muted-foreground font-light">
-            © {currentYear} {companyName}. Все права защищены.
+            © {currentYear} {company?.companyName}. Все права защищены.
           </p>
           <Link href="/privacy" className="text-sm text-muted-foreground hover:text-gray-300">
             Заявление о конфиденциальности

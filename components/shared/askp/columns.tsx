@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { ReadableDate } from "../timezone/date";
 
 export type Product = {
     id: number
@@ -72,7 +73,7 @@ export const columns: ColumnDef<askpReport>[] = [
         },
         cell: ({ row }) => {
             const date = new Date(row.original.controlDate);
-            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            return new ReadableDate(date.getTime()).toReadable();
         }
     },
     {

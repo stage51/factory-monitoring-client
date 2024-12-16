@@ -1,4 +1,3 @@
-import axios from "axios";
 import apiClient from "./api-client";
 
 export const login = async (email: string, password: string) => {

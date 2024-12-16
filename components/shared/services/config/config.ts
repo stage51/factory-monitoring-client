@@ -1,27 +1,32 @@
-"use client";
-import { Metadata } from "next";
-import redis from "../../../../app/api/redis/route";
-import { useEffect, useState } from "react";
-import { setConfig } from "next/config";
+import apiClient from "../auth/api-client";
 
-type Seo = {
-    pageTitle: string
-    pageDescription: string;
-}
-
-export const Config = () => {
-    const [seo, setSeo] = useState<Seo>(
-        {
-            pageTitle: "title",
-            pageDescription: "description"
-        }
-    )
-
-    useEffect(() => {
-        setConfig()
-    }, [])
-
-    const setConfig = async () => {
-        setSeo({pageTitle: await redis.get("page_title"), pageDescription: await redis.get("page_description")})
+export const updateConfig = async (key: string, value: any) => {
+    try {
+      const response = await apiClient.put(`/config-server/config?key=${encodeURIComponent(key)}`, value, {
+        headers: { 'Content-Type': 'text/plain' },
+      });
+      console.log('Configuration updated:', response.data);
+    } catch (error) {
+      console.error('Error updating configuration:', error);
     }
-};
+  };
+  
+ export const getConfig = async (key: string): Promise<any> => {
+    try {
+      const response = await apiClient.get(`/config-server/config?key=${encodeURIComponent(key)}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching configuration:', error);
+      return null;
+    }
+  };
+
+  export const getClientConfig = async (key: string): Promise<any> => {
+    try {
+      const response = await apiClient.get(`/config-server/config/client?key=${encodeURIComponent(key)}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching configuration:', error);
+      return null;
+    }
+  };

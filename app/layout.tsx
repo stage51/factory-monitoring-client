@@ -4,8 +4,7 @@ import "./globals.css";
 import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import { Toaster } from "@/components/ui/toaster";
-import { redis } from "@/app/api/redis/route";
-
+import { getClientConfig, getConfig } from "@/components/shared/services/config/config";
 const commissioner = Commissioner({
   subsets: ["latin", "cyrillic"],
   variable: "--font-commissioner",
@@ -13,12 +12,14 @@ const commissioner = Commissioner({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = await redis.get("page_title");
-  const description = await redis.get("page_description");
+  const title = await getClientConfig("config/next-app/seo.page-title");
+  const description = await getClientConfig("config/next-app/seo.page-description");
+  const keywords = await await getClientConfig("config/next-app/seo.keywords")
 
   return {
     title: title || "Default Title",
     description: description || "Default Description",
+    keywords: keywords || "Default Keywords"
   };
 }
 

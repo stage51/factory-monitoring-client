@@ -21,6 +21,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DatePicker } from "../../date-picker";
 import { DateRange } from "react-day-picker";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ReadableDate } from "../../timezone/date";
 
 
 interface withObjectProps<HeadersTypes, ObjectHeaders> {
@@ -39,14 +41,19 @@ interface Props<HeadersTypes> {
     handleDelete?: (id: number | string) => Promise<void>;
 }
 
-function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }: { 
+function EditDialog<HeadersTypes>({ 
+    data, 
+    headers, 
+    handleUpdate, 
+    handleDelete 
+}: { 
     data: HeadersTypes; 
-    headers: Array<{ key: keyof HeadersTypes; label: string; sortable?: boolean}> ;
+    headers: Array<{ key: keyof HeadersTypes; label: string; sortable?: boolean }>;
     handleUpdate: (id: number | string, data: HeadersTypes) => Promise<HeadersTypes>;
     handleDelete: (id: number | string) => Promise<void>; 
 }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [editedData, setEditedData] = useState(data);  // Состояние для редактируемых данных
+    const [editedData, setEditedData] = useState(data); // Состояние для редактируемых данных
 
     // Обновляем состояние, если данные изменяются
     useEffect(() => {
@@ -54,7 +61,7 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
     }, [data]);
 
     const handleFieldChange = (key: string, value: string | boolean | Date) => {
-        setEditedData(prevData => ({
+        setEditedData((prevData) => ({
             ...prevData,
             [key]: value,
         }));
@@ -63,7 +70,7 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
     const updateRow = async (id: number | string, updatedData: HeadersTypes) => {
         try {
             await handleUpdate(id, updatedData);
-            window.location.reload()
+            window.location.reload();
         } catch (error) {
             console.error("Error updating row:", error);
         }
@@ -73,7 +80,7 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
         setIsOpen(false);
         try {
             await handleDelete(id);
-            window.location.reload()
+            window.location.reload();
         } catch (error) {
             console.error("Error deleting row:", error);
         }
@@ -92,48 +99,61 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
                     <DialogTitle>Редактирование</DialogTitle>
                     <DialogDescription>Редактирование элемента</DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    {headers.map(({ key, label }) =>
-                        !["id", "product"].includes(key) ? (
-                            <div key={key.toString()} className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor={key.toString()} className="text-right">
-                                    {label}
-                                </Label>
-                                {editedData[key] instanceof Date ? (
-                                    <DatePicker
-                                        value={editedData[key] as Date} 
-                                        onChange={(date) => handleFieldChange(key.toString(), date)}  // Обновляем состояние
-                                        className="col-span-3 w-full" 
-                                    />
-                                ) : (
-                                    <>
-                                        {typeof editedData[key] === "boolean" ? (
-                                            <Select 
-                                                value={String(editedData[key])}
-                                                onValueChange={(value) => handleFieldChange(key.toString(), value === 'true')}
-                                            >
-                                                <SelectTrigger className="col-span-3">
-                                                    <SelectValue placeholder={editedData[key] ? "Да" : "Нет"} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="true">Да</SelectItem>
-                                                    <SelectItem value="false">Нет</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        ) : (
-                                            <Input 
-                                                id={key.toString()} 
-                                                defaultValue={String(editedData[key])} 
-                                                className="col-span-3" 
-                                                onChange={(e) => handleFieldChange(key.toString(), e.target.value)}  // Обновляем состояние
-                                            />
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                        ) : null
-                    )}
-                </div>
+                <ScrollArea className="max-h-[75vh]">
+                    <div className="grid gap-4 py-4">
+                        {headers.map(({ key, label }) =>
+                            !["id", "product"].includes(key) ? (
+                                <div
+                                    key={key.toString()}
+                                    className="grid grid-cols-4 items-center gap-4 pe-4"
+                                >
+                                    <Label htmlFor={key.toString()} className="text-right">
+                                        {label}
+                                    </Label>
+                                    {editedData[key] instanceof Date ? (
+                                        <DatePicker
+                                            value={editedData[key] as Date}
+                                            onChange={(date) =>
+                                                handleFieldChange(key.toString(), date)
+                                            }
+                                            className="col-span-3 w-full"
+                                        />
+                                    ) : (
+                                        <>
+                                            {typeof editedData[key] === "boolean" ? (
+                                                <Select
+                                                    value={String(editedData[key])}
+                                                    onValueChange={(value) =>
+                                                        handleFieldChange(key.toString(), value === "true")
+                                                    }
+                                                >
+                                                    <SelectTrigger className="col-span-3">
+                                                        <SelectValue
+                                                            placeholder={editedData[key] ? "Да" : "Нет"}
+                                                        />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="true">Да</SelectItem>
+                                                        <SelectItem value="false">Нет</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            ) : (
+                                                <Input
+                                                    id={key.toString()}
+                                                    defaultValue={String(editedData[key])}
+                                                    className="col-span-3"
+                                                    onChange={(e) =>
+                                                        handleFieldChange(key.toString(), e.target.value)
+                                                    }
+                                                />
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            ) : null
+                        )}
+                    </div>
+                </ScrollArea>
                 <DialogFooter className="justify-between gap-2">
                     <Dialog>
                         <DialogTrigger asChild>
@@ -142,11 +162,18 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
                         <DialogContent className="sm:max-w-[600px]">
                             <DialogHeader className="gap-2">
                                 <DialogTitle>Удаление</DialogTitle>
-                                <DialogDescription>Вы действительно хотите удалить элемент?</DialogDescription>
+                                <DialogDescription>
+                                    Вы действительно хотите удалить элемент?
+                                </DialogDescription>
                             </DialogHeader>
                             <DialogFooter className="justify-between gap-2">
                                 <DialogClose asChild>
-                                    <Button variant="destructive" onClick={() => deleteRow(editedData.id)}>Удалить</Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={() => deleteRow(editedData.id)}
+                                    >
+                                        Удалить
+                                    </Button>
                                 </DialogClose>
                                 <DialogClose asChild>
                                     <Button variant="outline">Отмена</Button>
@@ -155,13 +182,19 @@ function EditDialog<HeadersTypes>({ data, headers, handleUpdate, handleDelete }:
                         </DialogContent>
                     </Dialog>
                     <DialogClose asChild>
-                        <Button variant="default" onClick={() => updateRow(editedData.id, editedData)}>Сохранить</Button>
+                        <Button
+                            variant="default"
+                            onClick={() => updateRow(editedData.id, editedData)}
+                        >
+                            Сохранить
+                        </Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 }
+
 
 
 export default function generateColumns<HeadersTypes>({ headers, editable = true, handleUpdate, handleDelete}: Props<HeadersTypes>) {
@@ -184,7 +217,10 @@ export default function generateColumns<HeadersTypes>({ headers, editable = true
             const original = row.original as HeadersTypes;
             const value = original[key];
             if (typeof value === "boolean") return value ? "Да" : "Нет";
-            if (value instanceof Date) return value.toLocaleString();
+            if (value instanceof Date || (typeof value === "string" && !isNaN(Date.parse(value)))) {
+                const date = value instanceof Date ? value : new Date(value);
+                return new ReadableDate(date.getTime()).toReadable();
+            }
             return value;
         },
         filterFn: (row, columnId, filterValue) => {
@@ -231,7 +267,10 @@ export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers
             const original = row.original as HeadersTypes;
             const value = original[key];
             if (typeof value === "boolean") return value ? "Да" : "Нет";
-            if (value instanceof Date) return value.toLocaleString();
+            if (value instanceof Date || (typeof value === "string" && !isNaN(Date.parse(value)))) {
+                const date = value instanceof Date ? value : new Date(value);
+                return new ReadableDate(date.getTime()).toReadable();
+            }
             if (typeof value === "object") {
                 return (
                     <Popover>

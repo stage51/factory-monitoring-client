@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { ReadableDate } from "../timezone/date";
 
 export type Product = {
     id: number
@@ -82,7 +83,7 @@ export const columns: ColumnDef<egaisReport>[] = [
         },
         cell: ({ row }) => {
             const date = new Date(row.original.startDate);
-            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            return new ReadableDate(date.getTime()).toReadable();
         }
     },
     {
@@ -100,7 +101,7 @@ export const columns: ColumnDef<egaisReport>[] = [
         },
         cell: ({ row }) => {
             const date = new Date(row.original.endDate);
-            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            return new ReadableDate(date.getTime()).toReadable();
         }
     },
     {
