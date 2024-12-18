@@ -3,18 +3,27 @@ import { cn } from '@/lib/utils';
 import Container from './container';
 import { CircleUser, Mail, MailOpen, DoorClosed, DoorOpen, List } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MailDialog from './mail/mail-dialog';
 import { logout } from './services/auth/auth-serivce';
 import { useToast } from "@/components/hooks/use-toast"
+import { observer } from 'mobx-react-lite';
+import { userStore } from './stores/user-store';
 
 interface Props {
   className?: string;
 }
 
-export default function Header({ className }: Props) {
+const Header = observer(({ className }: Props) => {
+    const {profile} = userStore;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState(true);
     const { toast } = useToast()
+
+    useEffect(() => {
+        setIsAuthorized(!!profile);
+    }, [profile]);
+    
     const handleLogout = async () => {
         try {
             await logout()
@@ -56,31 +65,48 @@ export default function Header({ className }: Props) {
                 </div>
 
                 {/* Icon Section (visible on all screen sizes) */}
-                <div className="flex h-20 items-center justify-between bg-primary gap-10 p-4 w-full md:w-auto rounded-none md:rounded-3xl md:rounded-r-none">
-                  <div className="absolute inset-y-0 right-0 w-[1px] bg-primary" />
-                    {/* Menu Icon for mobile (md and below) */}
-                    <div className="md:hidden flex items-center">
-                        <button
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="text-white focus:outline-none"
-                        >
-                            <List className="cursor-pointer inset-0 flex items-center transition duration-150 hover:animate-spin-element" size={24} />
-                        </button>
+                {isAuthorized ? (
+                    <div className="flex h-20 items-center justify-between bg-primary gap-10 md:p-4 p-8 w-full md:w-auto rounded-none md:rounded-3xl md:rounded-r-none">
+                        <div className="absolute inset-y-0 right-0 w-[1px] bg-primary" />
+                            {/* Menu Icon for mobile (md and below) */}
+                            <div className="md:hidden flex items-center">
+                                <button
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    className="text-white focus:outline-none"
+                                >
+                                    <List className="cursor-pointer inset-0 flex items-center transition duration-150 hover:animate-spin-element" size={24} />
+                                </button>
+                            </div>
+                            <Link href="/profile" className="group relative h-6 w-6">
+                                <CircleUser className="absolute cursor-pointer inset-0 flex items-center transition duration-150 group-hover:animate-spin-element" color="white" />
+                            </Link>
+                            <MailDialog>
+                                <div className="group relative h-6 w-6">
+                                    <Mail className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
+                                    <MailOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
+                                </div>
+                            </MailDialog>
+                            <Link href="/sign-in" onClick={() => handleLogout()} className="group relative h-6 w-6">
+                                <DoorClosed className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
+                                <DoorOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
+                            </Link>
+
                     </div>
-                    <Link href="/profile" className="group relative h-6 w-6">
-                        <CircleUser className="absolute cursor-pointer inset-0 flex items-center transition duration-150 group-hover:animate-spin-element" color="white" />
-                    </Link>
-                    <MailDialog>
-                        <div className="group relative h-6 w-6">
-                            <Mail className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
-                            <MailOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
+                ) :
+                (
+                    <div className="flex h-20 items-center justify-between bg-primary gap-10 md:p-4 p-8 w-full md:w-auto rounded-none md:rounded-3xl md:rounded-r-none">
+                        <div className="absolute inset-y-0 right-0 w-[1px] bg-primary" />
+                        <div className="md:hidden flex items-center">
+                            <button
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="text-white focus:outline-none"
+                            >
+                                <List className="cursor-pointer inset-0 flex items-center transition duration-150 hover:animate-spin-element" size={24} />
+                            </button>
                         </div>
-                    </MailDialog>
-                    <Link href="/sign-in" onClick={() => handleLogout()} className="group relative h-6 w-6">
-                        <DoorClosed className="absolute inset-0 flex items-center transition duration-150 group-hover:opacity-0" color="white" />
-                        <DoorOpen className="absolute cursor-pointer inset-0 flex transition-transform duration-150 translate-y-[-100%] opacity-0 group-hover:animate-spin-element group-hover:opacity-100" color="white" />
-                    </Link>
-                </div>
+                        <Link href="/sign-in" className="text-sm uppercase cursor-pointer text-white font-bold hover:animate-spin-element px-4">ВОЙТИ</Link>
+                    </div>
+                )}
             </Container>
 
 
@@ -97,4 +123,6 @@ export default function Header({ className }: Props) {
             )}
         </header>
     );
-}
+})
+
+export default Header

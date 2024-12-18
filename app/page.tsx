@@ -4,7 +4,7 @@ import Auth from "@/components/shared/services/auth/auth"
 
 export default function Home() {
   return (
-    <Auth>
+    <Auth mainPage={true}>
       <StatusPanel />
       <CardList className="mb-12" />
     </Auth>

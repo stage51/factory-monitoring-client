@@ -8,9 +8,10 @@ import apiClient from "./api-client";
 
 interface Props {
   children?: ReactNode;
+  mainPage?: boolean
 }
 
-export default function Auth({ children }: Props) {
+export default function Auth({ children, mainPage = false }: Props) {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const [accessDenied, setAccessDenied] = useState(false);
   const refreshTimer = useRef<NodeJS.Timeout | null>(null);
@@ -117,7 +118,7 @@ export default function Auth({ children }: Props) {
     );
   }
 
-  if (accessDenied) {
+  if (accessDenied && mainPage === false) {
     return (
       <>
         <Title
@@ -134,7 +135,7 @@ export default function Auth({ children }: Props) {
     );
   }
 
-  if (!isAuthorized) {
+  if (!isAuthorized && mainPage === false) {
     return (
       <>
         <Title

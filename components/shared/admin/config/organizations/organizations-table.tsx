@@ -33,6 +33,7 @@ export default function OrganizationsTable() {
 
     type HeadersTypes = {
       id: number;
+      userId: number;
       shortName: string;
       name: string;
       type: string;

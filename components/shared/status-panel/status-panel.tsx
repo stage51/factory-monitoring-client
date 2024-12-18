@@ -104,11 +104,12 @@ const StatusPanel = observer(() => {
     }, {} as Record<string, ReportStatus[]>);
     
     if (profile === null) {
-        return (<></>)
+        return (<Title title={"Здравствуйте"} subtitle="Добро пожаловать в ЕГАИС Мониторинг. После авторизации вам будут доступен функционал сервиса." />)
+
     } else if (!profile?.organization || !profile?.organization?.taxpayerNumber){
         return (
             <>
-            <Title title={"Здравствуйте, " + profile.firstName + " " + profile.lastName} subtitle="Добро пожаловать в ЕГАИС Мониторинг. Вы авторизованы как клиент. Выберите действие." />
+            <Title title={"Здравствуйте, " + profile.firstName + " " + profile.lastName} subtitle="Добро пожаловать в ЕГАИС Мониторинг. Выберите действие." />
             <Container className="flex items-start flex-col p-6 gap-6 animate-slide-element">
                 <Card className="flex justify-center items-center gap-8 p-6 border-none shadow-md w-full">
                     <Frown strokeWidth={1.25} className="h-12 w-12 text-muted-foreground" />
