@@ -21,7 +21,6 @@ export default function UserVerification() {
       { key: "firstName", label: "Имя", sortable: false },
       { key: "lastName", label: "Фамилия", sortable: false },
       { key: "middleName", label: "Отчество", sortable: false },
-      { key: "timezone", label: "Часовой пояс", sortable: false },
       { key: "role", label: "Роль", sortable: false },
       { key: "active", label: "Активен", sortable: false },
       { key: "createdAt", label: "Дата создания", sortable: true },
@@ -39,7 +38,6 @@ export default function UserVerification() {
       firstName: string;
       lastName: string;
       middleName: string;
-      timezone: string;
       role: string;
       active: boolean;
       createdAt: Date;

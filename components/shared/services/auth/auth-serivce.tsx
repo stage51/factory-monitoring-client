@@ -47,3 +47,10 @@ export const register = async (userData: {
     sessionStorage.setItem("access_token", accessToken);
     sessionStorage.setItem("refresh_token", refreshToken);
   };
+
+export const forgotPassword = async (email : string) => {
+    await apiClient.get("/auth-server/auth/forgot", { params : { email : email}})
+}
+export const recoveryPassword = async (code : string) => {
+    await apiClient.get("/auth-server/auth/recovery", { params : { code : code}})
+}

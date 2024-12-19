@@ -8,6 +8,8 @@ import {
   UserRequest,
   UserResponse,
   OrganizationRequest,
+  SettingRequest,
+  updateSetting as updateSettingAPI,
 } from "../services/profile/profile-service";
 import { toast } from "@/components/hooks/use-toast"
 import { setTimezone } from "../timezone/date";
@@ -26,7 +28,7 @@ export class UserStore {
     try {
       const profile = await fetchUserProfile();
       this.profile = profile;
-      setTimezone(profile.timezone);
+      setTimezone(profile.setting.timezone);
       toast({
         title: "Профиль загружен",
         description: "Данные успешно получены.",
@@ -81,6 +83,28 @@ export class UserStore {
         title: "Ошибка обновления организации",
         variant: "destructive",
         description: "Не удалось обновить данные об организации.",
+      });
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  updateSetting = async (data: SettingRequest) => {
+    this.isLoading = true;
+    try {
+      await updateSettingAPI(data);
+      if (this.profile?.setting) {
+        this.profile.setting = { ...this.profile.setting, ...data };
+      }
+      toast({
+        title: "Обновление настроек",
+        description: "Настройки успешно обновлены.",
+      });
+    } catch (err) {
+      toast({
+        title: "Ошибка обновления настроек",
+        variant: "destructive",
+        description: "Не удалось обновить настройки пользователя.",
       });
     } finally {
       this.isLoading = false;

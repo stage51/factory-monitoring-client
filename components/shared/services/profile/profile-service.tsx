@@ -1,6 +1,10 @@
 import apiClient from "../auth/api-client";
 
-
+export interface SettingResponse {
+    timezone: string;
+    subscribe: boolean;
+    reportNotifications: string[];
+}
 
 export interface OrganizationResponse {
     shortName: string;
@@ -19,12 +23,17 @@ export interface UserResponse {
     firstName: string;
     lastName: string;
     middleName: string;
-    timezone: string;
-    subscribe: boolean;
     active: boolean;
     role: string;
     organization: OrganizationResponse;
-  }
+    setting: SettingResponse;
+}
+
+export interface SettingRequest {
+    timezone: string;
+    subscribe: boolean;
+    reportNotifications: string[];
+}
 
 export interface OrganizationRequest {
     shortName: string;
@@ -44,8 +53,6 @@ export interface UserRequest {
     firstName: string;
     lastName: string;
     middleName: string;
-    timezone: string;
-    subscribe: boolean;
 }
 export const fetchUserProfile = async (): Promise<UserResponse> => {
     const response = await apiClient.get("/auth-server/users/profile");
@@ -77,4 +84,8 @@ export const deleteOrganization = async () => {
 
 export const updateProfile = async (data : UserRequest) => {
     await apiClient.put("/auth-server/users/profile", data)
+}
+
+export const updateSetting = async (data: SettingRequest) => {
+    await apiClient.put("auth-server/users/profile/setting", data)
 }

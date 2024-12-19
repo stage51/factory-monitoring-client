@@ -18,10 +18,10 @@ export default function UserListTable() {
     const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
       { key: "id", label: "ID", sortable: false },
       { key: "email", label: "Email", sortable: true },
+      { key: "password", label: "Пароль", sortable: false},
       { key: "firstName", label: "Имя", sortable: false },
       { key: "lastName", label: "Фамилия", sortable: false },
       { key: "middleName", label: "Отчество", sortable: false },
-      { key: "timezone", label: "Часовой пояс", sortable: false },
       { key: "role", label: "Роль", sortable: false },
       { key: "active", label: "Активен", sortable: false },
       { key: "createdAt", label: "Дата создания", sortable: true },
@@ -36,10 +36,10 @@ export default function UserListTable() {
     type HeadersTypes = {
       id: number;
       email: string;
+      password: string;
       firstName: string;
       lastName: string;
       middleName: string;
-      timezone: string;
       role: string;
       active: boolean;
       createdAt: Date;

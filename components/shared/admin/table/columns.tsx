@@ -140,7 +140,7 @@ function EditDialog<HeadersTypes>({
                                             ) : (
                                                 <Input
                                                     id={key.toString()}
-                                                    defaultValue={String(editedData[key])}
+                                                    defaultValue={String(editedData[key] === undefined ? "" : editedData[key])}
                                                     className="col-span-3"
                                                     onChange={(e) =>
                                                         handleFieldChange(key.toString(), e.target.value)

@@ -148,8 +148,7 @@ export default function FiveMinuteFilesTable() {
           <SelectFilter table={tableRef} column="status" placeholder="Выберите статус" values={["Неизвестно", "Принято в РАР", "Не принято в РАР", "Принято в УТМ", "Не принято в УТМ"]}/>
         </div>
         <div className="flex flex-col w-full gap-4">
-          <DateFilter placeholder="Начальная дата" column="startDate" table={tableRef}/>
-          <DateFilter placeholder="Конечная дата" column="endDate" table={tableRef}/>
+          <DateFilter placeholder="Дата" column="controlDate" table={tableRef}/>
         </div>
       </DataTable>
     </div>

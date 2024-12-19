@@ -15,13 +15,16 @@ interface Props {
 }
 
 const Header = observer(({ className }: Props) => {
-    const {profile} = userStore;
+    const {profile, fetchProfile} = userStore;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isAuthorized, setIsAuthorized] = useState(true);
     const { toast } = useToast()
 
     useEffect(() => {
-        setIsAuthorized(!!profile);
+        if (profile === null) {
+            fetchProfile()
+        }
+        setIsAuthorized(!!profile)
     }, [profile]);
     
     const handleLogout = async () => {

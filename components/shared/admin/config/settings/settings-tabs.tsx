@@ -45,6 +45,7 @@ type Security = {
 };
 type DateTime = {
   defaultValue: string;
+  defaultUserTimezone: string;
 };
 type Timing = {
   greenMonitoringTiming: number;
@@ -57,6 +58,17 @@ type Timing = {
   yellowDailyTiming: number;
   redDailyTiming: number;
 };
+type Email = {
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  sslEnable: boolean;
+  starttlsEnable: boolean;
+  registrationNotification: boolean;
+  helpNotification: boolean;
+}
+
 type ApiToken = {
   value: string;
 }
@@ -81,7 +93,7 @@ export default function SettingsTabs() {
     accessExpiration: 0,
     refreshExpiration: 0,
   });
-  const [dateTime, setDateTime] = useState<DateTime>({ defaultValue: "" });
+  const [dateTime, setDateTime] = useState<DateTime>({ defaultValue: "", defaultUserTimezone: "" });
   const [timing, setTiming] = useState<Timing>({
     greenMonitoringTiming: 0,
     yellowMonitoringTiming: 0,
@@ -93,6 +105,16 @@ export default function SettingsTabs() {
     yellowDailyTiming: 0,
     redDailyTiming: 0,
   });
+  const [email, setEmail] = useState<Email>({
+    host: "",
+    port: 0,
+    username: "",
+    password: "",
+    sslEnable: false,
+    starttlsEnable: false,
+    registrationNotification: false,
+    helpNotification: false
+  })
   const [apiToken, setApiToken] = useState<string>("")
 
   const handleSaveCompany = async (company: Company) => {
@@ -116,6 +138,7 @@ export default function SettingsTabs() {
   }
   async function handleSaveDateTime(dateTime : DateTime) {
     await updateConfig('config/application/date-time.default-value', dateTime.defaultValue);
+    await updateConfig('config/application/date-time.default-user-timezone', dateTime.defaultUserTimezone);
   }
   async function handleSaveTiming(timing : Timing) {
     await updateConfig("config/application/timing.green-monitoring-timing", timing.greenMonitoringTiming);
@@ -127,6 +150,16 @@ export default function SettingsTabs() {
     await updateConfig("config/application/timing.green-fiveminute-timing", timing.greenFiveminuteTiming);
     await updateConfig("config/application/timing.yellow-fiveminute-timing", timing.yellowFiveminuteTiming);
     await updateConfig("config/application/timing.red-fiveminute-timing", timing.redFiveminuteTiming);
+  }
+  async function handleSaveEmail(email : Email) {
+    await updateConfig("config/mail-service/spring.mail.host", email.host)
+    await updateConfig("config/mail-service/spring.mail.port", email.port)
+    await updateConfig("config/mail-service/spring.mail.username", email.username)
+    await updateConfig("config/mail-service/spring.mail.password", email.password)
+    await updateConfig("config/mail-service/spring.mail.properties.mail.smtp.ssl.enable", email.sslEnable || "false")
+    await updateConfig("config/mail-service/spring.mail.properties.mail.smtp.starttls.enable", email.starttlsEnable || "false")
+    await updateConfig("config/application/email.registration-notification", email.registrationNotification || "false")
+    await updateConfig("config/application/email.help-notification", email.helpNotification || "false")
   }
   async function handleCreateApiToken(data: z.infer<typeof FormSchema>) {
     const expiration = Number.parseInt(data.type) * 30 * 24 * 60 * 60 * 1000
@@ -153,6 +186,7 @@ export default function SettingsTabs() {
   
         setDateTime({
           defaultValue: await getConfig("config/application/date-time.default-value"),
+          defaultUserTimezone: await getConfig("config/application/date-time.default-user-timezone")
         });
   
         setSecurity({
@@ -173,6 +207,17 @@ export default function SettingsTabs() {
           yellowDailyTiming: await getConfig("config/application/timing.yellow-daily-timing"),
           redDailyTiming: await getConfig("config/application/timing.red-daily-timing"),
         });
+
+        setEmail({
+          host: await getConfig("config/mail-service/spring.mail.host"),
+          port: await getConfig("config/mail-service/spring.mail.port"),
+          username: await getConfig("config/mail-service/spring.mail.username"),
+          password: await getConfig("config/mail-service/spring.mail.password"),
+          sslEnable: await getConfig("config/mail-service/spring.mail.properties.mail.smtp.ssl.enable"),
+          starttlsEnable: await getConfig("config/mail-service/spring.mail.properties.mail.smtp.starttls.enable"),
+          registrationNotification: await getConfig("config/application/email.registration-notification"),
+          helpNotification: await getConfig("config/application/email.help-notification")
+        })
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -196,7 +241,7 @@ export default function SettingsTabs() {
                 <TabsTrigger value="security" className="w-full md:w-[12.5%]">Безопасность</TabsTrigger>
                 <TabsTrigger value="user" className="w-full md:w-[12.5%]">Пользователь</TabsTrigger>
                 <TabsTrigger value="date-time" className="w-full md:w-[12.5%]">Дата и время</TabsTrigger>
-                <TabsTrigger value="private-messages" className="w-full md:w-[12.5%]">Сообщения</TabsTrigger>
+                <TabsTrigger value="email" className="w-full md:w-[12.5%]">Почта</TabsTrigger>
                 <TabsTrigger value="timing" className="w-full md:w-[12.5%]">Тайминги</TabsTrigger>
                 <TabsTrigger value="reports" className="w-full md:w-[12.5%]">Отчеты</TabsTrigger>
             </TabsList>
@@ -540,10 +585,56 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="default-value">Часовой пояс по умолчанию</Label>
+                        <Label htmlFor="default-value">Серверный часовой пояс</Label>
                         <Select onValueChange={(e) => setDateTime({...dateTime, defaultValue: e})} defaultValue={dateTime.defaultValue}>
                             <SelectTrigger>
                                 <SelectValue id="default-value" placeholder="Выберите значение"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="UTC-12:00">UTC-12:00</SelectItem>
+                                <SelectItem value="UTC-11:00">UTC-11:00</SelectItem>
+                                <SelectItem value="UTC-10:00">UTC-10:00 (Hawaii-Aleutian Time)</SelectItem>
+                                <SelectItem value="UTC-09:00">UTC-09:00 (Alaska Time)</SelectItem>
+                                <SelectItem value="UTC-08:00">UTC-08:00 (Pacific Time)</SelectItem>
+                                <SelectItem value="UTC-07:00">UTC-07:00 (Mountain Time)</SelectItem>
+                                <SelectItem value="UTC-06:00">UTC-06:00 (Central Time)</SelectItem>
+                                <SelectItem value="UTC-05:00">UTC-05:00 (Eastern Time)</SelectItem>
+                                <SelectItem value="UTC-04:00">UTC-04:00 (Atlantic Time)</SelectItem>
+                                <SelectItem value="UTC-03:00">UTC-03:00</SelectItem>
+                                <SelectItem value="UTC-02:00">UTC-02:00</SelectItem>
+                                <SelectItem value="UTC-01:00">UTC-01:00</SelectItem>
+                                <SelectItem value="UTC+00:00">UTC+00:00 (GMT)</SelectItem>
+                                <SelectItem value="UTC+01:00">UTC+01:00 (Central European Time)</SelectItem>
+                                <SelectItem value="UTC+02:00">UTC+02:00 (Eastern European Time)</SelectItem>
+                                <SelectItem value="UTC+03:00">UTC+03:00 (Moscow Time)</SelectItem>
+                                <SelectItem value="UTC+03:30">UTC+03:30 (Iran Standard Time)</SelectItem>
+                                <SelectItem value="UTC+04:00">UTC+04:00 (Gulf Standard Time)</SelectItem>
+                                <SelectItem value="UTC+04:30">UTC+04:30 (Afghanistan Time)</SelectItem>
+                                <SelectItem value="UTC+05:00">UTC+05:00 (Pakistan Standard Time)</SelectItem>
+                                <SelectItem value="UTC+05:30">UTC+05:30 (India Standard Time)</SelectItem>
+                                <SelectItem value="UTC+05:45">UTC+05:45 (Nepal Time)</SelectItem>
+                                <SelectItem value="UTC+06:00">UTC+06:00 (Bangladesh Time)</SelectItem>
+                                <SelectItem value="UTC+06:30">UTC+06:30 (Cocos Islands Time)</SelectItem>
+                                <SelectItem value="UTC+07:00">UTC+07:00 (Indochina Time)</SelectItem>
+                                <SelectItem value="UTC+08:00">UTC+08:00 (China Standard Time)</SelectItem>
+                                <SelectItem value="UTC+08:45">UTC+08:45 (Australian Central Western Time)</SelectItem>
+                                <SelectItem value="UTC+09:00">UTC+09:00 (Japan Standard Time)</SelectItem>
+                                <SelectItem value="UTC+09:30">UTC+09:30 (Australian Central Time)</SelectItem>
+                                <SelectItem value="UTC+10:00">UTC+10:00 (Australian Eastern Time)</SelectItem>
+                                <SelectItem value="UTC+10:30">UTC+10:30 (Lord Howe Island Time)</SelectItem>
+                                <SelectItem value="UTC+11:00">UTC+11:00 (Solomon Islands Time)</SelectItem>
+                                <SelectItem value="UTC+12:00">UTC+12:00 (New Zealand Standard Time)</SelectItem>
+                                <SelectItem value="UTC+12:45">UTC+12:45 (Chatham Islands Time)</SelectItem>
+                                <SelectItem value="UTC+13:00">UTC+13:00 (Tonga Time)</SelectItem>
+                                <SelectItem value="UTC+14:00">UTC+14:00 (Line Islands Time)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="default-user-timezone">Часовой пояс по умолчанию при регистрации</Label>
+                        <Select onValueChange={(e) => setDateTime({...dateTime, defaultUserTimezone: e})} defaultValue={dateTime.defaultUserTimezone}>
+                            <SelectTrigger>
+                                <SelectValue id="default-user-timezone" placeholder="Выберите значение"/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="UTC-12:00">UTC-12:00</SelectItem>
@@ -595,22 +686,79 @@ export default function SettingsTabs() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="private-messages">
+            <TabsContent value="email">
               <Card className="shadow-none">
                 <CardHeader>
-                  <CardTitle className="text-lg">Настройки личных сообщений</CardTitle>
+                  <CardTitle className="text-lg">Настройки сервиса электронной почты</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-6">
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="allow-private-messages">Возможность оставлять личные сообщения</Label>
-                      <Switch />
+                    <div className="space-y-2">
+                      <Label htmlFor="host">Почтовый сервер</Label>
+                      <Input
+                        id="host"
+                        type="text"
+                        placeholder="Введите URL"
+                        value={email.host || ""}
+                        onChange={(e) =>
+                          setEmail({ ...email, host: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="port">Порт</Label>
+                      <Input
+                        id="port"
+                        type="number"
+                        placeholder="Введите число"
+                        value={email.port || ""}
+                        onChange={(e) =>
+                          setEmail({ ...email, port: Number.parseInt(e.target.value) })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Имя аккаунта</Label>
+                      <Input
+                        id="username"
+                        type="text"
+                        placeholder="Введите имя"
+                        value={email.username || ""}
+                        onChange={(e) =>
+                          setEmail({ ...email, username: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Пароль от аккаунта</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Введите URL"
+                        value={email.password || ""}
+                        onChange={(e) =>
+                          setEmail({ ...email, password: e.target.value })
+                        }
+                      />
                     </div>
                     <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="notify-private-messages">Уведомление о личных сообщениях</Label>
-                      <Switch />
+                      <Label htmlFor="ssl-enable">Подключение по SSL/TLS</Label>
+                      <Switch checked={!!email.sslEnable} onCheckedChange={(e) => setEmail({...email, sslEnable: e})}/>
+                    </div>
+                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <Label htmlFor="starttls-enable">Подключение по StartTLS</Label>
+                      <Switch checked={!!email.starttlsEnable} onCheckedChange={(e) => setEmail({...email, starttlsEnable: e})}/>
+                    </div>
+                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <Label htmlFor="registration-notification">Уведомление о регистрациях пользователей</Label>
+                      <Switch checked={!!email.registrationNotification} onCheckedChange={(e) => setEmail({...email, registrationNotification: e})}/>
+                    </div>
+                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <Label htmlFor="help-notification">Уведомление о заявлениях в сервис</Label>
+                      <Switch checked={!!email.helpNotification} onCheckedChange={(e) => setEmail({...email, helpNotification: e})}/>
                     </div>
                     <Button className="mt-4" onClick={() => {
+                      handleSaveEmail(email)
                       toast({
                         title: "Настройки",
                         description: "Настройки сохранены",

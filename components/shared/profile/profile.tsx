@@ -12,9 +12,10 @@ import { OrganizationForm } from "../forms/organization-form"
 import { UserRegForm } from "../forms/user-reg-form"
 import { observer } from "mobx-react-lite"
 import { userStore } from "../stores/user-store"
+import { SettingForm } from "../forms/setting-form"
 
 const Profile: React.FC = observer(() => {
-  const { profile, isLoading, error, fetchProfile, updateProfile, updateOrganization, deleteOrganization } =
+  const { profile, isLoading, error, fetchProfile, updateProfile, updateSetting, updateOrganization, deleteOrganization } =
   userStore;
 
   useEffect(() => {
@@ -37,6 +38,27 @@ const Profile: React.FC = observer(() => {
             <h2 className="text-2xl font-bold mb-2">{profile?.firstName} {profile?.lastName}</h2>
             <p className="text-gray-500 mb-4">{profile?.email}</p>
           </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="w-full">Изменить настройки</Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Настройки пользователя</DialogTitle>
+                          <DialogDescription>Изменение настроек пользователя</DialogDescription>
+                        </DialogHeader>
+                        <SettingForm initialValues={profile?.setting} onSubmit={updateSetting}>
+                            <Button className="w-full" type="submit" >
+                                Изменить
+                            </Button>
+                        </SettingForm>
+                        <DialogClose asChild>
+                          <Button className="" type="button" variant="secondary">
+                            Закрыть
+                          </Button>
+                        </DialogClose>
+                      </DialogContent>
+                    </Dialog>
         </div>
 
 
@@ -80,7 +102,7 @@ const Profile: React.FC = observer(() => {
                     <Separator />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Часовой пояс</p>
-                      <p className="text-sm text-muted-foreground">{profile?.timezone}</p>
+                      <p className="text-sm text-muted-foreground">{profile?.setting.timezone}</p>
                     </div>
                   </div>
                   <div className="flex gap-6 flex-col md:flex-row mt-6">
@@ -89,9 +111,9 @@ const Profile: React.FC = observer(() => {
                         <Button className="w-full">Изменить</Button>
                       </DialogTrigger>
                       <DialogContent>
-                        <DialogHeader className="hidden">
-                          <DialogTitle />
-                          <DialogDescription />
+                        <DialogHeader>
+                          <DialogTitle>Профиль пользователя</DialogTitle>
+                          <DialogDescription>Изменение профиля пользователя</DialogDescription>
                         </DialogHeader>
                         <UserRegForm initialValues={profile} onSubmit={updateProfile}>
                             <Button className="w-full" type="submit" >
@@ -174,9 +196,9 @@ const Profile: React.FC = observer(() => {
                         <Button className="w-full">Изменить</Button>
                       </DialogTrigger>
                       <DialogContent>
-                        <DialogHeader className="hidden">
-                          <DialogTitle />
-                          <DialogDescription />
+                        <DialogHeader>
+                          <DialogTitle>JОрганизация пользователя</DialogTitle>
+                          <DialogDescription>Изменение организации пользователя</DialogDescription>
                         </DialogHeader>
                         <OrganizationForm initialValues={profile?.organization} onSubmit={updateOrganization}>
                             <Button className="w-full" type="submit" >

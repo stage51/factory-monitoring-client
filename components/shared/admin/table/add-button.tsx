@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { DatePicker } from "@/components/shared/date-picker";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
+import { da } from "date-fns/locale";
 
 interface Props<HeadersTypes> {
   className?: string;
@@ -103,6 +104,7 @@ export default function AddButton<HeadersTypes>({
                         id={key.toString()}
                         placeholder="Введите значение"
                         className="col-span-3"
+                        value={data[key] === undefined ? "" : data[key]} 
                         onChange={(e) =>
                           setData((prev) => ({ ...prev, [key]: e.target.value }))
                         }

@@ -5,7 +5,6 @@ export const testData = [
         firstName: "John",
         lastName: "Doe",
         middleName: "Jack",
-        timezone: "UTC+03:00",
         role: "ROLE_GUEST",
         active: true,
         createdAt: new Date,

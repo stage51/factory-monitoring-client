@@ -43,6 +43,9 @@ export default function SignIn() {
               </Button>
             </Link>
           </div>
+          <div className="w-full flex justify-center">
+            <Link href="/forgot">Забыл пароль?</Link>
+          </div>
         </UserLoginForm>
       </CardContent>
     </Card>
