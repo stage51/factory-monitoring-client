@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import StatesTable from "@/components/shared/admin/config/states/states-table"
+import OrganizationsTable from "@/components/shared/admin/users/organizations/organizations-table"
 
 export default function Page() {
   return (
@@ -25,18 +25,18 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/admin/config">Конфигурация</BreadcrumbLink>
+                <BreadcrumbLink href="/admin/users">Пользователи</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Страны</BreadcrumbPage>
+                <BreadcrumbPage>Организации</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </Container>
-      <Title title="Страны" />
+      <Title title="Организации" />
       <Container className="mb-40 p-6 pt-0 animate-slide-element">
-        <StatesTable />
+        <OrganizationsTable />
       </Container>
     </div>
   )

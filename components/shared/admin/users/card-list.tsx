@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import Container from '../../container';
 import Card from '../../card';
-import { LaptopMinimal, CloudDownload, CloudUpload, Settings, Joystick, Calculator, Users, File, Cpu, Binoculars, Eye, Flashlight, CalendarSearch, Files, SquareArrowLeft, List, SquareUser, UserRound, UserRoundSearch, KeyRound, UserCheck } from 'lucide-react';
+import { LaptopMinimal, CloudDownload, CloudUpload, Settings, Joystick, Calculator, Users, File, Cpu, Binoculars, Eye, Flashlight, CalendarSearch, Files, SquareArrowLeft, List, SquareUser, UserRound, UserRoundSearch, KeyRound, UserCheck, Building2 } from 'lucide-react';
 import { useRouter } from 'next/navigation'
 import { useState } from 'react';
 
@@ -27,7 +27,7 @@ export default function CardList({ className }: Props) {
                                 <List size={96} className="relative text-primary" />
                             </div>
                         }
-                        title="Список"
+                        title="Список пользователей"
                         className="content-center"
                         onClick={() => {handleCardClick("users/list")}}
                     />
@@ -41,6 +41,16 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("users/verification")}}
                     />
+                    <Card
+                        icon={
+                            <div className='h-32'>
+                                <Building2 size={96} className="relative text-primary" />
+                            </div>
+                        }
+                        title="Организации"
+                        className="content-center"
+                        onClick={() => {handleCardClick("users/organizations")}}
+                     />
                     <Card 
                         icon={
                             <div className='h-32'>

@@ -1,5 +1,4 @@
 import Title from "@/components/shared/title"
-import CardList from "@/components/shared/admin/config/card-list"
 import Container from "@/components/shared/container"
 import {
   Breadcrumb,
@@ -9,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import SettingsTabs from "@/components/shared/admin/config/settings-tabs"
 
 export default function Page() {
   return (
@@ -31,7 +31,7 @@ export default function Page() {
           </Breadcrumb>
         </Container>
       <Title title="Конфигурация" />
-      <CardList />
+      <SettingsTabs />
     </div>
   )
 }

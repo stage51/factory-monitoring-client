@@ -66,7 +66,15 @@ type Email = {
   sslEnable: boolean;
   starttlsEnable: boolean;
   registrationNotification: boolean;
+  registrationNotificationFor: string;
   helpNotification: boolean;
+  helpNotificationFor: string;
+}
+type User = {
+  recoveryUrlLifetime: number;
+  avatarUpload: boolean;
+  imageHostingApiUrl: string;
+  imageHostingSecretKey: string;
 }
 
 type ApiToken = {
@@ -113,7 +121,15 @@ export default function SettingsTabs() {
     sslEnable: false,
     starttlsEnable: false,
     registrationNotification: false,
-    helpNotification: false
+    registrationNotificationFor: "",
+    helpNotification: false,
+    helpNotificationFor: ""
+  })
+  const [user, setUser] = useState<User>({
+    recoveryUrlLifetime: 0,
+    avatarUpload: false,
+    imageHostingApiUrl: "",
+    imageHostingSecretKey: ""
   })
   const [apiToken, setApiToken] = useState<string>("")
 
@@ -159,7 +175,16 @@ export default function SettingsTabs() {
     await updateConfig("config/mail-service/spring.mail.properties.mail.smtp.ssl.enable", email.sslEnable || "false")
     await updateConfig("config/mail-service/spring.mail.properties.mail.smtp.starttls.enable", email.starttlsEnable || "false")
     await updateConfig("config/application/email.registration-notification", email.registrationNotification || "false")
+    await updateConfig("config/application/email.registration-notification-for", email.registrationNotificationFor)
     await updateConfig("config/application/email.help-notification", email.helpNotification || "false")
+    await updateConfig("config/application/email.help-notification-for", email.helpNotificationFor)
+  }
+  async function handleSaveUser(user : User) {
+    await updateConfig("config/application/user.recovery-url-lifetime", user.recoveryUrlLifetime)
+    await updateConfig("config/application/user.avatar-upload", user.avatarUpload || "false")
+    await updateConfig("config/next-app/user.avatar-upload", user.avatarUpload || "false")
+    await updateConfig("config/application/user.image-hosting-api-url", user.imageHostingApiUrl)
+    await updateConfig("config/application/user.image-hosting-secret-key", user.imageHostingSecretKey)
   }
   async function handleCreateApiToken(data: z.infer<typeof FormSchema>) {
     const expiration = Number.parseInt(data.type) * 30 * 24 * 60 * 60 * 1000
@@ -216,7 +241,16 @@ export default function SettingsTabs() {
           sslEnable: await getConfig("config/mail-service/spring.mail.properties.mail.smtp.ssl.enable"),
           starttlsEnable: await getConfig("config/mail-service/spring.mail.properties.mail.smtp.starttls.enable"),
           registrationNotification: await getConfig("config/application/email.registration-notification"),
-          helpNotification: await getConfig("config/application/email.help-notification")
+          registrationNotificationFor: await getConfig("config/application/email.registration-notification-for"),
+          helpNotification: await getConfig("config/application/email.help-notification"),
+          helpNotificationFor: await getConfig("config/application/email.help-notification-for")
+        })
+
+        setUser({
+          recoveryUrlLifetime: await getConfig("config/application/user.recovery-url-lifetime"),
+          avatarUpload: await getConfig("config/application/user.avatar-upload"),
+          imageHostingApiUrl: await getConfig("config/application/user.image-hosting-api-url"),
+          imageHostingSecretKey: await getConfig("config/application/user.image-hosting-secret-key")
         })
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -528,47 +562,26 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="sign-up-type">Верификация</Label>
-                        <Select>
-                            <SelectTrigger>
-                                <SelectValue id="sign-up-type" placeholder="Выберите тип"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="admin-approval">Подтверждение администратора</SelectItem>
-                                <SelectItem value="email-verification">Подтверждение через почту</SelectItem>
-                                <SelectItem value="disable">Без верификации</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Label htmlFor="recovery-url-lifetime">Время жизни ссылки для восстановления пароля, мин</Label>
+                        <Input id="recovery-url-lifetime" type="number" placeholder="Введите число"
+                        value={user.recoveryUrlLifetime} onChange={(e) => setUser({...user, recoveryUrlLifetime: Number.parseInt(e.target.value)})}/>
+                    </div>
+                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <Label htmlFor="avatar-upload">Загрузка аватаров</Label>
+                      <Switch checked={!!user.avatarUpload} onCheckedChange={(e) => setUser({...user, avatarUpload: e})}/>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="password-size">Время жизни ссылки для восстановления пароля, дней</Label>
-                        <Input id="password-recovery-lifetime" type="number" placeholder="Введите число" />
+                        <Label htmlFor="image-hosting-api-url">Ссылка на API хостинга изображений (аватаров)</Label>
+                        <Input id="image-hosting-api-url" type="text" placeholder="Введите ссылку" disabled={!user.avatarUpload}
+                        value={user.imageHostingApiUrl} onChange={(e) => setUser({...user, imageHostingApiUrl: e.target.value})} />
                     </div>
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="news-subscription">Новостная подписка для пользователей</Label>
-                      <Switch />
-                    </div>
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="upload-avatar">Загрузка аватаров</Label>
-                      <Switch />
-                    </div>
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="view-profile">Просмотр профилей пользователей</Label>
-                      <Switch />
-                    </div>
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="fill-company-info">Форма заполнения данных компании при регистрации</Label>
-                      <Switch />
-                    </div>
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="notify-sign-up">Уведомление о новой регистрации пользователя</Label>
-                      <Switch />
-                    </div>
-                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <Label htmlFor="notify-sign-up">Согласие с политикой при регистрации</Label>
-                      <Switch />
+                    <div className="space-y-2">
+                        <Label htmlFor="image-hosting-secret-key">API ключ для хостинга изображений</Label>
+                        <Input id="image-hosting-secret-key" type="text" placeholder="Введите ключ" disabled={!user.avatarUpload}
+                        value={user.imageHostingSecretKey} onChange={(e) => setUser({...user, imageHostingSecretKey: e.target.value})} />
                     </div>
                     <Button className="mt-4" onClick={() => {
+                      handleSaveUser(user)
                       toast({
                         title: "Настройки",
                         description: "Настройки сохранены",
@@ -753,10 +766,44 @@ export default function SettingsTabs() {
                       <Label htmlFor="registration-notification">Уведомление о регистрациях пользователей</Label>
                       <Switch checked={!!email.registrationNotification} onCheckedChange={(e) => setEmail({...email, registrationNotification: e})}/>
                     </div>
+                    <RadioGroup className="mx-2" 
+                    disabled={!email.registrationNotification} 
+                    defaultValue={email.registrationNotificationFor}
+                    onValueChange={(e) => setEmail({...email, registrationNotificationFor: e})}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="admin-only" id="admin-only" />
+                        <Label htmlFor="admin-only">Только администраторам</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="admin-manager" id="admin-manager" />
+                        <Label htmlFor="admin-manager">Администраторам и менеджерам</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="manager-only" id="manager-only" />
+                        <Label htmlFor="manager-only">Только менеджерам</Label>
+                      </div>
+                    </RadioGroup>
                     <div className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <Label htmlFor="help-notification">Уведомление о заявлениях в сервис</Label>
                       <Switch checked={!!email.helpNotification} onCheckedChange={(e) => setEmail({...email, helpNotification: e})}/>
                     </div>
+                    <RadioGroup className="mx-2" 
+                    disabled={!email.helpNotification} 
+                    defaultValue={email.helpNotificationFor}
+                    onValueChange={(e) => setEmail({...email, helpNotificationFor: e})}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="admin-only" id="admin-only" />
+                        <Label htmlFor="admin-only">Только администраторам</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="admin-manager" id="admin-manager" />
+                        <Label htmlFor="admin-manager">Администраторам и менеджерам</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="manager-only" id="manager-only" />
+                        <Label htmlFor="manager-only">Только менеджерам</Label>
+                      </div>
+                    </RadioGroup>
                     <Button className="mt-4" onClick={() => {
                       handleSaveEmail(email)
                       toast({

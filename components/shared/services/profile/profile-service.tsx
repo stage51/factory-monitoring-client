@@ -4,6 +4,7 @@ export interface SettingResponse {
     timezone: string;
     subscribe: boolean;
     reportNotifications: string[];
+    avatarUrl: string;
 }
 
 export interface OrganizationResponse {
@@ -33,6 +34,7 @@ export interface SettingRequest {
     timezone: string;
     subscribe: boolean;
     reportNotifications: string[];
+    avatarUrl: string;
 }
 
 export interface OrganizationRequest {

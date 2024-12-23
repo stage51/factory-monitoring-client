@@ -31,8 +31,8 @@ const Profile: React.FC = observer(() => {
         <div className="md:w-1/3 flex flex-col items-center md:items-center">
           {/* Profile Avatar */}
           <Avatar className="w-32 h-32 mb-4">
-            <AvatarImage src="/images/user-avatar.png" alt="User Avatar" />
-            <AvatarFallback>AB</AvatarFallback>
+            <AvatarImage src={profile?.setting.avatarUrl} alt="User Avatar" />
+            <AvatarFallback>{profile?.firstName.charAt(0)}{profile?.lastName.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">{profile?.firstName} {profile?.lastName}</h2>

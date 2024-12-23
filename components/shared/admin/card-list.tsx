@@ -39,7 +39,7 @@ export default function CardList({ className }: Props) {
                             </div>
                         }
                         title="Пользователи"
-                        subtitle='Список, роли, онлайн'
+                        subtitle='Список, роли, онлайн, организации'
                         className="content-center"
                         onClick={() => {handleCardClick("admin/users")}}
                     />
@@ -50,7 +50,7 @@ export default function CardList({ className }: Props) {
                             </div>
                         }
                         title="Конфигурация"
-                        subtitle="Настройки, страны, организации, продукты"
+                        subtitle="Компания, SEO, безопасность, пользователь"
                         className="content-center"
                         onClick={() => {handleCardClick("admin/config")}}
                      />

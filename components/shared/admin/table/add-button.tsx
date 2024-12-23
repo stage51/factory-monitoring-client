@@ -104,7 +104,6 @@ export default function AddButton<HeadersTypes>({
                         id={key.toString()}
                         placeholder="Введите значение"
                         className="col-span-3"
-                        value={data[key] === undefined ? "" : data[key]} 
                         onChange={(e) =>
                           setData((prev) => ({ ...prev, [key]: e.target.value }))
                         }

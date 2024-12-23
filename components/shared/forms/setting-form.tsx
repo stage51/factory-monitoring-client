@@ -4,16 +4,20 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Schema, z } from "zod";
+import { boolean, Schema, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
+import apiClient from "../services/auth/api-client";
+import { useEffect, useState } from "react";
+import { getClientConfig } from "../services/config/config";
 
 const formSchema = z.object({
   timezone: z.string(),
   subscribe: z.boolean(),
-  reportNotifications: z.array(z.string()).refine((value) => value.some((item) => item))
+  reportNotifications: z.array(z.string()).refine((value) => value.some((item) => item)),
+  avatarUrl: z.string().optional()
 })
 
 const reportNotifications = [
@@ -38,14 +42,24 @@ type SettingFormProps = {
 };
 
 export const SettingForm = ({ onSubmit, initialValues, children }: SettingFormProps) => {
+  const [canUpload, setCanUpload] = useState<boolean>(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues || {
       timezone: "UTC+03:00",
       subscribe: false,
-      reportNotifications: []
+      reportNotifications: [],
+      avatarUrl: ""
     },
   });
+
+  useEffect(() => {
+    getPermissions()
+  }, [])
+
+  const getPermissions = async () => {
+    setCanUpload(await getClientConfig("config/next-app/user.avatar-upload"))
+  }
 
   return (
     <Form {...form}>
@@ -125,7 +139,7 @@ export const SettingForm = ({ onSubmit, initialValues, children }: SettingFormPr
                             control={form.control}
                             name="reportNotifications"
                             render={() => (
-                                <FormItem className="border rounded-lg p-6">
+                                <FormItem className="border rounded-lg px-6 py-4">
                                 <div className="mb-4">
                                     <FormLabel className="text-base">Уведомления об отчетах</FormLabel>
                                     <FormDescription>
@@ -170,6 +184,51 @@ export const SettingForm = ({ onSubmit, initialValues, children }: SettingFormPr
                                 </FormItem>
                             )}
                         />
+                        {canUpload && (<FormField
+                        control={form.control}
+                        name="avatarUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Аватар</FormLabel>
+                            <FormControl>
+                              <div className="space-y-2">
+                                <Input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={async (event) => {
+                                    const file = event.target.files?.[0];
+                                    if (file) {
+                                      const formData = new FormData();
+                                      formData.append("file", file);
+
+                                      try {
+                                        const response = await apiClient.post("/auth-server/users/profile/avatar", formData, {
+                                          headers: {
+                                            "Content-Type" : "multipart/form-data"
+                                          }
+                                        });
+                                        field.onChange(response.data.avatarUrl);
+                                      } catch (error) {
+                                        console.error("Ошибка загрузки аватара:", error);
+                                      }
+                                    }
+                                  }}
+                                />
+                                {field.value && (
+                                  <div className="flex flex-col justify-center items-center py-4">
+                                    <img
+                                      src={field.value}
+                                      alt="Avatar Preview"
+                                      className="h-32 w-32 rounded-full object-cover"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />)}
             {children}
         </form>
     </Form>
