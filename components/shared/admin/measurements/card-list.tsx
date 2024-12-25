@@ -31,6 +31,7 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("measurements/sessions")}}
                     />
+                    {/*
                     <Card
                         icon={
                             <div className='h-32'>
@@ -41,6 +42,7 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("measurements/events")}}
                      />
+                     */}
                     <Card
                         icon={
                             <div className='h-32'>

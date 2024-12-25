@@ -28,7 +28,7 @@ export default function CardList({ className }: Props) {
                             </div>
                         }
                         title="Измерения"
-                        subtitle='Навигация, сессии, события, суточные файлы'
+                        subtitle='Навигация, сессии, суточные файлы'
                         className="content-center"
                         onClick={() => {handleCardClick("admin/measurements")}}
                     />
@@ -54,6 +54,7 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("admin/config")}}
                      />
+                    {/*
                     <Card
                         icon={
                             <div className='h-32'>
@@ -65,6 +66,7 @@ export default function CardList({ className }: Props) {
                         className="content-center"
                         onClick={() => {handleCardClick("admin/system")}}
                      />
+                     */}
                 </div>
             </Container>
         </div>

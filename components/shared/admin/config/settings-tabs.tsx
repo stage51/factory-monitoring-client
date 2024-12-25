@@ -76,6 +76,16 @@ type User = {
   imageHostingApiUrl: string;
   imageHostingSecretKey: string;
 }
+type XMLReports = {
+  ftpHost: string;
+  ftpPort: number;
+  ftpUsername: string;
+  ftpPassword: string;
+  ftpDirectory: string;
+  dailyReport: boolean;
+  fiveMinuteReport: boolean;
+  modeReport: boolean;
+}
 
 type ApiToken = {
   value: string;
@@ -131,6 +141,16 @@ export default function SettingsTabs() {
     imageHostingApiUrl: "",
     imageHostingSecretKey: ""
   })
+  const [XMLReports, setXMLReports] = useState<XMLReports>({
+    ftpHost: "",
+    ftpPort: 0,
+    ftpUsername: "",
+    ftpPassword: "",
+    ftpDirectory: "",
+    dailyReport: true,
+    fiveMinuteReport: true,
+    modeReport: true
+  })
   const [apiToken, setApiToken] = useState<string>("")
 
   const handleSaveCompany = async (company: Company) => {
@@ -185,6 +205,16 @@ export default function SettingsTabs() {
     await updateConfig("config/next-app/user.avatar-upload", user.avatarUpload || "false")
     await updateConfig("config/application/user.image-hosting-api-url", user.imageHostingApiUrl)
     await updateConfig("config/application/user.image-hosting-secret-key", user.imageHostingSecretKey)
+  }
+  async function handleSaveXMLReports(XMLReports : XMLReports) {
+    await updateConfig("config/application/xml-reports.ftp-host", XMLReports.ftpHost)
+    await updateConfig("config/application/xml-reports.ftp-port", XMLReports.ftpPort)
+    await updateConfig("config/application/xml-reports.ftp-username", XMLReports.ftpUsername)
+    await updateConfig("config/application/xml-reports.ftp-password", XMLReports.ftpPassword)
+    await updateConfig("config/application/xml-reports.ftp-directory", XMLReports.ftpDirectory)
+    await updateConfig("config/application/xml-reports.daily-report", XMLReports.dailyReport || "false")
+    await updateConfig("config/application/xml-reports.five-minute-report", XMLReports.fiveMinuteReport || "false")
+    await updateConfig("config/application/xml-reports.mode-report", XMLReports.modeReport || "false")
   }
   async function handleCreateApiToken(data: z.infer<typeof FormSchema>) {
     const expiration = Number.parseInt(data.type) * 30 * 24 * 60 * 60 * 1000
@@ -251,6 +281,17 @@ export default function SettingsTabs() {
           avatarUpload: await getConfig("config/application/user.avatar-upload"),
           imageHostingApiUrl: await getConfig("config/application/user.image-hosting-api-url"),
           imageHostingSecretKey: await getConfig("config/application/user.image-hosting-secret-key")
+        })
+
+        setXMLReports({
+          ftpHost: await getConfig("config/application/xml-reports.ftp-host"),
+          ftpPort: await getConfig("config/application/xml-reports.ftp-port"),
+          ftpUsername: await getConfig("config/application/xml-reports.ftp-username"),
+          ftpPassword: await getConfig("config/application/xml-reports.ftp-password"),
+          ftpDirectory: await getConfig("config/application/xml-reports.ftp-directory"),
+          dailyReport: await getConfig("config/application/xml-reports.daily-report"),
+          fiveMinuteReport: await getConfig("config/application/xml-reports.five-minute-report"),
+          modeReport: await getConfig("config/application/xml-reports.mode-report")
         })
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -562,7 +603,7 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="recovery-url-lifetime">Время жизни ссылки для восстановления пароля, мин</Label>
+                        <Label htmlFor="recovery-url-lifetime">Время жизни кода для восстановления пароля, мин</Label>
                         <Input id="recovery-url-lifetime" type="number" placeholder="Введите число"
                         value={user.recoveryUrlLifetime} onChange={(e) => setUser({...user, recoveryUrlLifetime: Number.parseInt(e.target.value)})}/>
                     </div>
@@ -964,42 +1005,55 @@ export default function SettingsTabs() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-6">
-                    <h2 className="font-semibold text-sm">XML</h2>
                     <div className="space-y-2">
-                        <Label htmlFor="xml-resource">Путь к папке хранения XML отчетов</Label>
-                        <Input id="xml-resource" type="text" placeholder="Введите текст" />
+                        <Label htmlFor="ftp-host">Адрес FTP сервера</Label>
+                        <Input id="ftp-host" 
+                        value={XMLReports.ftpHost}
+                        onChange={(e) => setXMLReports({...XMLReports, ftpHost: e.target.value})}
+                        type="text" placeholder="Введите текст" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="xml-domain">Домен хранения XML отчетов</Label>
-                        <Input id="xml-domain" type="text" placeholder="Введите текст" />
+                        <Label htmlFor="ftp-port">Порт FTP сервера</Label>
+                        <Input id="ftp-port" 
+                        value={XMLReports.ftpPort}
+                        onChange={(e) => setXMLReports({...XMLReports, ftpPort: Number.parseInt(e.target.value)})}
+                        type="number" placeholder="Введите текст" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="xml-login">Логин ресурса для XML отчетов</Label>
-                        <Input id="xml-login" type="login" placeholder="Введите текст" />
+                        <Label htmlFor="ftp-username">Имя пользователя FTP сервера</Label>
+                        <Input id="ftp-username" 
+                        value={XMLReports.ftpUsername}
+                        onChange={(e) => setXMLReports({...XMLReports, ftpUsername: e.target.value})}
+                        type="login" placeholder="Введите текст" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="xml-password">Пароль ресурса для XML отчетов</Label>
-                        <Input id="xml-password" type="password" placeholder="Введите пароль" />
+                        <Label htmlFor="ftp-password">Пароль пользователя FTP сервера</Label>
+                        <Input id="ftp-password" 
+                        value={XMLReports.ftpPassword}
+                        onChange={(e) => setXMLReports({...XMLReports, ftpPassword: e.target.value})}
+                        type="password" placeholder="Введите пароль" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="ftp-directory">Директория хранения на FTP сервере</Label>
+                        <Input id="ftp-directory" 
+                        value={XMLReports.ftpDirectory}
+                        onChange={(e) => setXMLReports({...XMLReports, ftpDirectory: e.target.value})}
+                        type="text" placeholder="Введите текст" />
                     </div>
                     <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <Label htmlFor="save-daily-xml-files">Сохранение XML-файлов суточных</Label>
-                        <Switch />
+                        <Label htmlFor="daily-report">Сохранение XML-файлов суточных отчетов</Label>
+                        <Switch checked={!!XMLReports.dailyReport} onCheckedChange={(e) => setXMLReports({...XMLReports, dailyReport: e})}/>
                     </div>
                     <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <Label htmlFor="save-tth-xml-files">Сохранение XML-файлов ТТН</Label>
-                        <Switch />
+                        <Label htmlFor="five-minute-report">Сохранение XML-файлов пятиминутных отчетов</Label>
+                        <Switch checked={!!XMLReports.fiveMinuteReport} onCheckedChange={(e) => setXMLReports({...XMLReports, fiveMinuteReport: e})}/>
                     </div>
-                    <Separator />
-                    <h2 className="font-semibold text-sm">Excel</h2>
-                    <div className="space-y-2">
-                        <Label htmlFor="excel-admin-path">Относительный путь к папке файлов Excel для администратора</Label>
-                        <Input id="excel-admin-path" type="text" placeholder="Введите текст" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="excel-user-path">Относительный путь к папке файлов Excel для пользователя</Label>
-                        <Input id="excel-user-path" type="text" placeholder="Введите текст" />
+                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <Label htmlFor="mode-report">Сохранение XML-файлов отчетов по режимам</Label>
+                        <Switch checked={!!XMLReports.modeReport} onCheckedChange={(e) => setXMLReports({...XMLReports, modeReport: e})}/>
                     </div>
                     <Button className="mt-4" onClick={() => {
+                      handleSaveXMLReports(XMLReports)
                       toast({
                         title: "Настройки",
                         description: "Настройки сохранены",

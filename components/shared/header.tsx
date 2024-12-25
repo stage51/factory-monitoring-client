@@ -60,11 +60,11 @@ const Header = observer(({ className }: Props) => {
                 </Link>
 
                 {/* Navigation Links (hidden on md and below) */}
-                <div className="hidden md:flex items-center justify-between gap-16">
+                <div className="hidden md:flex lg:ms-40 ms-0 w-full items-center lg:justify-start justify-center gap-16">
                     <Link href="/askp" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">АСКП</Link>
                     <Link href="/egais" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">ЕГАИС</Link>
                     <Link href="/modes" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">РЕЖИМЫ</Link>
-                    <Link href="/events" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">СОБЫТИЯ</Link>
+                    {/*<Link href="/events" className="text-sm uppercase cursor-pointer text-white font-light hover:animate-spin-element">СОБЫТИЯ</Link>*/}
                 </div>
 
                 {/* Icon Section (visible on all screen sizes) */}
@@ -120,7 +120,7 @@ const Header = observer(({ className }: Props) => {
                         <Link href="/askp" className="text-sm uppercase cursor-pointer font-light hover:underline">АСКП</Link>
                         <Link href="/egais" className="text-sm uppercase cursor-pointer font-light hover:underline">ЕГАИС</Link>
                         <Link href="/modes" className="text-sm uppercase cursor-pointer font-light hover:underline">РЕЖИМЫ</Link>
-                        <Link href="/events" className="text-sm uppercase cursor-pointer font-light hover:underline">СОБЫТИЯ</Link>
+                        {/*<Link href="/events" className="text-sm uppercase cursor-pointer font-light hover:underline">СОБЫТИЯ</Link>*/}
                     </nav>
                 </div>
             )}
