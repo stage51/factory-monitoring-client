@@ -51,7 +51,6 @@ export default function EventsTable() {
         <DataTable
           ref={tableRef}
           columns={generateColumns<HeadersTypes>({ headers, editable: false}) as ColumnDef<unknown, unknown>[]}
-          data={data || []}
           isLoading={isLoading}
           visibleHeaders={visibleHeaders}
           defaultHeaders={headers.map((h) => h.label)}

@@ -61,11 +61,11 @@ export default function UserVerification() {
             columnFilters
               .filter(filter => ["createdAt", "updatedAt"].includes(filter.id))
               .map(filter => {
-                const from = filter.value?.from
-                  ? new Date(filter.value.from).toISOString()
+                const from = (filter.value as any)?.from
+                  ? new Date((filter.value as any)?.from).toISOString()
                   : "null";
-                const to = filter.value?.to
-                  ? new Date(filter.value.to).toISOString()
+                const to = (filter.value as any)?.to
+                  ? new Date((filter.value as any)?.to).toISOString()
                   : "null";
                 return [filter.id, `${from},${to}`];
               })
@@ -79,7 +79,7 @@ export default function UserVerification() {
       }
     };
 
-    const handleApprove = async (id) => {
+    const handleApprove = async (id : string | number) => {
       try {
         await apiClient.get(`/auth-server/users/${id}/approve`);
         window.location.reload()
@@ -89,7 +89,7 @@ export default function UserVerification() {
       }
     };
 
-    const handleDisapprove = async (id) => {
+    const handleDisapprove = async (id : string | number) => {
       try {
         await apiClient.get(`/auth-server/users/${id}/disapprove`);
         window.location.reload()
@@ -99,7 +99,7 @@ export default function UserVerification() {
       }
     };
 
-    const customActions = (data) => (
+    const customActions = (data : any) => (
       <>
         <DialogClose asChild>
           <Button onClick={() => handleApprove(data.id)}>Одобрить</Button>

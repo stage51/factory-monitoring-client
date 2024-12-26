@@ -14,12 +14,12 @@ const commissioner = Commissioner({
 export async function generateMetadata(): Promise<Metadata> {
   const title = await getClientConfig("config/next-app/seo.page-title");
   const description = await getClientConfig("config/next-app/seo.page-description");
-  const keywords = await await getClientConfig("config/next-app/seo.keywords")
+  const keywords = await getClientConfig("config/next-app/seo.keywords")
 
   return {
-    title: title || "Default Title",
-    description: description || "Default Description",
-    keywords: keywords || "Default Keywords"
+    title: title || "ЕГАИС Мониторинг",
+    description: description || "Управляйте вашими данными из ЕГАИС",
+    keywords: keywords || "alcospot, monitoring"
   };
 }
 

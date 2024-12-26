@@ -3,7 +3,7 @@ import { testData } from "./test-data";
 import { useState, useEffect, useRef } from "react";
 import { DataTable } from "../../table/data-table";
 import generateColumns from "../../table/columns";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState, PaginationState, SortingState } from "@tanstack/react-table";
 import apiClient from "@/components/shared/services/auth/api-client";
 
 

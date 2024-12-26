@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs-app
+    ports:
+      - "80:80"
+    environment:
+      NEXT_PUBLIC_API_HOST: http://localhost:8080/api/v1
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge

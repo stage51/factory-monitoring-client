@@ -40,8 +40,6 @@ const formSchema = z.object({
     firstName: z.string().min(1, { message: "Имя обязательно" }),
     lastName: z.string().min(1, { message: "Фамилия обязательна" }),
     middleName: z.string().optional(),
-    timezone: z.string(),
-    subscribe: z.boolean(),
     policy: z.boolean().refine(val => val, { message: "" })
   });
   
@@ -59,8 +57,6 @@ export default function SignUp() {
         firstName: "",
         lastName: "",
         middleName: "",
-        timezone: "UTC+03:00",
-        subscribe: false,
         policy: false
       },
     });
@@ -79,8 +75,18 @@ export default function SignUp() {
       }, []);
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+      const userData = {
+        email: values.email,
+        password: values.password,
+        repeatPassword: values.repeatPassword,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        middleName: values.middleName,
+        policy: values.policy,
+      };
+
       try{
-        await register(values)
+        await register(userData)
         toast({
           title: "Регистрация",
           description: "Регистрация пользователя прошла успешно",

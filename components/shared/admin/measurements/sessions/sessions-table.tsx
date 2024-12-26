@@ -91,11 +91,11 @@ export default function SessionsTable() {
           columnFilters
             .filter(filter => ["startDate", "endDate"].includes(filter.id))
             .map(filter => {
-              const from = filter.value?.from
-                ? new Date(filter.value.from).toISOString()
+              const from = (filter.value as any)?.from
+                ? new Date((filter.value as any)?.from).toISOString()
                 : "null";
-              const to = filter.value?.to
-                ? new Date(filter.value.to).toISOString()
+              const to = (filter.value as any)?.to
+                ? new Date((filter.value as any)?.to).toISOString()
                 : "null";
               return [filter.id, `${from},${to}`];
             })
@@ -109,7 +109,7 @@ export default function SessionsTable() {
     }
   };
 
-  const handleUpdate = async (id, updatedData) => {
+  const handleUpdate = async (id : string | number, updatedData : any) => {
     try {
       const response = await apiClient.put(`/mode-report/positions/${id}`, updatedData);
       return response.data;
@@ -119,7 +119,7 @@ export default function SessionsTable() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id : string | number) => {
     try {
       await apiClient.delete(`/mode-report/positions/${id}`);
     } catch (error) {

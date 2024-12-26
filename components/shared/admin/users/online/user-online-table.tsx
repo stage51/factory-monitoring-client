@@ -47,11 +47,11 @@ export default function UserOnlineTable() {
             columnFilters
               .filter(filter => ["activeAt"].includes(filter.id))
               .map(filter => {
-                const from = filter.value?.from
-                  ? new Date(filter.value.from).toISOString()
+                const from = (filter.value as any)?.from
+                  ? new Date((filter.value as any)?.from).toISOString()
                   : "null";
-                const to = filter.value?.to
-                  ? new Date(filter.value.to).toISOString()
+                const to = (filter.value as any)?.to
+                  ? new Date((filter.value as any)?.to).toISOString()
                   : "null";
                 return [filter.id, `${from},${to}`];
               })

@@ -63,11 +63,11 @@ export default function UserListTable() {
             columnFilters
               .filter(filter => ["createdAt", "updatedAt"].includes(filter.id))
               .map(filter => {
-                const from = filter.value?.from
-                  ? new Date(filter.value.from).toISOString()
+                const from = (filter.value as any)?.from
+                  ? new Date((filter.value as any)?.from).toISOString()
                   : "null";
-                const to = filter.value?.to
-                  ? new Date(filter.value.to).toISOString()
+                const to = (filter.value as any)?.to
+                  ? new Date((filter.value as any)?.to).toISOString()
                   : "null";
                 return [filter.id, `${from},${to}`];
               })
@@ -81,7 +81,7 @@ export default function UserListTable() {
       }
     };
   
-    const handleCreate = async (newUser) => {
+    const handleCreate = async (newUser : any) => {
       try {
         const response = await apiClient.post(`/auth-server/users`, newUser);
         return response.data;
@@ -91,7 +91,7 @@ export default function UserListTable() {
       }
     };
   
-    const handleUpdate = async (id, updatedUser) => {
+    const handleUpdate = async (id : string | number, updatedUser : any) => {
       try {
         const response = await apiClient.put(`/auth-server/users/${id}`, updatedUser);
         return response.data;
@@ -101,7 +101,7 @@ export default function UserListTable() {
       }
     };
   
-    const handleDelete = async (id) => {
+    const handleDelete = async (id : string | number) => {
       try {
         await apiClient.delete(`/auth-server/users/${id}`);
       } catch (error) {
@@ -115,7 +115,6 @@ export default function UserListTable() {
         <DataTable
           ref={tableRef}
           columns={generateColumns<HeadersTypes>({ headers, handleUpdate, handleDelete }) as ColumnDef<unknown, unknown>[]}
-          data={data || []}
           isLoading={isLoading}
           visibleHeaders={visibleHeaders}
           defaultHeaders={headers.map((h) => h.label)}

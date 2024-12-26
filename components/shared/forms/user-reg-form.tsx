@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Switch } from "@/components/ui/switch";
+import { UserRequest } from "../services/profile/profile-service";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Введите корректный email" }),
@@ -24,8 +25,8 @@ const formSchema = z.object({
 });
 
 type UserFormProps = {
-  onSubmit: (values: z.infer<typeof formSchema>) => void;
-  initialValues?: z.infer<typeof formSchema>;
+  onSubmit: (values: z.infer<typeof formSchema> | UserRequest) => void;
+  initialValues?: z.infer<typeof formSchema> | null;
   children?: React.ReactNode;
 };
 
@@ -38,7 +39,7 @@ export const UserRegForm = ({ onSubmit, initialValues, children }: UserFormProps
       repeatPassword: "",
       firstName: "",
       lastName: "",
-      middleName: "",
+      middleName: undefined,
       policy: false,
     },
   });

@@ -79,8 +79,7 @@ export default function AddButton<HeadersTypes>({
                 </Label>
                 {data[key] instanceof Date ? (
                   <DatePicker
-                    value={selectedDate}
-                    onChange={(date) => setSelectedDate(date)}
+                    value={selectedDate || undefined}
                     className="col-span-3 w-full"
                   />
                 ) : (

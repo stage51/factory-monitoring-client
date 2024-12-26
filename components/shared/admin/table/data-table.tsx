@@ -52,7 +52,7 @@ interface DataTableProps<TData, TValue> {
   visibleHeaders : string[]
   defaultHeaders : string[]
   className? : string
-  fetchData: (filters: any, dateRanges: any, pagination: { page: number; size: number }) => Promise<any>;
+  fetchData?: (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => Promise<any>;
 }
 
 export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
@@ -115,7 +115,7 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
     };
   }, []);
 
-  const sanitizeData = (data) => {
+  const sanitizeData = (data : any) => {
     if (data === null) {
         return "";
     }

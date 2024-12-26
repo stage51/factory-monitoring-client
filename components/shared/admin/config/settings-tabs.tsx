@@ -639,52 +639,6 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="default-value">Серверный часовой пояс</Label>
-                        <Select onValueChange={(e) => setDateTime({...dateTime, defaultValue: e})} defaultValue={dateTime.defaultValue}>
-                            <SelectTrigger>
-                                <SelectValue id="default-value" placeholder="Выберите значение"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="UTC-12:00">UTC-12:00</SelectItem>
-                                <SelectItem value="UTC-11:00">UTC-11:00</SelectItem>
-                                <SelectItem value="UTC-10:00">UTC-10:00 (Hawaii-Aleutian Time)</SelectItem>
-                                <SelectItem value="UTC-09:00">UTC-09:00 (Alaska Time)</SelectItem>
-                                <SelectItem value="UTC-08:00">UTC-08:00 (Pacific Time)</SelectItem>
-                                <SelectItem value="UTC-07:00">UTC-07:00 (Mountain Time)</SelectItem>
-                                <SelectItem value="UTC-06:00">UTC-06:00 (Central Time)</SelectItem>
-                                <SelectItem value="UTC-05:00">UTC-05:00 (Eastern Time)</SelectItem>
-                                <SelectItem value="UTC-04:00">UTC-04:00 (Atlantic Time)</SelectItem>
-                                <SelectItem value="UTC-03:00">UTC-03:00</SelectItem>
-                                <SelectItem value="UTC-02:00">UTC-02:00</SelectItem>
-                                <SelectItem value="UTC-01:00">UTC-01:00</SelectItem>
-                                <SelectItem value="UTC+00:00">UTC+00:00 (GMT)</SelectItem>
-                                <SelectItem value="UTC+01:00">UTC+01:00 (Central European Time)</SelectItem>
-                                <SelectItem value="UTC+02:00">UTC+02:00 (Eastern European Time)</SelectItem>
-                                <SelectItem value="UTC+03:00">UTC+03:00 (Moscow Time)</SelectItem>
-                                <SelectItem value="UTC+03:30">UTC+03:30 (Iran Standard Time)</SelectItem>
-                                <SelectItem value="UTC+04:00">UTC+04:00 (Gulf Standard Time)</SelectItem>
-                                <SelectItem value="UTC+04:30">UTC+04:30 (Afghanistan Time)</SelectItem>
-                                <SelectItem value="UTC+05:00">UTC+05:00 (Pakistan Standard Time)</SelectItem>
-                                <SelectItem value="UTC+05:30">UTC+05:30 (India Standard Time)</SelectItem>
-                                <SelectItem value="UTC+05:45">UTC+05:45 (Nepal Time)</SelectItem>
-                                <SelectItem value="UTC+06:00">UTC+06:00 (Bangladesh Time)</SelectItem>
-                                <SelectItem value="UTC+06:30">UTC+06:30 (Cocos Islands Time)</SelectItem>
-                                <SelectItem value="UTC+07:00">UTC+07:00 (Indochina Time)</SelectItem>
-                                <SelectItem value="UTC+08:00">UTC+08:00 (China Standard Time)</SelectItem>
-                                <SelectItem value="UTC+08:45">UTC+08:45 (Australian Central Western Time)</SelectItem>
-                                <SelectItem value="UTC+09:00">UTC+09:00 (Japan Standard Time)</SelectItem>
-                                <SelectItem value="UTC+09:30">UTC+09:30 (Australian Central Time)</SelectItem>
-                                <SelectItem value="UTC+10:00">UTC+10:00 (Australian Eastern Time)</SelectItem>
-                                <SelectItem value="UTC+10:30">UTC+10:30 (Lord Howe Island Time)</SelectItem>
-                                <SelectItem value="UTC+11:00">UTC+11:00 (Solomon Islands Time)</SelectItem>
-                                <SelectItem value="UTC+12:00">UTC+12:00 (New Zealand Standard Time)</SelectItem>
-                                <SelectItem value="UTC+12:45">UTC+12:45 (Chatham Islands Time)</SelectItem>
-                                <SelectItem value="UTC+13:00">UTC+13:00 (Tonga Time)</SelectItem>
-                                <SelectItem value="UTC+14:00">UTC+14:00 (Line Islands Time)</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="space-y-2">
                         <Label htmlFor="default-user-timezone">Часовой пояс по умолчанию при регистрации</Label>
                         <Select onValueChange={(e) => setDateTime({...dateTime, defaultUserTimezone: e})} defaultValue={dateTime.defaultUserTimezone}>
                             <SelectTrigger>
@@ -863,7 +817,7 @@ export default function SettingsTabs() {
                 <CardContent>
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="green-monitoring-timing">Зеленая дата синхронизации с мониторингом, минуты</Label>
+                        <Label htmlFor="green-monitoring-timing">Длительность зеленой дата синхронизации с мониторингом, минуты</Label>
                         <Input 
                         value={timing.greenMonitoringTiming / 1000 / 60 || 0}
                         onChange={(e) =>
@@ -877,7 +831,7 @@ export default function SettingsTabs() {
                         id="green-monitoring-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-monitoring-timing">Желтая дата синхронизации с мониторингом, минуты</Label>
+                        <Label htmlFor="yellow-monitoring-timing">Длительность желтой дата синхронизации с мониторингом, минуты</Label>
                         <Input 
                         value={timing.yellowMonitoringTiming / 1000 / 60 || 0}
                         onChange={(e) =>
@@ -891,21 +845,7 @@ export default function SettingsTabs() {
                         id="yellow-monitoring-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="red-monitoring-timing">Красная дата синхронизации с мониторингом, минуты</Label>
-                        <Input 
-                        value={timing.redMonitoringTiming / 1000 / 60 || 0}
-                        onChange={(e) =>
-                          setTiming({
-                            ...timing,
-                            redMonitoringTiming: e.target.value
-                              ? Number.parseInt(e.target.value) * 1000 * 60
-                              : 0,
-                          })
-                        }
-                        id="red-monitoring-timing" type="number" placeholder="Введите число" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="green-fiveminute-timing">Зеленая дата синхронизации по пятиминутным с РАР, минуты</Label>
+                        <Label htmlFor="green-fiveminute-timing">Длительность зеленой даты синхронизации по пятиминутным с РАР, минуты</Label>
                         <Input 
                         value={timing.greenFiveminuteTiming / 1000 / 60 || 0}
                         onChange={(e) =>
@@ -919,7 +859,7 @@ export default function SettingsTabs() {
                         id="green-fiveminute-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-fiveminute-timing">Желтая дата синхронизации по пятиминутным с РАР, минуты</Label>
+                        <Label htmlFor="yellow-fiveminute-timing">Длительность желтой даты синхронизации по пятиминутным с РАР, минуты</Label>
                         <Input 
                         value={timing.yellowFiveminuteTiming / 1000 / 60 || 0}
                         onChange={(e) =>
@@ -933,21 +873,7 @@ export default function SettingsTabs() {
                         id="yellow-fiveminute-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="red-fiveminute-timing">Красная дата синхронизации по пятиминутным с РАР, минуты</Label>
-                        <Input 
-                        value={timing.redFiveminuteTiming / 1000 / 60 || 0}
-                        onChange={(e) =>
-                          setTiming({
-                            ...timing,
-                            redFiveminuteTiming: e.target.value
-                              ? Number.parseInt(e.target.value) * 1000 * 60
-                              : 0,
-                          })
-                        }
-                        id="red-fiveminute-timing" type="number" placeholder="Введите число" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="green-daily-timing">Зеленая дата синхронизации по суточным с РАР, минуты</Label>
+                        <Label htmlFor="green-daily-timing">Длительность зеленой дата синхронизации по суточным с РАР, минуты</Label>
                         <Input 
                         value={timing.greenDailyTiming / 1000 / 60 || 0}
                         onChange={(e) =>
@@ -961,7 +887,7 @@ export default function SettingsTabs() {
                         id="green-daily-timing" type="number" placeholder="Введите число" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="yellow-daily-timing">Желтая дата синхронизации по суточным с РАР, минуты</Label>
+                        <Label htmlFor="yellow-daily-timing">Длительность желтой дата синхронизации по суточным с РАР, минуты</Label>
                         <Input 
                         value={timing.yellowDailyTiming / 1000 / 60 || 0}
                         onChange={(e) =>
@@ -973,20 +899,6 @@ export default function SettingsTabs() {
                           })
                         }
                         id="yellow-daily-timing" type="number" placeholder="Введите число" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="red-daily-timing">Красная дата синхронизации по суточным с РАР, минуты</Label>
-                        <Input 
-                        value={timing.redDailyTiming / 1000 / 60 || 0}
-                        onChange={(e) =>
-                          setTiming({
-                            ...timing,
-                            redDailyTiming: e.target.value
-                              ? Number.parseInt(e.target.value) * 1000 * 60
-                              : 0,
-                          })
-                        }
-                        id="red-daily-timing" type="number" placeholder="Введите число" />
                     </div>
                     <Button className="mt-4" onClick={() => {
                       handleSaveTiming(timing)

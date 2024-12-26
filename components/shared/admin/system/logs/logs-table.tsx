@@ -67,7 +67,7 @@ export default function LogsTable() {
       <DataTable
         ref={tableRef}
         columns={generateColumnsWithObject<HeadersTypes, Details>({ headers, editable: false, objectHeaders: detailsHeaders}) as ColumnDef<unknown, unknown>[]}
-        data={data || []}
+
         isLoading={isLoading}
         visibleHeaders={visibleHeaders}
         defaultHeaders={headers.map((h) => h.label)}

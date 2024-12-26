@@ -26,7 +26,7 @@ export interface UserResponse {
     middleName: string;
     active: boolean;
     role: string;
-    organization: OrganizationResponse;
+    organization: OrganizationResponse | null;
     setting: SettingResponse;
 }
 
@@ -34,7 +34,7 @@ export interface SettingRequest {
     timezone: string;
     subscribe: boolean;
     reportNotifications: string[];
-    avatarUrl: string;
+    avatarUrl?: string;
 }
 
 export interface OrganizationRequest {
@@ -54,7 +54,7 @@ export interface UserRequest {
     password: string;
     firstName: string;
     lastName: string;
-    middleName: string;
+    middleName?: string | undefined;
 }
 export const fetchUserProfile = async (): Promise<UserResponse> => {
     const response = await apiClient.get("/auth-server/users/profile");

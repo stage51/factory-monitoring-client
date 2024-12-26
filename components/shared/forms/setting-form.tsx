@@ -3,7 +3,6 @@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { boolean, Schema, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import apiClient from "../services/auth/api-client";
 import { useEffect, useState } from "react";
 import { getClientConfig } from "../services/config/config";
+import { SettingRequest } from "../services/profile/profile-service";
 
 const formSchema = z.object({
   timezone: z.string(),
@@ -36,7 +36,7 @@ const reportNotifications = [
   ] as const
 
 type SettingFormProps = {
-  onSubmit: (values: z.infer<typeof formSchema>) => void;
+  onSubmit: (values: z.infer<typeof formSchema> | SettingRequest) => Promise<void>;
   initialValues?: z.infer<typeof formSchema>;
   children?: React.ReactNode;
 };

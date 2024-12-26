@@ -26,11 +26,11 @@ export const logout = async () => {
 export const register = async (userData: {
     email: string;
     password: string;
+    repeatPassword: string;
     firstName: string;
     lastName: string;
     middleName?: string;
-    timezone?: string;
-    subscribe: boolean;
+    policy: boolean;
   }) => {
     const response = await apiClient.post("/auth-server/auth/register", userData);
     const userResponse = response.data;

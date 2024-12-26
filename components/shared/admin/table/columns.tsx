@@ -102,7 +102,7 @@ function EditDialog<HeadersTypes>({
                 <ScrollArea className="max-h-[75vh]">
                     <div className="grid gap-4 py-4">
                         {headers.map(({ key, label }) =>
-                            !["id", "product"].includes(key) ? (
+                            !["id", "product"].includes(key as string) ? (
                                 <div
                                     key={key.toString()}
                                     className="grid grid-cols-4 items-center gap-4 pe-4"
@@ -113,9 +113,6 @@ function EditDialog<HeadersTypes>({
                                     {editedData[key] instanceof Date ? (
                                         <DatePicker
                                             value={editedData[key] as Date}
-                                            onChange={(date) =>
-                                                handleFieldChange(key.toString(), date)
-                                            }
                                             className="col-span-3 w-full"
                                         />
                                     ) : (
@@ -170,7 +167,7 @@ function EditDialog<HeadersTypes>({
                                 <DialogClose asChild>
                                     <Button
                                         variant="destructive"
-                                        onClick={() => deleteRow(editedData.id)}
+                                        onClick={() => deleteRow((editedData as { id: number }).id)}
                                     >
                                         Удалить
                                     </Button>
@@ -184,7 +181,7 @@ function EditDialog<HeadersTypes>({
                     <DialogClose asChild>
                         <Button
                             variant="default"
-                            onClick={() => updateRow(editedData.id, editedData)}
+                            onClick={() => updateRow((editedData as { id : number }).id, editedData)}
                         >
                             Сохранить
                         </Button>
@@ -237,20 +234,18 @@ export default function generateColumns<HeadersTypes>({ headers, editable = true
 
     if (editable) {
         columns.push({
-            id: "actions",
-            accessorKey: "actions",
-            header: "Действия",
+            id: "actions" as keyof HeadersTypes,
+            accessorKey: "actions" as keyof HeadersTypes,
+            header: () => "Действия",
             cell: ({ row }) => (
                 <EditDialog 
                     data={row.original as HeadersTypes} 
                     headers={headers}
-                    onChange={(key, value) => {
-                        row.original[key] = value;
-                    }}
                     handleUpdate={handleUpdate}
                     handleDelete={handleDelete}
                 />
             ) as HeadersTypes[keyof HeadersTypes],
+            filterFn: (row, columnId, filterValue) => true,
         });
     }
 
@@ -312,8 +307,8 @@ export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers
 
     if (editable) {
         columns.push({
-            id: "actions",
-            accessorKey: "actions",
+            id: "actions" as keyof HeadersTypes,
+            accessorKey: "actions" as keyof HeadersTypes,
             header: "Действия",
             cell: ({ row }) => (
                 <EditDialog 
@@ -323,6 +318,7 @@ export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers
                     handleDelete={handleDelete}
                 />
             ) as HeadersTypes[keyof HeadersTypes],
+            filterFn: (row, columnId, filterValue) => true,
         });
     }
 
@@ -343,9 +339,9 @@ export function generateColumnsWithCustomActions<HeadersTypes>({
     const columns = generateColumns<HeadersTypes>({headers, editable : false})
 
     columns.push({
-        id: "actions",
-        accessorKey: "actions",
-        header: "Действия",
+        id: "actions" as keyof HeadersTypes,
+        accessorKey: "actions" as keyof HeadersTypes,
+        header: () => "Действия",
         cell: ({ row }) => {
             return (
                 <Dialog>
@@ -365,8 +361,9 @@ export function generateColumnsWithCustomActions<HeadersTypes>({
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
-            );
+            ) as HeadersTypes[keyof HeadersTypes]
         },
+        filterFn: (row, columnId, filterValue) => true,
     });
 
     return columns;
