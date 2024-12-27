@@ -14,7 +14,7 @@ interface Props {
 export default function CardList({ className }: Props) {
     const [router] = useState(useRouter())
     function handleCardClick(href : string) {
-        router.push(href)
+        router.replace(href)
     }
 
     return (
@@ -29,7 +29,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Список пользователей"
                         className="content-center"
-                        onClick={() => {handleCardClick("users/list")}}
+                        onClick={() => {handleCardClick("/admin/users/list")}}
                     />
                     <Card 
                         icon={
@@ -39,7 +39,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Верификация"
                         className="content-center"
-                        onClick={() => {handleCardClick("users/verification")}}
+                        onClick={() => {handleCardClick("/admin/users/verification")}}
                     />
                     <Card
                         icon={
@@ -49,7 +49,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Организации"
                         className="content-center"
-                        onClick={() => {handleCardClick("users/organizations")}}
+                        onClick={() => {handleCardClick("/admin/users/organizations")}}
                      />
                     <Card 
                         icon={
@@ -59,7 +59,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Роли"
                         className="content-center"
-                        onClick={() => {handleCardClick("users/roles")}}
+                        onClick={() => {handleCardClick("/admin/users/roles")}}
                     />
                     <Card
                         icon={
@@ -69,7 +69,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Онлайн"
                         className="content-center"
-                        onClick={() => {handleCardClick("users/online")}}
+                        onClick={() => {handleCardClick("/admin/users/online")}}
                      />
                     <Card
                         icon={
@@ -79,7 +79,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Refresh токены"
                         className="content-center"
-                        onClick={() => {handleCardClick("users/refresh-tokens")}}
+                        onClick={() => {handleCardClick("/admin/users/refresh-tokens")}}
                     />
                     <Card
                         icon={
@@ -89,7 +89,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Назад"
                         className="content-center"
-                        onClick={() => {handleCardClick("../admin")}}
+                        onClick={() => {handleCardClick("/admin")}}
                      />
                 </div>
             </Container>

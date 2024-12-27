@@ -14,7 +14,7 @@ interface Props {
 export default function CardList({ className }: Props) {
     const [router] = useState(useRouter())
     function handleCardClick(href : string) {
-        router.push(href)
+        router.replace(href)
     }
 
     return (
@@ -29,7 +29,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Сессии"
                         className="content-center"
-                        onClick={() => {handleCardClick("measurements/sessions")}}
+                        onClick={() => {handleCardClick("/admin/measurements/sessions")}}
                     />
                     {/*
                     <Card
@@ -51,7 +51,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Суточные файлы"
                         className="content-center"
-                        onClick={() => {handleCardClick("measurements/daily-files")}}
+                        onClick={() => {handleCardClick("/admin/measurements/daily-files")}}
                      />
                      <Card
                         icon={
@@ -61,7 +61,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Пятиминутные файлы"
                         className="content-center"
-                        onClick={() => {handleCardClick("measurements/five-minute-files")}}
+                        onClick={() => {handleCardClick("/admin/measurements/five-minute-files")}}
                      />
                     <Card
                         icon={
@@ -71,7 +71,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Назад"
                         className="content-center"
-                        onClick={() => {handleCardClick("../admin")}}
+                        onClick={() => {handleCardClick("/admin")}}
                      />
                 </div>
             </Container>

@@ -14,7 +14,7 @@ interface Props {
 export default function CardList({ className }: Props) {
     const [router] = useState(useRouter())
     function handleCardClick(href : string) {
-        router.push(href)
+        router.replace(href)
     }
 
     return (
@@ -30,7 +30,7 @@ export default function CardList({ className }: Props) {
                         title="Измерения"
                         subtitle='Навигация, сессии, суточные файлы'
                         className="content-center"
-                        onClick={() => {handleCardClick("admin/measurements")}}
+                        onClick={() => {handleCardClick("/admin/measurements")}}
                     />
                     <Card 
                         icon={
@@ -41,7 +41,7 @@ export default function CardList({ className }: Props) {
                         title="Пользователи"
                         subtitle='Список, роли, онлайн, организации'
                         className="content-center"
-                        onClick={() => {handleCardClick("admin/users")}}
+                        onClick={() => {handleCardClick("/admin/users")}}
                     />
                     <Card
                         icon={
@@ -52,7 +52,7 @@ export default function CardList({ className }: Props) {
                         title="Конфигурация"
                         subtitle="Компания, SEO, безопасность, пользователь"
                         className="content-center"
-                        onClick={() => {handleCardClick("admin/config")}}
+                        onClick={() => {handleCardClick("/admin/config")}}
                      />
                     {/*
                     <Card

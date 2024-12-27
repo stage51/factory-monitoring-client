@@ -33,7 +33,7 @@ export default function CardList({ className }: Props) {
     }, [accessToken]);
 
     function handleCardClick(href: string) {
-        router.push(href);
+        router.replace(href);
     }
 
     return (
@@ -49,7 +49,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Контроль отправки АСКП отчетности"
                         subtitle='Осуществляйте перманентный контроль отправки отчетности АСКП в РАР, наблюдайте за её статусами.'
-                        onClick={() => {handleCardClick("askp")}}
+                        onClick={() => {handleCardClick("/askp")}}
                     />
                     <Card 
                         icon={
@@ -60,7 +60,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Контроль отправки ЕГАИС отчетности"
                         subtitle='Отслеживайте своевременность отправки «суточной отчетности» в РАР по всем точкам учёта, контроллируйте ответные сообщения.'
-                        onClick={() => {handleCardClick("egais")}}
+                        onClick={() => {handleCardClick("/egais")}}
                     />
                     <Card
                         icon={
@@ -71,7 +71,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Контроль отправки отчетности режимов"
                         subtitle='Отслеживайте отправку «отчетности по режимам» в РАР по всем точкам учёта, контроллируйте ответные сообщения.'
-                        onClick={() => {handleCardClick("modes")}}
+                        onClick={() => {handleCardClick("/modes")}}
                     />
                     {/* Показываем карточку только если роль пользователя - ADMIN */}
                     {isAdmin && (
@@ -84,7 +84,7 @@ export default function CardList({ className }: Props) {
                             }
                             title="Панель администратора"
                             subtitle='Управляйте содержимым сервиса, изменяйте настройки и получайте данные для анализа'
-                            onClick={() => {handleCardClick("admin")}}
+                            onClick={() => {handleCardClick("/admin")}}
                         />
                     )}
                 </div>

@@ -14,7 +14,7 @@ interface Props {
 export default function CardList({ className }: Props) {
     const [router] = useState(useRouter())
     function handleCardClick(href : string) {
-        router.push(href)
+        router.replace(href)
     }
 
     return (
@@ -29,7 +29,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Логи ошибок"
                         className="content-center"
-                        onClick={() => {handleCardClick("system/log")}}
+                        onClick={() => {handleCardClick("/admin/system/log")}}
                     />
                     <Card
                         icon={
@@ -39,7 +39,7 @@ export default function CardList({ className }: Props) {
                         }
                         title="Назад"
                         className="content-center"
-                        onClick={() => {handleCardClick("../admin")}}
+                        onClick={() => {handleCardClick("/admin")}}
                      />
                 </div>
             </Container>
