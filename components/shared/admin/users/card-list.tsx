@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function CardList({ className }: Props) {
-    const [router] = useState(useRouter())
+    const router = useRouter()
     function handleCardClick(href : string) {
         router.replace(href)
     }

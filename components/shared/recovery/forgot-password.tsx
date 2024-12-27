@@ -19,7 +19,7 @@ export default function ForgotPassword() {
           title: "Код отправлен",
           description: "Код успешно отправлен на почту " + values.email,
         });
-        router.push("/recovery");
+        router.replace("/recovery");
       } catch (error) {
         console.error("Ошибка авторизации:", error);
         toast({

@@ -19,7 +19,7 @@ export default function SignIn() {
         title: "Авторизация",
         description: "Вход выполнен под логином " + values.email,
       });
-      router.push("/");
+      router.replace("/");
     } catch (error) {
       console.error("Ошибка авторизации:", error);
       toast({

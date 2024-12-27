@@ -18,7 +18,7 @@ export default function FillOrganizationInfo() {
         title: "Создание организации",
         description: "Организация успешно добавлена к вам в профиль",
       })
-      router.push("/sign-up/complete")
+      router.replace("/sign-up/complete")
     } catch (error) {
       console.error("Ошибка авторизации:", error)
       toast({

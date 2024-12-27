@@ -19,7 +19,7 @@ export default function RecoveryPassword() {
           title: "Успешное восстановление",
           description: "Зайдите в аккаунт и смените пароль в профиле",
         });
-        router.push("/sign-in");
+        router.replace("/sign-in");
       } catch (error) {
         console.error("Ошибка авторизации:", error);
         toast({

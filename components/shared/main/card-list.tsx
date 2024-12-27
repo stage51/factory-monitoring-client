@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function CardList({ className }: Props) {
-    const [router] = useState(useRouter());
+    const router = useRouter();
     const [accessToken, setAccessToken] = useState<string | null>();
     const [isAdmin, setIsAdmin] = useState(false);
 

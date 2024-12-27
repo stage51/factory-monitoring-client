@@ -91,7 +91,7 @@ export default function SignUp() {
           title: "Регистрация",
           description: "Регистрация пользователя прошла успешно",
         })
-        router.push("/sign-up/fill-organization-info")
+        router.replace("/sign-up/fill-organization-info")
       } catch (error) {
         console.error("Ошибка авторизации:", error);
         toast({
