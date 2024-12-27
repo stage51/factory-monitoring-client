@@ -26,13 +26,15 @@ export class UserStore {
   fetchProfile = async () => {
     this.isLoading = true;
     try {
-      const profile = await fetchUserProfile();
-      this.profile = profile;
-      setTimezone(profile.setting.timezone);
-      toast({
-        title: "Профиль загружен",
-        description: "Данные успешно получены.",
-      });
+      if (!!sessionStorage.getItem("access_token")) {
+        const profile = await fetchUserProfile();
+        this.profile = profile;
+        setTimezone(profile.setting.timezone);
+        toast({
+          title: "Профиль загружен",
+          description: "Данные успешно получены.",
+        });
+      }
     } catch (err) {
       this.error = "Ошибка загрузки профиля";
       toast({

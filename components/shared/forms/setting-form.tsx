@@ -16,7 +16,7 @@ import { SettingRequest } from "../services/profile/profile-service";
 const formSchema = z.object({
   timezone: z.string(),
   subscribe: z.boolean(),
-  reportNotifications: z.array(z.string()).refine((value) => value.some((item) => item)),
+  reportNotifications: z.array(z.string()).refine((value) => value.some((item) => item)).optional(),
   avatarUrl: z.string().optional()
 })
 
