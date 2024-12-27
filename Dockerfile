@@ -1,5 +1,9 @@
 FROM node:18-alpine AS builder
 
+ARG NEXT_PUBLIC_API_HOST
+
+ENV NEXT_PUBLIC_API_HOST=${NEXT_PUBLIC_API_HOST}
+
 WORKDIR /app
 
 COPY package*.json ./
