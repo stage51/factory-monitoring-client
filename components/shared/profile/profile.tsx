@@ -136,7 +136,7 @@ const Profile: React.FC = observer(() => {
               {profile?.organization === null ? (
                 <div className="flex flex-col items-center py-6 gap-6">
                   <p className="text-lg text-center">Информации о вашей организации пока что нет в профиле</p>
-                  <Button className="w-1/2"><Link href="sign-up/fill-organization-info">Заполнить</Link></Button>
+                  <Button className="w-1/2"><Link href="/sign-up/fill-organization-info">Заполнить</Link></Button>
                 </div>
               ) : (
               <Card className="shadow-none">
