@@ -45,6 +45,7 @@ export type askpReport = {
 
 export const mobileHeaders = [
     "Дата/время",
+    "Сенсор",
     "Объем спирта",
     "Объем",
     "Концентрация",
@@ -54,7 +55,7 @@ export const mobileHeaders = [
     "Статус",
     "Продукт"
   ];
-export const visibleHeaders = ["Дата/время", "Объем", "Код режима", "Статус"];
+export const visibleHeaders = ["Дата/время", "Сенсор", "Объем", "Код режима", "Статус"];
 
 
 export const columns: ColumnDef<askpReport>[] = [

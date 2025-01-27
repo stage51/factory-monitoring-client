@@ -44,6 +44,7 @@ export type modesReport = {
 export const mobileHeaders = [
     "Начало измерений",
     "Конец измерений",
+    "Сенсор",
     "Объем безводнового спирта в начале",
     "Объем безводного спирта в конце",
     "Объем готовой продукции в начале",
@@ -56,7 +57,7 @@ export const mobileHeaders = [
     "Статус",
     "Продукт"
   ];
-export const visibleHeaders = ["Начало измерений", "Конец измерений", "Код режима", "Статус"];
+export const visibleHeaders = ["Начало измерений", "Конец измерений", "Сенсор", "Код режима", "Статус"];
 
 
 export const columns: ColumnDef<modesReport>[] = [
