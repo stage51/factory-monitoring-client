@@ -141,7 +141,7 @@ const StatusPanel = observer(() => {
                             <Smile strokeWidth={1.25} className="h-12 w-12 text-muted-foreground" />
                             <div className="p-4">
                                 <CardHeader className="p-0 text-center">Всё хорошо</CardHeader>
-                                <CardDescription className="text-center">По отправке отчетов нет никаких проблемю Нажмите для подробностей</CardDescription>
+                                <CardDescription className="text-center">По отправке отчетов нет никаких проблем. Нажмите для подробностей</CardDescription>
                             </div>
                         </Card>
                     )}
