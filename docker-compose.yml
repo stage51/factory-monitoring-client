@@ -10,8 +10,11 @@ services:
     container_name: nextjs-app
     ports:
       - "80:80"
+      - "443:443"
     environment:
       NEXT_PUBLIC_API_HOST: http://localhost:8080/api/v1
+    volumes:
+      - ./certs:/etc/nginx/certs
     networks:
       - app-net
 
