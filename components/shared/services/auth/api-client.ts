@@ -5,7 +5,7 @@ const isBrowser = typeof window !== "undefined";
 
 const getAccessToken = () => {
   if (isBrowser) {
-    return sessionStorage.getItem("access_token");
+    return localStorage.getItem("access_token");
   } else return null
 };
 

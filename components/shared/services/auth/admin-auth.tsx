@@ -15,7 +15,7 @@ export default function AdminAuth({ children }: Props) {
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        setAccessToken(sessionStorage.getItem("access_token"))
+        setAccessToken(localStorage.getItem("access_token"))
         if (accessToken) {
             try {
                 const decoded: any = jwtDecode(accessToken);

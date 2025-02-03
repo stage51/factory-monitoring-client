@@ -26,7 +26,7 @@ export class UserStore {
   fetchProfile = async () => {
     this.isLoading = true;
     try {
-      if (!!sessionStorage.getItem("access_token")) {
+      if (!!localStorage.getItem("access_token")) {
         const profile = await fetchUserProfile();
         this.profile = profile;
         setTimezone(profile.setting.timezone);

@@ -19,7 +19,7 @@ export default function CardList({ className }: Props) {
 
     // Декодирование токена и проверка роли
     useEffect(() => {
-        setAccessToken(sessionStorage.getItem("access_token"))
+        setAccessToken(localStorage.getItem("access_token"))
         if (accessToken) {
             try {
                 const decoded: any = jwtDecode(accessToken);

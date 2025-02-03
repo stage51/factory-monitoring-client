@@ -4,13 +4,13 @@ export const login = async (email: string, password: string) => {
     const response = await apiClient.post("/auth-server/auth/login", { email, password });
     const { accessToken, refreshToken } = response.data;
   
-    sessionStorage.setItem("access_token", accessToken);
-    sessionStorage.setItem("refresh_token", refreshToken);
+    localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("refresh_token", refreshToken);
 
 };
 
 export const logout = async () => {
-    const refreshToken = sessionStorage.getItem("refresh_token");
+    const refreshToken = localStorage.getItem("refresh_token");
     if (!refreshToken) {
         new Error("Refresh token не найден.");
     }
@@ -19,8 +19,8 @@ export const logout = async () => {
         refreshToken,
     });
   
-    sessionStorage.removeItem("access_token");
-    sessionStorage.removeItem("refresh_token");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
   };
 
 export const register = async (userData: {
@@ -44,8 +44,8 @@ export const register = async (userData: {
   
     const { accessToken, refreshToken } = loginResponse.data;
 
-    sessionStorage.setItem("access_token", accessToken);
-    sessionStorage.setItem("refresh_token", refreshToken);
+    localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("refresh_token", refreshToken);
   };
 
 export const forgotPassword = async (email : string) => {

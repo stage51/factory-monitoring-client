@@ -56,7 +56,6 @@ export class ReadableDate extends Date {
       minute: "2-digit",
       second: "2-digit",
     });
-    console.log("Converted to: " + formatter.format(this));
     return formatter.format(this);
   }
 }

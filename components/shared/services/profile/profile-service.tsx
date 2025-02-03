@@ -58,7 +58,6 @@ export interface UserRequest {
 }
 export const fetchUserProfile = async (): Promise<UserResponse> => {
     const response = await apiClient.get("/auth-server/users/profile");
-    console.log("User profile:", response.data);
     return response.data;
 };
 

@@ -19,7 +19,9 @@ FROM nginx:alpine
 COPY --from=builder /app/out /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY certs/certificate.crt /etc/nginx/certs/certificate.crt
+COPY certs/certificate.key /etc/nginx/certs/certificate.key
 
-EXPOSE 80 443
+EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]

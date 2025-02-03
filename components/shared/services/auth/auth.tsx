@@ -41,7 +41,7 @@ export default function Auth({ children, mainPage = false }: Props) {
 
   const refreshAccessToken = async () => {
     try {
-      const refreshToken = sessionStorage.getItem("refresh_token");
+      const refreshToken = localStorage.getItem("refresh_token");
       if (!refreshToken) throw new Error("Refresh token not found");
 
       const response = await apiClient.post("/auth-server/auth/refresh-token", {
@@ -49,7 +49,7 @@ export default function Auth({ children, mainPage = false }: Props) {
       });
 
       const { accessToken } = response.data;
-      sessionStorage.setItem("access_token", accessToken);
+      localStorage.setItem("access_token", accessToken);
 
       scheduleTokenRefresh(accessToken);
 
@@ -88,7 +88,7 @@ export default function Auth({ children, mainPage = false }: Props) {
   };
 
   const verifyAuthorization = async () => {
-    const token = sessionStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
 
     if (!token) {
       const refreshedToken = await refreshAccessToken();
