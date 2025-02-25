@@ -8,7 +8,7 @@ import { userStore } from "../stores/user-store";
 import { useToast } from "@/components/hooks/use-toast";
 import { useEffect, useState } from "react";
 
-const AskpTable = observer(() => {
+const AsiiuTable = observer(() => {
     const { profile, isLoading, fetchProfile } = userStore;
     const { toast } = useToast();
   
@@ -41,4 +41,4 @@ const AskpTable = observer(() => {
     );
   });
   
-  export default AskpTable;
+  export default AsiiuTable;

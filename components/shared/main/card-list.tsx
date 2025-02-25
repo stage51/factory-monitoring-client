@@ -47,9 +47,9 @@ export default function CardList({ className }: Props) {
                                 <CloudDownload size={96} className="relative inset-x-6 -inset-y-16 text-primary transition-all fill-white group-hover:fill-slate-200" />
                             </div>
                         }
-                        title="Контроль отправки АСКП отчетности"
-                        subtitle='Осуществляйте перманентный контроль отправки отчетности АСКП в РАР, наблюдайте за её статусами.'
-                        onClick={() => {handleCardClick("/askp")}}
+                        title="Контроль отправки пятиминутной АСИИУ отчетности"
+                        subtitle='Осуществляйте перманентный контроль отправки отчетности пятиминутных файлов АСИИУ в РАР, наблюдайте за её статусами.'
+                        onClick={() => {handleCardClick("/asiiu")}}
                     />
                     <Card 
                         icon={

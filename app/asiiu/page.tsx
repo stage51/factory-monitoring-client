@@ -1,6 +1,6 @@
 
 import Title from "@/components/shared/title"
-import AskpTable from "@/components/shared/askp/askp-table"
+import AsiiuTable from "@/components/shared/asiiu/asiiu-table"
 import Container from "@/components/shared/container"
 import {
   Breadcrumb,
@@ -24,14 +24,14 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>АСКП</BreadcrumbPage>
+                <BreadcrumbPage>АСИИУ</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </Container>
-        <Title title = "АСКП" subtitle="Управление пятиминутной отчетностью"/>
+        <Title title = "Пятиминутные отчеты АСИИУ" subtitle="Управление пятиминутной отчетностью"/>
         <Container className="mb-40 p-6 pt-0 animate-slide-element">
-            <AskpTable />
+            <AsiiuTable />
         </Container>
       </div>
     )
