@@ -73,9 +73,7 @@ export default function FiveMinuteFilesTable() {
     { key: "alcCode", label: "Код" },
     { key: "capacity", label: "Объем" },
     { key: "alcVolume", label: "Алк. объем" },
-    { key: "productVCode", label: "Код продукта"},
-    { key: "crotonaldehyde", label: "Кротоноальдегид"},
-    { key: "toluene", label: "Толуол"}
+    { key: "productVCode", label: "Код продукта"}
   ];
 
   const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {

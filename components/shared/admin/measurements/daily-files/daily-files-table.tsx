@@ -28,8 +28,6 @@ export default function DailyFilesTable() {
     { key: "bottleCountEnd", label: "Кол-во в конце", sortable: false },
     { key: "temperature", label: "Температура", sortable: false },
     { key: "mode", label: "Режим", sortable: false },
-    { key: "crotonaldehyde", label: "Кротоноальдегид", sortable: false},
-    { key: "toluene", label: "Толуол", sortable: false},
     { key: "status", label: "Статус", sortable: false },
     { key: "product", label: "Продукт", sortable: false }
   ];
@@ -56,8 +54,6 @@ export default function DailyFilesTable() {
     bottleCountEnd: number;
     temperature: number;
     mode: string;
-    crotonaldehyde: string;
-    toluene: string;
     status: string;
     product: Product;
   };

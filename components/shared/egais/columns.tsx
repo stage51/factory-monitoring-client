@@ -138,14 +138,6 @@ export const columns: ColumnDef<egaisReport>[] = [
         header: "Температура",
     },
     {
-        accessorKey: "crotonaldehyde",
-        header: "Кротоноальдегид",
-    },
-    {
-        accessorKey: "toluene",
-        header: "Толуол",
-    },
-    {
         accessorKey: "mode",
         header: "Режим",
     },
