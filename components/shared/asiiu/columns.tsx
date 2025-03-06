@@ -24,8 +24,6 @@ export type Product = {
     capacity: number
     alcVolume: number
     productVCode: string
-    crotonaldehyde: number
-    toluene: number
 }
 
 export type askpReport = {
@@ -38,8 +36,8 @@ export type askpReport = {
     percentAlc: number
     bottleCountControl: number
     temperature: number
-    mode: "Промывка АСИиУ" | "Калибровка АСИиУ" | "Технологический прогон" | "Производство продукции" | 
-    "Остановка АСИиУ" | "Прием (возврат)" | "Прием (закупка)" | "Внутреннее перемещение" | "Отгрузка (покупателю)" | "Отгрузка (возврат)"
+    mode: "Промывка" | "Калибровка" | "Тех. прогон" | "Производство" | 
+    "Остановка" | "Прием (возврат)" | "Прием" | "Внутреннее перемещение" | "Отгрузка" | "Отгрузка (возврат)" | "Другие цели"
     status: "Неизвестно" | "Принято в РАР" | "Не принято в РАР" | "Принято в УТМ" | "Не принято в УТМ"
 }
 
@@ -135,8 +133,6 @@ export const columns: ColumnDef<askpReport>[] = [
                     <span className="text-sm">Тип: {product.unitType}</span>
                     <span className="text-sm">Вид: {product.type}</span>
                     <span className="text-sm">Код продукта: {product.productVCode}</span>
-                    <span className="text-sm">Кротоноальдегид: {product.crotonaldehyde} %</span>
-                    <span className="text-sm">Толуол: {product.toluene} %</span>
                     </div>
                 </PopoverContent>
             </Popover>

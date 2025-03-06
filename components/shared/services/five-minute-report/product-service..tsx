@@ -12,9 +12,7 @@ export type ProductRequest = {
     alcCode : string,
     capacity : number,
     alcVolume : number,
-    productVCode : string,
-    crotonaldehyde : number,
-    toluene : number
+    productVCode : string
 }
 
 export const getProduct = async (id : number) => {

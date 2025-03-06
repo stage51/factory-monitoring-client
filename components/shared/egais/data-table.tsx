@@ -177,16 +177,17 @@ export function DataTable<TData, TValue>({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Все</SelectItem>
-            <SelectItem value="Промывка АСИиУ">Промывка АСИиУ</SelectItem>
-            <SelectItem value="Калибровка АСИиУ">Калибровка АСИиУ</SelectItem>
-            <SelectItem value="Технологический прогон">Технологический прогон</SelectItem>
-            <SelectItem value="Производство продукции">Производство продукции</SelectItem>
-            <SelectItem value="Остановка АСИиУ">Остановка АСИиУ</SelectItem>
-            <SelectItem value="Прием (возврат)">Прием (возврат)</SelectItem>
-            <SelectItem value="Прием (закупка)">Прием (закупка)</SelectItem>
-            <SelectItem value="Внутреннее перемещение">Внутреннее перемещение</SelectItem>
-            <SelectItem value="Отгрузка (покупателю)">Отгрузка (покупателю)</SelectItem>
-            <SelectItem value="Отгрузка (возврат)">Отгрузка (возврат)</SelectItem>
+            <SelectItem value="001">Промывка</SelectItem>
+            <SelectItem value="002">Калибровка</SelectItem>
+            <SelectItem value="003">Тех. прогон</SelectItem>
+            <SelectItem value="004">Производство</SelectItem>
+            <SelectItem value="005">Остановка</SelectItem>
+            <SelectItem value="006">Прием (возврат)</SelectItem>
+            <SelectItem value="007">Прием</SelectItem>
+            <SelectItem value="008">Внутреннее перемещение</SelectItem>
+            <SelectItem value="009">Отгрузка</SelectItem>
+            <SelectItem value="010">Отгрузка (возврат)</SelectItem>
+            <SelectItem value="011">Другие цели</SelectItem>
           </SelectContent>
         </Select>
         <Select

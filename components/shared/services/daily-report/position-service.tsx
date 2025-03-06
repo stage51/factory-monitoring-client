@@ -19,8 +19,6 @@ export type PositionRequest = {
     bottleCountEnd : number,
     temperature : number,
     mode : string,
-    crotonaldehyde : number,
-    toluene : number,
     status : string
 }
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Container from "../../container";
 import { Button } from "@/components/ui/button";
 import apiClient from "./api-client";
+import { parseJwt } from "./parse-jwt";
 
 interface Props {
   children?: ReactNode;
@@ -56,17 +57,6 @@ export default function Auth({ children, mainPage = false }: Props) {
       return accessToken;
     } catch (error) {
       console.error("Failed to refresh access token:", error);
-      return null;
-    }
-  };
-
-  const parseJwt = (token: string) => {
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      return JSON.parse(window.atob(base64));
-    } catch (error) {
-      console.error("Failed to parse token:", error);
       return null;
     }
   };
