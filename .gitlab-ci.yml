@@ -15,6 +15,8 @@ before_script:
   - export PATH=$PATH:/usr/local/bin
 
 build:
+  tags:
+    - factory-monitoring-client
   stage: build
   script:
     - echo "Building Docker image..."
@@ -24,12 +26,16 @@ build:
       - out/
 
 test:
+  tags:
+    - factory-monitoring-client
   stage: test
   script:
     - echo "Running tests..."
     - docker run --rm $DOCKER_IMAGE npm test
 
 sast:
+  tags:
+    - factory-monitoring-client
   stage: sast
   before_script:
     - cd factory-monitoring-client
@@ -38,6 +44,8 @@ sast:
   allow_failure: true
 
 deploy:
+  tags:
+    - factory-monitoring-client
   stage: deploy
   only:
     - main
