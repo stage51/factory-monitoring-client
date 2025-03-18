@@ -42,8 +42,6 @@ sast:
   tags:
     - factory-monitoring-client
   stage: sast
-  before_script:
-    - cd factory-monitoring-client
   script:
     - sonar-scanner -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.projectKey=factory-monitoring-client -Dsonar.login=$SONAR_TOKEN
   allow_failure: true
@@ -55,7 +53,8 @@ deploy:
   only:
     - main
   before_script:
-    - cd factory-monitoring-client
+    - cp /home/sysadm/factory-monitoring-client/certs/certificate.crt certs/certificate.crt
+    - cp /home/sysadm/factory-monitoring-client/certs/certificate.key certs/certificate.key
     - cp /home/sysadm/factory-monitoring-client/docker-compose.yml docker-compose.yml
   script:
     - echo "Deploying application..."
