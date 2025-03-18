@@ -6,9 +6,9 @@ stages:
 
 variables:
   NODE_ENV: "production"
-  DOCKER_IMAGE: "nextjs-app"
+  DOCKER_IMAGE: "nextjs-test"
   SONAR_HOST_URL: "http://sonarqube:9000"
-  SONAR_PROJECT_KEY: "nextjs-app"
+  SONAR_PROJECT_KEY: "factory-monitoring"
   SONAR_TOKEN: $SONARQUBE_TOKEN
 
 before_script:
@@ -33,7 +33,7 @@ test:
   stage: test
   script:
     - echo "Running tests..."
-    - docker run --rm node:18-alpine sh -c "cd /app && npm install && npm test"
+    - docker run --rm $DOCKER_IMAGE npm test"
 
 sast:
   tags:
