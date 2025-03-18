@@ -12,14 +12,10 @@ const commissioner = Commissioner({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = await getClientConfig("config/next-app/seo.page-title");
-  const description = await getClientConfig("config/next-app/seo.page-description");
-  const keywords = await getClientConfig("config/next-app/seo.keywords")
-
   return {
-    title: title || "ЕГАИС Мониторинг",
-    description: description || "Управляйте вашими данными из ЕГАИС",
-    keywords: keywords || "alcospot, monitoring"
+    title: "ЕГАИС Мониторинг",
+    description: "Управляйте вашими данными из ЕГАИС",
+    keywords: "alcospot, monitoring"
   };
 }
 

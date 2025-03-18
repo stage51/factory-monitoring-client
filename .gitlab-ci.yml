@@ -1,0 +1,47 @@
+stages:
+  - build
+  - test
+  - sast
+  - deploy
+
+variables:
+  NODE_ENV: "production"
+  DOCKER_IMAGE: "nextjs-app"
+  SONAR_HOST_URL: "http://sonarqube:9000"
+  SONAR_PROJECT_KEY: "nextjs-app"
+  SONAR_TOKEN: $SONARQUBE_TOKEN
+
+before_script:
+  - export PATH=$PATH:/usr/local/bin
+
+build:
+  stage: build
+  script:
+    - echo "Building Docker image..."
+    - docker build --build-arg NEXT_PUBLIC_API_HOST=http://localhost:8080/api/v1 -t $DOCKER_IMAGE .
+  artifacts:
+    paths:
+      - out/
+
+test:
+  stage: test
+  script:
+    - echo "Running tests..."
+    - docker run --rm $DOCKER_IMAGE npm test
+
+sast:
+  stage: sast
+  before_script:
+    - cd factory-monitoring-client
+  script:
+    - sonar-scanner -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.projectKey=factory-monitoring-client -Dsonar.login=$SONAR_TOKEN
+  allow_failure: true
+
+deploy:
+  stage: deploy
+  only:
+    - main
+  script:
+    - echo "Deploying application..."
+    - docker-compose down
+    - docker-compose up -d --build
