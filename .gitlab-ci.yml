@@ -7,9 +7,7 @@ stages:
 variables:
   NODE_ENV: "production"
   DOCKER_IMAGE: "nextjs-test"
-  SONAR_HOST_URL: "http://sonarqube:9000"
   SONAR_PROJECT_KEY: "factory-monitoring"
-  SONAR_TOKEN: $SONARQUBE_TOKEN
 
 before_script:
   - export PATH=$PATH:/usr/local/bin
@@ -33,7 +31,12 @@ test:
   stage: test
   script:
     - echo "Running tests..."
-    - docker exec -it --rm $DOCKER_IMAGE npm test
+    - docker run --name test-container -d $DOCKER_IMAGE
+    - docker exec test-container npm test
+  after_script:
+    - echo "Stopping and removing test container..."
+    - docker stop test-container
+    - docker rm test-container
 
 sast:
   tags:
@@ -51,6 +54,9 @@ deploy:
   stage: deploy
   only:
     - main
+  before_script:
+    - cd factory-monitoring-client
+    - cp /home/sysadm/factory-monitoring-client/docker-compose.yml docker-compose.yml
   script:
     - echo "Deploying application..."
     - docker-compose up -d --build
