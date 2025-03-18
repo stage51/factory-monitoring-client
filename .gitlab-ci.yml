@@ -20,6 +20,8 @@ build:
   stage: build
   script:
     - echo "Building Docker image..."
+    - cp /home/sysadm/factory-monitoring-client/certs/certificate.crt certs/certificate.crt
+    - cp /home/sysadm/factory-monitoring-client/certs/certificate.key certs/certificate.key
     - docker build --build-arg NEXT_PUBLIC_API_HOST=http://localhost:8080/api/v1 -t $DOCKER_IMAGE .
   artifacts:
     paths:
