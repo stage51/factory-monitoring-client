@@ -12,7 +12,7 @@ RUN npm run build
 FROM node:18-alpine AS tester
 WORKDIR /app
 COPY --from=builder /app /app
-CMD ["npm", "test"]
+CMD ["npm", "test", "--", "--run"]
 
 FROM nginx:alpine
 COPY --from=builder /app/out /usr/share/nginx/html
