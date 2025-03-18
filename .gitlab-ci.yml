@@ -33,7 +33,7 @@ test:
   stage: test
   script:
     - echo "Running tests..."
-    - docker exec -it --rm $DOCKER_IMAGE npm test"
+    - docker exec -it --rm $DOCKER_IMAGE npm test
 
 sast:
   tags:
