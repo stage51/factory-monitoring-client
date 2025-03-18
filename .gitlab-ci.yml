@@ -33,7 +33,7 @@ test:
   stage: test
   script:
     - echo "Running tests..."
-    - docker run --rm $DOCKER_IMAGE npm test
+    - docker run --rm node:18-alpine sh -c "cd /app && npm install && npm test"
 
 sast:
   tags:
@@ -53,5 +53,4 @@ deploy:
     - main
   script:
     - echo "Deploying application..."
-    - docker-compose down
     - docker-compose up -d --build
