@@ -31,8 +31,8 @@ test:
   stage: test
   script:
     - echo "Running tests..."
-    - docker run --name test-container -d $DOCKER_IMAGE
-    - docker exec test-container npm test
+    - docker build -t $DOCKER_IMAGE --target tester .
+    - docker run --rm $DOCKER_IMAGE
   after_script:
     - echo "Stopping and removing test container..."
     - docker stop test-container
