@@ -7,13 +7,17 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+const dangerousPattern = /^[^<>"'`;\\/*=+-]*$/; // запрет на опасные символы
+
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Введите корректный email",
-  }),
+  email: z.string()
+    .max(100, { message: "Email слишком длинный" })
+    .email({ message: "Введите корректный email" })
+    .regex(dangerousPattern, { message: "Email содержит недопустимые символы" }),
   password: z.string()
     .min(8, { message: "Пароль должен быть от 8 символов" })
-    .max(20, { message: "Пароль должен быть до 20 символов" }),
+    .max(20, { message: "Пароль должен быть до 20 символов" })
+    .regex(dangerousPattern, { message: "Пароль содержит недопустимые символы" }),
 });
 
 type UserFormProps = {

@@ -7,8 +7,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+const dangerousPattern = /^[^<>"'`;\\/*=+-]*$/; // запрет на опасные символы
+
 const formSchema = z.object({
   code: z.string()
+  .length(16, { message: "Код должен содержать ровно 16 символов" })
+  .regex(dangerousPattern, { message: "Код содержит недопустимые символы" }),
 });
 
 type UserFormProps = {

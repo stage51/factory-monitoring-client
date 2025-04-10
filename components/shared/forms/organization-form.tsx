@@ -8,19 +8,60 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+const dangerousPattern = /^[^<>"'`;\\/*=+-]*$/; // запрет на опасные символы
+
 const formSchema = z.object({
-  shortName: z.string().min(1, { message: "Краткое наименование обязательно" }),
-  name: z.string().min(1, { message: "Полное наименование обязательно" }),
-  type: z.string().min(1, { message: "Выберите тип предприятия" }),
-  region: z.string().min(1, { message: "Регион обязателен" }),
-  taxpayerNumber: z.string()
-    .regex(/^\d{12}$/, { message: "ИНН должен содержать 12 цифр" }),
-  reasonCode: z.string()
-    .regex(/^\d{9}$/, { message: "КПП должен содержать 9 цифр" }),
-  address: z.string().min(1, { message: "Адрес обязателен" }),
-  specialEmail: z.string().email({ message: "Введите корректный email" }),
-  specialPhone: z.string().min(7, { message: "Введите корректный телефон" }),
+  shortName: z
+    .string()
+    .min(1, { message: "Краткое наименование обязательно" })
+    .max(100, { message: "Краткое наименование слишком длинное" })
+    .regex(dangerousPattern, { message: "Краткое наименование содержит недопустимые символы" }),
+
+  name: z
+    .string()
+    .min(1, { message: "Полное наименование обязательно" })
+    .max(200, { message: "Полное наименование слишком длинное" })
+    .regex(dangerousPattern, { message: "Полное наименование содержит недопустимые символы" }),
+
+  type: z
+    .string()
+    .min(1, { message: "Выберите тип предприятия" })
+    .max(50, { message: "Тип предприятия слишком длинный" })
+    .regex(dangerousPattern, { message: "Тип предприятия содержит недопустимые символы" }),
+
+  region: z
+    .string()
+    .min(1, { message: "Регион обязателен" })
+    .max(100, { message: "Регион слишком длинный" })
+    .regex(dangerousPattern, { message: "Регион содержит недопустимые символы" }),
+
+  taxpayerNumber: z
+    .string()
+    .regex(/^\d{12}$/, { message: "ИНН должен содержать ровно 12 цифр" }),
+
+  reasonCode: z
+    .string()
+    .regex(/^\d{9}$/, { message: "КПП должен содержать ровно 9 цифр" }),
+
+  address: z
+    .string()
+    .min(1, { message: "Адрес обязателен" })
+    .max(250, { message: "Адрес слишком длинный" })
+    .regex(dangerousPattern, { message: "Адрес содержит недопустимые символы" }),
+
+  specialEmail: z
+    .string()
+    .email({ message: "Введите корректный email" })
+    .max(100, { message: "Email слишком длинный" })
+    .regex(dangerousPattern, { message: "Email содержит недопустимые символы" }),
+
+  specialPhone: z
+    .string()
+    .min(7, { message: "Введите корректный телефон" })
+    .max(20, { message: "Телефон слишком длинный" })
+    .regex(/^[0-9()+\-\s]+$/, { message: "Телефон содержит недопустимые символы" }),
 });
+
 
 type OrganizationFormProps = {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
