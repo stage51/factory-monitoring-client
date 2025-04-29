@@ -48,8 +48,8 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>Настройки пользователя</DialogTitle>
                           <DialogDescription>Изменение настроек пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="px-3 max-h-[calc(100vh-15rem)]">
-                          <SettingForm id="update-setting-form" initialValues={profile?.setting} onSubmit={updateSetting}>
+                        <ScrollArea className="max-h-[calc(100vh-15rem)]">
+                          <SettingForm className="px-3" id="update-setting-form" initialValues={profile?.setting} onSubmit={updateSetting}>
                           </SettingForm>
                         </ScrollArea>
                         <DialogFooter>
@@ -154,8 +154,8 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>Организация пользователя</DialogTitle>
                           <DialogDescription>Добавление организации пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="px-3 max-h-[calc(100vh-15rem)]">
-                          <OrganizationForm id="create-organization-foem" initialValues={profile?.organization} onSubmit={createOrganization}>
+                        <ScrollArea className="max-h-[calc(100vh-15rem)]">
+                          <OrganizationForm className="px-3" id="create-organization-form" initialValues={profile?.organization} onSubmit={createOrganization}>
                           </OrganizationForm>
                         </ScrollArea>
                         <DialogFooter>
@@ -233,8 +233,8 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>JОрганизация пользователя</DialogTitle>
                           <DialogDescription>Изменение организации пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="px-3 max-h-[calc(100vh-15rem)]">
-                          <OrganizationForm id="update-organization-form" initialValues={profile?.organization} onSubmit={updateOrganization}>
+                        <ScrollArea className="max-h-[calc(100vh-15rem)]">
+                          <OrganizationForm className="px-3" id="update-organization-form" initialValues={profile?.organization} onSubmit={updateOrganization}>
                           </OrganizationForm>
                         </ScrollArea>
                         <DialogFooter>

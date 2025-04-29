@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Switch } from "@/components/ui/switch";
 import { UserRequest } from "../services/profile/profile-service";
+import { cn } from "@/lib/utils";
 
 const dangerousPattern = /^[^<>"'`;\\/*=+-]*$/; // запрет на опасные символы
 
@@ -58,12 +59,13 @@ const formSchema = z.object({
 
 type UserFormProps = {
   id?: string;
+  className?: string;
   onSubmit: (values: z.infer<typeof formSchema> | UserRequest) => void;
   initialValues?: z.infer<typeof formSchema> | null;
   children?: React.ReactNode;
 };
 
-export const UserRegForm = ({ id, onSubmit, initialValues, children }: UserFormProps) => {
+export const UserRegForm = ({ id, className, onSubmit, initialValues, children }: UserFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues || {
@@ -79,7 +81,7 @@ export const UserRegForm = ({ id, onSubmit, initialValues, children }: UserFormP
 
   return (
     <Form {...form}>
-        <form id={id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
+        <form id={id} onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4 w-full", className)}>
                     <FormField
                         control={form.control}
                         name="email"

@@ -12,6 +12,7 @@ import apiClient from "../services/auth/api-client";
 import { useEffect, useState } from "react";
 import { getClientConfig } from "../services/config/config";
 import { SettingRequest } from "../services/profile/profile-service";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   timezone: z.string(),
@@ -37,12 +38,13 @@ const reportNotifications = [
 
 type SettingFormProps = {
   id?: string;
+  className?: string;
   onSubmit: (values: z.infer<typeof formSchema> | SettingRequest) => Promise<void>;
   initialValues?: z.infer<typeof formSchema>;
   children?: React.ReactNode;
 };
 
-export const SettingForm = ({ id, onSubmit, initialValues, children }: SettingFormProps) => {
+export const SettingForm = ({ id, className, onSubmit, initialValues, children }: SettingFormProps) => {
   const [canUpload, setCanUpload] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,7 +66,7 @@ export const SettingForm = ({ id, onSubmit, initialValues, children }: SettingFo
 
   return (
     <Form {...form}>
-      <form id={id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
+      <form id={id} onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4 w-full", className)}>
         <FormField
           control={form.control}
           name="timezone"

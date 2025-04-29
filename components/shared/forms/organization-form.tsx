@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 const dangerousPattern = /^[^<>"'`;\\/*=+-]*$/; // запрет на опасные символы
 
@@ -69,9 +70,10 @@ type OrganizationFormProps = {
   children?: React.ReactNode;
   data?: any;
   id?: string;
+  className?: string;
 };
 
-export const OrganizationForm = ({ id, onSubmit, initialValues, children }: OrganizationFormProps) => {
+export const OrganizationForm = ({ id, className, onSubmit, initialValues, children }: OrganizationFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues || {
@@ -89,7 +91,7 @@ export const OrganizationForm = ({ id, onSubmit, initialValues, children }: Orga
 
   return (
     <Form {...form}>
-      <form id={id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
+      <form id={id} onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4 w-full", className)}>
         <FormField
           control={form.control}
           name="shortName"
