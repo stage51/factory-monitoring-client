@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
-const dangerousPattern = /^[^<>"'`;\\/*=+-]*$/; // запрет на опасные символы
+const dangerousPattern = /^[^<>'`;\\/*=+]*$/; // запрет на опасные символы
 
 const formSchema = z.object({
   shortName: z
@@ -28,7 +28,7 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "Выберите тип предприятия" })
     .max(50, { message: "Тип предприятия слишком длинный" })
-    .regex(/^[^<>"'`;\\/*=+]*$/, { message: "Тип предприятия содержит недопустимые символы" }),
+    .regex(dangerousPattern, { message: "Тип предприятия содержит недопустимые символы" }),
 
   region: z
     .string()

@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserRequest } from "../services/profile/profile-service";
 import { cn } from "@/lib/utils";
 
-const dangerousPattern = /^[^<>"'`;\\/*=+-]*$/; // запрет на опасные символы
+const dangerousPattern = /^[^<>"'`;\\/*=+]*$/; // запрет на опасные символы
 
 const formSchema = z.object({
   email: z

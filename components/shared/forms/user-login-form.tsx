@@ -7,7 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-const dangerousPattern = /^[^<>"'`;\\/*=+-]*$/; // запрет на опасные символы
+const dangerousPattern = /^[^<>"'`;\\/*=+]*$/; // запрет на опасные символы
 
 const formSchema = z.object({
   email: z.string()
