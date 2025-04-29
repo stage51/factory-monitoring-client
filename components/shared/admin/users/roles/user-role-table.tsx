@@ -18,8 +18,8 @@ export default function UserRoleTable() {
     ];
 
     const visibleHeaders = [
-      "ID",
-      "Название",
+      "Роль",
+      "Описание",
     ];
 
     type HeadersTypes = {

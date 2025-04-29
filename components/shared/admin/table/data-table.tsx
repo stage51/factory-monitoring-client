@@ -180,8 +180,8 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
                         if (visibleHeaders.includes(mobileHeaders[index])) {
                           return (
                             <div key={cell.id} className="flex justify-between">
-                              <span className="font-normal">{mobileHeaders[index]}:</span>
-                              <span className="font-light">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
+                              <span className="font-normal text-left">{mobileHeaders[index]}:</span>
+                              <span className="font-light text-right">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
                             </div>
                           );
                         }
@@ -198,16 +198,16 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
                         if (index > mobileHeaders.length - 1){
                           return (
                             <div className="flex justify-between">
-                              <span className="font-normal">Действия:</span>
-                              <span className="font-light">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
+                              <span className="font-normal text-left">Действия:</span>
+                              <span className="font-light text-right">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
                             </div>
                           );
                         }
                         if (!visibleHeaders.includes(mobileHeaders[index])) {
                           return (
                             <div key={cell.id} className="flex justify-between">
-                              <span className="font-normal">{mobileHeaders[index]}:</span>
-                              <span className="font-light">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
+                              <span className="font-normal text-left">{mobileHeaders[index]}:</span>
+                              <span className="font-light text-right">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
                             </div>
                           );
                         }
