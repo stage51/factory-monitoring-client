@@ -57,12 +57,13 @@ const formSchema = z.object({
 
 
 type UserFormProps = {
+  id?: string;
   onSubmit: (values: z.infer<typeof formSchema> | UserRequest) => void;
   initialValues?: z.infer<typeof formSchema> | null;
   children?: React.ReactNode;
 };
 
-export const UserRegForm = ({ onSubmit, initialValues, children }: UserFormProps) => {
+export const UserRegForm = ({ id, onSubmit, initialValues, children }: UserFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues || {
@@ -78,7 +79,7 @@ export const UserRegForm = ({ onSubmit, initialValues, children }: UserFormProps
 
   return (
     <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
+        <form id={id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
                     <FormField
                         control={form.control}
                         name="email"

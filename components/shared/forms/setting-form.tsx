@@ -36,12 +36,13 @@ const reportNotifications = [
 ] as const;
 
 type SettingFormProps = {
+  id?: string;
   onSubmit: (values: z.infer<typeof formSchema> | SettingRequest) => Promise<void>;
   initialValues?: z.infer<typeof formSchema>;
   children?: React.ReactNode;
 };
 
-export const SettingForm = ({ onSubmit, initialValues, children }: SettingFormProps) => {
+export const SettingForm = ({ id, onSubmit, initialValues, children }: SettingFormProps) => {
   const [canUpload, setCanUpload] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,7 +64,7 @@ export const SettingForm = ({ onSubmit, initialValues, children }: SettingFormPr
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
+      <form id={id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
         <FormField
           control={form.control}
           name="timezone"

@@ -49,12 +49,14 @@ const Profile: React.FC = observer(() => {
                           <DialogDescription>Изменение настроек пользователя</DialogDescription>
                         </DialogHeader>
                         <ScrollArea className="max-h-[calc(100vh-15rem)]">
-                          <SettingForm initialValues={profile?.setting} onSubmit={updateSetting}>
-                              <Button className="w-full" type="submit" >
-                                  Изменить
-                              </Button>
+                          <SettingForm id="update-setting-form" initialValues={profile?.setting} onSubmit={updateSetting}>
                           </SettingForm>
                         </ScrollArea>
+                        <DialogFooter>
+                            <Button form="update-setting-form" className="w-full" type="submit" >
+                                  Изменить
+                            </Button>
+                        </DialogFooter>
                         <DialogClose asChild>
                           <Button className="" type="button" variant="secondary">
                             Закрыть
@@ -119,12 +121,14 @@ const Profile: React.FC = observer(() => {
                           <DialogDescription>Изменение профиля пользователя</DialogDescription>
                         </DialogHeader>
                         <ScrollArea className="max-h-[calc(100vh-15rem)]">
-                          <UserRegForm initialValues={profile} onSubmit={updateProfile}>
-                              <Button className="w-full" type="submit" >
-                                  Изменить
-                              </Button>
+                          <UserRegForm id="update-user-form" initialValues={profile} onSubmit={updateProfile}>
                           </UserRegForm>
                         </ScrollArea>
+                        <DialogFooter>
+                            <Button form="update-user-form" className="w-full" type="submit" >
+                                  Изменить
+                            </Button>
+                        </DialogFooter>
                         <DialogClose asChild>
                           <Button className="" type="button" variant="secondary">
                             Закрыть
@@ -151,12 +155,14 @@ const Profile: React.FC = observer(() => {
                           <DialogDescription>Добавление организации пользователя</DialogDescription>
                         </DialogHeader>
                         <ScrollArea className="max-h-[calc(100vh-15rem)]">
-                          <OrganizationForm initialValues={profile?.organization} onSubmit={createOrganization}>
-                              <Button className="w-full" type="submit" >
-                                  Добавить
-                              </Button>
+                          <OrganizationForm id="create-organization-foem" initialValues={profile?.organization} onSubmit={createOrganization}>
                           </OrganizationForm>
                         </ScrollArea>
+                        <DialogFooter>
+                              <Button form="create-organization-form" className="w-full" type="submit" >
+                                  Добавить
+                              </Button>
+                        </DialogFooter>
                         <DialogClose asChild>
                           <Button className="" type="button" variant="secondary">
                             Закрыть
@@ -227,13 +233,15 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>JОрганизация пользователя</DialogTitle>
                           <DialogDescription>Изменение организации пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="max-h-[calc(100vh-15rem)]">
-                          <OrganizationForm initialValues={profile?.organization} onSubmit={updateOrganization}>
-                              <Button className="w-full" type="submit" >
-                                  Изменить
-                              </Button>
+                        <ScrollArea className="px-2 max-h-[calc(100vh-15rem)]">
+                          <OrganizationForm id="update-organization-form" initialValues={profile?.organization} onSubmit={updateOrganization}>
                           </OrganizationForm>
                         </ScrollArea>
+                        <DialogFooter>
+                          <Button className="w-full" type="submit" form="update-organization-form">
+                            Изменить
+                          </Button>
+                        </DialogFooter>
                         <DialogClose asChild>
                           <Button className="" type="button" variant="secondary">
                             Закрыть

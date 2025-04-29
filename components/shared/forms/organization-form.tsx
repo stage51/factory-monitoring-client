@@ -68,9 +68,10 @@ type OrganizationFormProps = {
   initialValues?: z.infer<typeof formSchema>;
   children?: React.ReactNode;
   data?: any;
+  id?: string;
 };
 
-export const OrganizationForm = ({ onSubmit, initialValues, children }: OrganizationFormProps) => {
+export const OrganizationForm = ({ id, onSubmit, initialValues, children }: OrganizationFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues || {
@@ -88,7 +89,7 @@ export const OrganizationForm = ({ onSubmit, initialValues, children }: Organiza
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
+      <form id={id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
         <FormField
           control={form.control}
           name="shortName"
