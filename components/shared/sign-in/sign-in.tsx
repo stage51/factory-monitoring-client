@@ -44,7 +44,7 @@ export default function SignIn() {
             </Link>
           </div>
           <div className="w-full flex justify-center">
-            <Link className="text-muted-foreground hover:text-gray-300" href="/forgot">Забыли пароль?</Link>
+            <Link className="text-muted-foreground hover:text-gray-700" href="/forgot">Забыли пароль?</Link>
           </div>
         </UserLoginForm>
       </CardContent>
