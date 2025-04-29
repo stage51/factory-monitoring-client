@@ -62,7 +62,7 @@ export default function Footer() {
           <p className="text-sm text-muted-foreground font-light">
             © {currentYear} {company?.companyName}. Все права защищены.
           </p>
-          <Link href="/privacy" className="text-sm text-muted-foreground hover:text-gray-300">
+          <Link href="/privacy.pdf" className="text-sm text-muted-foreground hover:text-gray-300" target="_blank" rel="noopener noreferrer">
             Заявление о конфиденциальности
           </Link>
         </div>
