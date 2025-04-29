@@ -73,6 +73,7 @@ export const createOrganization = async (orgData: {
     specialPhone: string;
   }) => {
     const response = await apiClient.post("/auth-server/organizations/profile", orgData); 
+    return response.data
 };
 
 export const updateOrganization = async (data : OrganizationRequest) => {

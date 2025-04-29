@@ -50,7 +50,7 @@ export class UserStore {
 
   createOrganization = async (values: any) => {
       try {
-        await createOrganization(values)
+        this.profile.organization = await createOrganization(values)
         toast({
           title: "Создание организации",
           description: "Организация успешно добавлена к вам в профиль",
