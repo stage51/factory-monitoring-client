@@ -15,7 +15,7 @@ import { userStore } from "../stores/user-store"
 import { SettingForm } from "../forms/setting-form"
 
 const Profile: React.FC = observer(() => {
-  const { profile, isLoading, error, fetchProfile, updateProfile, updateSetting, updateOrganization, deleteOrganization } =
+  const { profile, isLoading, error, fetchProfile, updateProfile, updateSetting, createOrganization, updateOrganization, deleteOrganization } =
   userStore;
 
   useEffect(() => {
@@ -136,7 +136,27 @@ const Profile: React.FC = observer(() => {
               {profile?.organization === null ? (
                 <div className="flex flex-col items-center py-6 gap-6">
                   <p className="text-lg text-center">Информации о вашей организации пока что нет в профиле</p>
-                  <Button className="w-1/2"><Link href="/sign-up/fill-organization-info">Заполнить</Link></Button>
+                  <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="w-1/2">Заполнить</Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Организация пользователя</DialogTitle>
+                          <DialogDescription>Добавление организации пользователя</DialogDescription>
+                        </DialogHeader>
+                        <OrganizationForm initialValues={profile?.organization} onSubmit={createOrganization}>
+                            <Button className="w-full" type="submit" >
+                                Добавить
+                            </Button>
+                        </OrganizationForm>
+                        <DialogClose asChild>
+                          <Button className="" type="button" variant="secondary">
+                            Закрыть
+                          </Button>
+                        </DialogClose>
+                      </DialogContent>
+                  </Dialog>
                 </div>
               ) : (
               <Card className="shadow-none">

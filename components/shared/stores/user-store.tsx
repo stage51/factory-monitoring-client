@@ -10,6 +10,7 @@ import {
   OrganizationRequest,
   SettingRequest,
   updateSetting as updateSettingAPI,
+  createOrganization,
 } from "../services/profile/profile-service";
 import { toast } from "@/components/hooks/use-toast"
 import { setTimezone } from "../timezone/date";
@@ -46,6 +47,22 @@ export class UserStore {
       this.isLoading = false;
     }
   }
+
+  createOrganization = async (values: any) => {
+      try {
+        await createOrganization(values)
+        toast({
+          title: "Создание организации",
+          description: "Организация успешно добавлена к вам в профиль",
+        })
+      } catch (error) {
+        toast({
+          title: "Ошибка регистрации",
+          variant: "destructive",
+          description: "Проверьте правильность заполненных форм и попробуйте ещё раз",
+        })
+      }
+    }
 
   updateProfile = async (data: UserRequest) => {
     this.isLoading = true;
