@@ -38,6 +38,7 @@ const ModesTable = observer(() => {
         mobileHeaders={mobileHeaders}
         taxpayerNumber={profile?.organization?.taxpayerNumber}
       />
+      {/*
       <TableFull className="2xl:flex hidden">
         <DataTable
           columns={columns}
@@ -46,6 +47,7 @@ const ModesTable = observer(() => {
           taxpayerNumber={profile?.organization?.taxpayerNumber}
         />
       </TableFull>
+      */}
     </div>
   );
 });
