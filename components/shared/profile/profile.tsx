@@ -230,7 +230,7 @@ const Profile: React.FC = observer(() => {
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>JОрганизация пользователя</DialogTitle>
+                          <DialogTitle>Организация пользователя</DialogTitle>
                           <DialogDescription>Изменение организации пользователя</DialogDescription>
                         </DialogHeader>
                         <ScrollArea className="max-h-[calc(100vh-15rem)]">
