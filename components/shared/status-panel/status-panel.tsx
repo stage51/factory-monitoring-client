@@ -127,9 +127,9 @@ const StatusPanel = observer(() => {
             <Title title={"Здравствуйте, " + profile.firstName + " " + profile.lastName} subtitle="Добро пожаловать в ЕГАИС Мониторинг. Выберите действие." />
             <Container className="flex items-start flex-col p-6 gap-6 animate-slide-element">
                 <Collapsible className="w-full">
-                    <CollapsibleTrigger hidden={hiddenCard} onClick={() => setHiddenCard(true)} className="w-full">
+                    <CollapsibleTrigger hidden={hiddenCard} onClick={() => setHiddenCard(true)} className="w-full rounded-lg shadow-md hover:bg-slate-200 hover:shadow-lg transition-all">
                     {hasProblem ? (
-                        <Card className="flex justify-center items-center gap-8 p-6 border-none shadow-md hover:bg-slate-200 hover:shadow-lg transition-all">
+                        <Card className="flex justify-center items-center gap-8 p-6 border-none shadow-none">
                             <CircleAlert strokeWidth={1.25} className="h-12 w-12 text-muted-foreground" />
                             <div className="p-4">
                                 <CardHeader className="p-0 text-center">Внимание</CardHeader>
@@ -137,7 +137,7 @@ const StatusPanel = observer(() => {
                             </div>
                         </Card>
                     ) : (
-                        <Card className="flex justify-center items-center gap-8 p-6 border-none shadow-md hover:bg-slate-200 hover:shadow-lg transition-all">
+                        <Card className="flex justify-center items-center gap-8 p-6 border-none shadow-none">
                             <Smile strokeWidth={1.25} className="h-12 w-12 text-muted-foreground" />
                             <div className="p-4">
                                 <CardHeader className="p-0 text-center">Всё хорошо</CardHeader>
