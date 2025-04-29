@@ -28,7 +28,7 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "Выберите тип предприятия" })
     .max(50, { message: "Тип предприятия слишком длинный" })
-    .regex(dangerousPattern, { message: "Тип предприятия содержит недопустимые символы" }),
+    .regex(/^[^<>"'`;\\/*=+]*$/, { message: "Тип предприятия содержит недопустимые символы" }),
 
   region: z
     .string()
