@@ -120,8 +120,8 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>Профиль пользователя</DialogTitle>
                           <DialogDescription>Изменение профиля пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="max-h-[calc(100vh-15rem)] px-3">
-                          <UserRegForm id="update-user-form" initialValues={profile} onSubmit={updateProfile}>
+                        <ScrollArea className="max-h-[calc(100vh-15rem)]">
+                          <UserRegForm className="px-3" id="update-user-form" initialValues={profile} onSubmit={updateProfile}>
                           </UserRegForm>
                         </ScrollArea>
                         <DialogFooter>
