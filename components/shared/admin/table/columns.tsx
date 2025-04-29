@@ -102,7 +102,7 @@ function EditDialog<HeadersTypes>({
                 <ScrollArea className="max-h-[75vh]">
                     <div className="grid gap-4 py-4">
                         {headers.map(({ key, label }) =>
-                            !["id", "product"].includes(key as string) ? (
+                            !["id", "product", "updatedAt", "createdAt"].includes(key as string) ? (
                                 <div
                                     key={key.toString()}
                                     className="grid grid-cols-4 items-center gap-4 pe-4"

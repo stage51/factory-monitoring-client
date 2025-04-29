@@ -48,7 +48,7 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>Настройки пользователя</DialogTitle>
                           <DialogDescription>Изменение настроек пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="max-h-[calc(100vh-15rem)]">
+                        <ScrollArea className="px-3 max-h-[calc(100vh-15rem)]">
                           <SettingForm id="update-setting-form" initialValues={profile?.setting} onSubmit={updateSetting}>
                           </SettingForm>
                         </ScrollArea>
@@ -120,7 +120,7 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>Профиль пользователя</DialogTitle>
                           <DialogDescription>Изменение профиля пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="max-h-[calc(100vh-15rem)]">
+                        <ScrollArea className="max-h-[calc(100vh-15rem)] px-3">
                           <UserRegForm id="update-user-form" initialValues={profile} onSubmit={updateProfile}>
                           </UserRegForm>
                         </ScrollArea>
@@ -154,7 +154,7 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>Организация пользователя</DialogTitle>
                           <DialogDescription>Добавление организации пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="max-h-[calc(100vh-15rem)]">
+                        <ScrollArea className="px-3 max-h-[calc(100vh-15rem)]">
                           <OrganizationForm id="create-organization-foem" initialValues={profile?.organization} onSubmit={createOrganization}>
                           </OrganizationForm>
                         </ScrollArea>
@@ -233,7 +233,7 @@ const Profile: React.FC = observer(() => {
                           <DialogTitle>JОрганизация пользователя</DialogTitle>
                           <DialogDescription>Изменение организации пользователя</DialogDescription>
                         </DialogHeader>
-                        <ScrollArea className="px-2 max-h-[calc(100vh-15rem)]">
+                        <ScrollArea className="px-3 max-h-[calc(100vh-15rem)]">
                           <OrganizationForm id="update-organization-form" initialValues={profile?.organization} onSubmit={updateOrganization}>
                           </OrganizationForm>
                         </ScrollArea>
