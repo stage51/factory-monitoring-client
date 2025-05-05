@@ -29,10 +29,6 @@ const reportNotifications = [
   {
     id: "FIVE_MINUTE",
     label: "Пятиминутные отчеты",
-  },
-  {
-    id: "MODE",
-    label: "Отчеты по режимам",
   }
 ] as const;
 
@@ -141,51 +137,64 @@ export const SettingForm = ({ id, className, onSubmit, initialValues, children }
         <FormField
           control={form.control}
           name="reportNotifications"
-          render={() => (
-            <FormItem className="border rounded-lg px-6 py-4">
-              <div className="mb-4">
-                <FormLabel className="text-base">Уведомления об отчетах</FormLabel>
-                <FormDescription>
-                  Уведомления будут приходить на указанный email организации.
-                </FormDescription>
-              </div>
-              {reportNotifications.map((item) => (
-                <FormField
-                  key={item.id}
-                  control={form.control}
-                  name="reportNotifications"
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={item.id}
-                        className="flex flex-row items-start space-x-3 space-y-0"
-                      >
-                        <FormControl>
-                          <Checkbox
-                            className="rounded-[4px] mt-[2px]"
-                            checked={field.value?.includes(item.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== item.id
-                                    )
-                                  );
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          {item.label}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
-              <FormMessage />
-            </FormItem>
-          )}
+          render={() => {
+            const subscribeValue = form.watch("subscribe");
+            
+            return (
+              <FormItem className={cn(
+                "border rounded-lg px-6 py-4",
+                !subscribeValue && "bg-muted/50"
+              )}>
+                <div className="mb-4">
+                  <FormLabel className="text-base">Уведомления об отчетах</FormLabel>
+                  <FormDescription>
+                    {subscribeValue 
+                      ? "Уведомления будут приходить на указанный email организации."
+                      : "Для получения уведомлений необходимо подписаться на рассылку."}
+                  </FormDescription>
+                </div>
+                {reportNotifications.map((item) => (
+                  <FormField
+                    key={item.id}
+                    control={form.control}
+                    name="reportNotifications"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={item.id}
+                          className="flex flex-row items-start space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              className="rounded-[4px] mt-[2px]"
+                              checked={field.value?.includes(item.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, item.id])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== item.id
+                                      )
+                                    );
+                              }}
+                              disabled={!subscribeValue}
+                            />
+                          </FormControl>
+                          <FormLabel className={cn(
+                            "text-sm font-normal",
+                            !subscribeValue && "text-muted-foreground"
+                          )}>
+                            {item.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
         {canUpload && (
           <FormField
