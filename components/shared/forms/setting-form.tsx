@@ -29,6 +29,10 @@ const reportNotifications = [
   {
     id: "FIVE_MINUTE",
     label: "Пятиминутные отчеты",
+  },
+  {
+    id: "MODE",
+    label: "Отчеты по режимам",
   }
 ] as const;
 
