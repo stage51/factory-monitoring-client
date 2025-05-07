@@ -198,38 +198,33 @@ const StatusPanel = observer(() => {
                         )}
                         {isLoading ? (<Skeleton className="rounded-xl w-full h-16" />) :
                         (<TabsContent className="flex flex-col mt-0 gap-2" value="daily">
-                                {
-                                    dailyStatuses && dailyStatuses.length > 0 ? (
-                                    <Card className="border-none shadow-md flex flex-col">
-                                    {Object.entries(groupedStatuses(dailyStatuses)).map(([controllerNumber, reportStatuses], index) => (
-                                        <div key={controllerNumber} className="flex flex-col p-4 gap-4">
-                                            <Separator className={index === 0 ? "hidden" : ""} orientation="horizontal" />
-                                            <div className="flex flex-row items-center align-middle gap-4 font-bold">
-                                                <Building2 className="h-6 w-6" />
-                                                Комплекс {controllerNumber}
+                                {   
+                                    dailyStatuses && dailyStatuses.length > 0 ? 
+                                    Object.entries(groupedStatuses(dailyStatuses)).map(([controllerNumber, reportStatuses]) => (
+                                        <Card key={controllerNumber} className="border-none shadow-md">
+                                        <CardHeader className="flex flex-row items-center align-middle gap-4 font-bold">
+                                            <Building2 className="h-6 w-6" />
+                                            Комплекс {controllerNumber}
+                                        </CardHeader>
+                                        <CardContent className="flex flex-col gap-4">
+                                        {reportStatuses.map((status) => (
+                                        <Alert className="flex gap-4" variant={status.reportStatus === "OK" ? "ok" : status.reportStatus === "WARN" ? "warning"  : "destructive"}>
+                                            <div className="items-center flex">
+                                                {status.reportStatus === "OK" ? (<CircleCheck />) : status.reportStatus === "WARN" ? (<CircleAlert />)  : (<CircleX />)}
                                             </div>
-                                            <div className="flex flex-col gap-4">
-                                            {reportStatuses.map((status) => (
-                                            <Alert className="flex gap-4" variant={status.reportStatus === "OK" ? "ok" : status.reportStatus === "WARN" ? "warning"  : "destructive"}>
-                                                <div className="items-center flex">
-                                                    {status.reportStatus === "OK" ? (<CircleCheck />) : status.reportStatus === "WARN" ? (<CircleAlert />)  : (<CircleX />)}
-                                                </div>
-                                                <div>
-                                                    <AlertTitle className="mb-2">
-                                                        Линия {status.lineNumber}
-                                                    </AlertTitle>
-                                                    <AlertDescription>
-                                                        Последний отчет был загружен в {new ReadableDate(new Date (status.lastReportTime)).toReadable()}
-                                                    </AlertDescription>
-                                                </div>
-                                            </Alert>
-                                            ))}
+                                            <div>
+                                                <AlertTitle className="mb-2">
+                                                    Линия {status.lineNumber}
+                                                </AlertTitle>
+                                                <AlertDescription>
+                                                    Последний отчет был загружен в {new ReadableDate(new Date (status.lastReportTime)).toReadable()}
+                                                </AlertDescription>
                                             </div>
-                                        </div>
+                                        </Alert>
+                                        ))}
+                                        </CardContent>
+                                        </Card>
                                     ))
-                                    }
-                                    </Card>
-                                    )
                                     : (
                                         <Card className="flex justify-center items-center gap-8 p-6 border-none shadow-md">
                                             <Frown strokeWidth={1.25} className="h-12 w-12 text-muted-foreground" />
@@ -250,5 +245,7 @@ const StatusPanel = observer(() => {
         );
     }
 });
+
+
 
 export default StatusPanel
