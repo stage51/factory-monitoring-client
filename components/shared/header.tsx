@@ -34,6 +34,7 @@ const Header = observer(({ className }: Props) => {
               title: "Выход из аккаунт",
               description: "Выход был успешно выполнен",
             })
+            window.location.reload()
         } catch (error) {
             console.error("Ошибка выхода из аккаунта:", error);
             toast({

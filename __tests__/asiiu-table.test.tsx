@@ -61,7 +61,7 @@ vi.mock("@/components/shared/services/five-minute-report/position-service", () =
 }));
 
 describe("DataTable component", () => {
-  it("renders table with data", async () => {
+  it("отображает таблицу с данными", async () => {
     render(
       <DataTable
         columns={columns}

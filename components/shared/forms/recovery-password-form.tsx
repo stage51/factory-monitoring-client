@@ -39,7 +39,7 @@ export const RecoveryPasswordForm = ({ onSubmit, initialValues, children }: User
             <FormItem>
               <FormLabel>Код восстановления</FormLabel>
               <FormControl>
-                <Input placeholder="Введите почту" type="text" {...field} />
+                <Input placeholder="Введите код из электронного письма" type="text" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

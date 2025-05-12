@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import apiClient from "./api-client";
+import { cookies } from "next/headers";
 
 interface AuthContextType {
   isAuthorized: boolean | null;
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const verifyAuthorization = async () => {
-    const token = localStorage.getItem("access_token");
+    const token = cookies().get("access_token");
 
     if (!token) {
       const refreshedToken = await refreshAccessToken();
@@ -43,14 +44,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshAccessToken = async () => {
     try {
-      const refreshToken = localStorage.getItem("refresh_token");
+      const refreshToken = cookies().get("refresh_token");
       if (!refreshToken) return null;
 
       const response = await apiClient.post("/auth-server/auth/refresh-token", {
         refreshToken,
       });
       const { accessToken } = response.data;
-      localStorage.setItem("access_token", accessToken);
+      cookies().set("access_token", accessToken);
       return accessToken;
     } catch {
       return null;

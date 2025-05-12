@@ -14,6 +14,7 @@ import {
 } from "../services/profile/profile-service";
 import { toast } from "@/components/hooks/use-toast"
 import { setTimezone } from "../timezone/date";
+import { cookies } from "next/headers";
 
 export class UserStore {
   profile: UserResponse | null = null;
@@ -27,7 +28,7 @@ export class UserStore {
   fetchProfile = async () => {
     this.isLoading = true;
     try {
-      if (!!localStorage.getItem("access_token")) {
+      if (!!cookies().get("access_token")) {
         const profile = await fetchUserProfile();
         this.profile = profile;
         setTimezone(profile.setting.timezone);
