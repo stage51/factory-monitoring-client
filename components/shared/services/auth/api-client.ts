@@ -1,12 +1,11 @@
 import axios from "axios";
-import { cookies } from "next/headers";
 
 export const SERVER_URL = process.env.NEXT_PUBLIC_API_HOST;
 const isBrowser = typeof window !== "undefined";
 
 const getAccessToken = () => {
   if (isBrowser) {
-    return cookies().get("access_token");
+    return localStorage.getItem("access_token");
   } else return null
 };
 

@@ -6,7 +6,6 @@ import Container from "../../container";
 import { Button } from "@/components/ui/button";
 import apiClient from "./api-client";
 import { parseJwt } from "./parse-jwt";
-import { cookies } from "next/headers";
 
 interface Props {
   children?: ReactNode;
@@ -43,7 +42,7 @@ export default function Auth({ children, mainPage = false }: Props) {
 
   const refreshAccessToken = async () => {
     try {
-      const refreshToken = cookies().get("refresh_token");
+      const refreshToken = localStorage.getItem("refresh_token");
       if (!refreshToken) throw new Error("Refresh token not found");
 
       const response = await apiClient.post("/auth-server/auth/refresh-token", {
@@ -51,7 +50,7 @@ export default function Auth({ children, mainPage = false }: Props) {
       });
 
       const { accessToken } = response.data;
-      cookies().set("access_token", accessToken);
+      localStorage.setItem("access_token", accessToken);
 
       scheduleTokenRefresh(accessToken);
 
@@ -79,7 +78,7 @@ export default function Auth({ children, mainPage = false }: Props) {
   };
 
   const verifyAuthorization = async () => {
-    const token = cookies().get("access_token");
+    const token = localStorage.getItem("access_token");
 
     if (!token) {
       const refreshedToken = await refreshAccessToken();
