@@ -18,7 +18,7 @@ const formSchema = z.object({
   timezone: z.string(),
   subscribe: z.boolean(),
   reportNotifications: z.array(z.string()).default([]),
-  avatarUrl: z.string().optional()
+  avatarUrl: z.string().nullable()
 });
 
 const reportNotifications = [
