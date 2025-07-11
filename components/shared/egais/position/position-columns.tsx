@@ -6,57 +6,18 @@ import { Button } from "@/components/ui/button"
 import { DateRange } from "react-day-picker";
 
 import { Package } from "lucide-react"
+import { Position } from "../columns";
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { ReadableDate } from "../timezone/date";
+import { ReadableDate } from "../../timezone/date";
 
-export type Sensor = {
-    id: number
-    taxpayerNumber: string
-    sensorNumber: string
-}
-
-export type ModeReport = {
-    id: number
-    sensor: Sensor
-    position: Position
-    createdAt: Date
-    updatedAt: Date
-}
-
-export type Product = {
-    id: number
-    unitType: "Фасованная" | "Нефасованная"
-    fullName: string
-    alcCode: string
-    productVCode: string
-}
-
-export type Position = {
-    id: number
-    product: Product
-    startDate: Date
-    endDate: Date
-    vbsStart: number
-    vbsEnd: number
-    aStart: number
-    aEnd: number
-    percentAlc: number
-    bottleCountStart: number
-    bottleCountEnd: number
-    temperature: number
-    mode: "Промывка" | "Калибровка" | "Тех. прогон" | "Производство" | 
-    "Остановка" | "Прием (возврат)" | "Прием" | "Внутреннее перемещение" | "Отгрузка" | "Отгрузка (возврат)" | "Другие цели",
-}
-
-export const mobileHeaders = [
+export const positionMobileHeaders = [
     "Начало измерений",
     "Конец измерений",
-    "Сенсор",
     "Объем безводнового спирта в начале",
     "Объем безводного спирта в конце",
     "Объем готовой продукции в начале",
@@ -68,10 +29,11 @@ export const mobileHeaders = [
     "Код режима",
     "Продукт"
   ];
-export const visibleHeaders = ["Начало измерений", "Конец измерений", "Сенсор", "Код режима"];
+  
+export const positionVisibleHeaders = ["Начало измерений", "Конец измерений", "Сенсор", "Код режима"];
 
 
-export const columns: ColumnDef<ModeReport>[] = [
+export const positionColumns: ColumnDef<Position>[] = [
     {
         accessorKey: "startDate",
         header: ({ column }) => {
@@ -86,7 +48,7 @@ export const columns: ColumnDef<ModeReport>[] = [
             );
         },
         cell: ({ row }) => {
-            const date = new Date(row.original.position.startDate);
+            const date = new Date(row.original.startDate);
             return new ReadableDate(date.getTime()).toReadable();
         }
     },
@@ -104,79 +66,45 @@ export const columns: ColumnDef<ModeReport>[] = [
             );
         },
         cell: ({ row }) => {
-            const date = new Date(row.original.position.endDate);
+            const date = new Date(row.original.endDate);
             return new ReadableDate(date.getTime()).toReadable();
-        }
-    },
-    {
-        accessorKey: "sensorNumber",
-        header: "Сенсор",
-        cell: ({ row }) => {
-            return row.original.sensor.sensorNumber
         }
     },
     {
         accessorKey: "vbsStart",
         header: "Объем безводного спирта в начале",
-        cell: ({ row }) => {
-            return row.original.position.vbsStart
-        }
     },
     {
         accessorKey: "vbsEnd",
         header: "Объем безводного спирта в конце",
-        cell: ({ row }) => {
-            return row.original.position.vbsEnd
-        }
     },
     {
         accessorKey: "aStart",
         header: "Объем готовой продукции в начале",
-        cell: ({ row }) => {
-            return row.original.position.aStart
-        }
     },
     {
         accessorKey: "aEnd",
         header: "Объем готовой продукции в конце",
-        cell: ({ row }) => {
-            return row.original.position.aEnd
-        }
     },
     {
         accessorKey: "percentAlc",
         header: "Концентрация спирта",
-        cell: ({ row }) => {
-            return row.original.position.percentAlc
-        }
     },
     {
         accessorKey: "bottleCountStart",
         header: "Кол-во в начале",
-        cell: ({ row }) => {
-            return row.original.position.bottleCountStart
-        }
     },
     {
         accessorKey: "bottleCountEnd",
         header: "Кол-во в конце",
-        cell: ({ row }) => {
-            return row.original.position.bottleCountEnd
-        }
     },
     {
         accessorKey: "temperature",
         header: "Температура",
-        cell: ({ row }) => {
-            return row.original.position.temperature
-        }
     },
     {
         accessorKey: "mode",
         header: "Режим",
-        cell: ({ row }) => {
-            return row.original.position.mode
-        }
     },
     {
         id: "product",
@@ -184,7 +112,7 @@ export const columns: ColumnDef<ModeReport>[] = [
         header: "Продукт",
         cell: ({ row }) => {
             const report = row.original;
-            const product = report.position.product;
+            const product = report.product;
 
             return (
                 <Popover>
@@ -197,8 +125,12 @@ export const columns: ColumnDef<ModeReport>[] = [
                     <PopoverContent align="end">
                         <div className="flex flex-col gap-2">
                             <span className="font-semibold">{product.fullName}</span>
+                            <span className="text-sm text-muted-foreground">{product.shortName}</span>
                             <span className="text-sm">Код: {product.alcCode}</span>
+                            <span className="text-sm">Объем: {product.capacity} L</span>
+                            <span className="text-sm">Алк. объем: {product.alcVolume} L</span>
                             <span className="text-sm">Тип: {product.unitType}</span>
+                            <span className="text-sm">Вид: {product.type}</span>
                             <span className="text-sm">Код продукта: {product.productVCode}</span>
                         </div>
                     </PopoverContent>

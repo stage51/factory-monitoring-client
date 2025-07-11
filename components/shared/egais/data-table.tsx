@@ -6,6 +6,7 @@ import { DatePickerWithRange } from "../date-range-picker"
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   Select,
   SelectContent,
@@ -48,19 +49,21 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton";
-import { getPagePositions } from "../services/daily-report/position-service";
+import { getPageDailyReports } from "../services/daily-report/daily-report-service";
+import { PositionDataTable } from "./position/position-data-table";
+import { positionColumns } from "./position/position-columns";
+import { Position } from "./columns";
+import { positionVisibleHeaders, positionMobileHeaders } from "./position/position-columns";
 
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
-  visibleHeaders : string[]
   mobileHeaders : string[]
   taxpayerNumber: string | undefined
 }
 
 export function DataTable<TData, TValue>({
     columns,
-    visibleHeaders,
     mobileHeaders,
     taxpayerNumber
 }: DataTableProps<TData, TValue> & { isLoading?: boolean }) {
@@ -74,6 +77,9 @@ export function DataTable<TData, TValue>({
   const [totalPages, setTotalPages] = React.useState<number>(0)
   const [totalElements, setTotalElements] = React.useState<number>(0)
 
+  const [selectedRow, setSelectedRow] = React.useState<any>(null);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
   const fetchData = async () => {
     setLoading(true);
     const params = {
@@ -83,12 +89,12 @@ export function DataTable<TData, TValue>({
       sortDirection: sorting[0]?.desc ? "DESC" : "ASC",
       filters: Object.fromEntries(
         columnFilters
-          .filter(filter => !["startDate", "endDate"].includes(filter.id))
+          .filter(filter => !["createdAt", "updatedAt"].includes(filter.id))
           .map(filter => [filter.id, filter.value])
       ),
       dateRanges: Object.fromEntries(
         columnFilters
-          .filter(filter => ["startDate", "endDate"].includes(filter.id))
+          .filter(filter => ["createdAt", "updatedAt"].includes(filter.id))
           .map(filter => {
             const from = (filter.value as any)?.from
               ? new Date((filter.value as any).from).toISOString()
@@ -102,7 +108,7 @@ export function DataTable<TData, TValue>({
     };
 
     try {
-      const response = await getPagePositions(params, taxpayerNumber);
+      const response = await getPageDailyReports(params, taxpayerNumber);
       setData(response.content); 
       setTotalPages(response.totalPages)
       setTotalElements(response.totalElements)
@@ -249,16 +255,16 @@ export function DataTable<TData, TValue>({
           className="w-full"
         />
         <DatePickerWithRange
-          value={table.getColumn("startDate")?.getFilterValue() as DateRange | undefined}
-          onChange={(newDateRange) => table.getColumn("startDate")?.setFilterValue(newDateRange)}
+          value={table.getColumn("createdAt")?.getFilterValue() as DateRange | undefined}
+          onChange={(newDateRange) => table.getColumn("createdAt")?.setFilterValue(newDateRange)}
           className="w-full"
-          placeholder="Начальная дата"
+          placeholder="Дата создания"
         />
         <DatePickerWithRange
-          value={table.getColumn("endDate")?.getFilterValue() as DateRange | undefined}
-          onChange={(newDateRange) => table.getColumn("endDate")?.setFilterValue(newDateRange)}
+          value={table.getColumn("updatedAt")?.getFilterValue() as DateRange | undefined}
+          onChange={(newDateRange) => table.getColumn("updatedAt")?.setFilterValue(newDateRange)}
           className="w-full"
-          placeholder="Конечная дата"
+          placeholder="Дата изменения"
         />
       </div>
       </div>
@@ -269,7 +275,7 @@ export function DataTable<TData, TValue>({
           <ScrollArea className="h-[400px]">
             {[...Array(5)].map((_, index) => (
               <div key={index} className="flex flex-col border-b p-4 gap-2">
-                {[...Array(visibleHeaders.length)].map((_, cellIndex) => (
+                {[...Array(mobileHeaders.length)].map((_, cellIndex) => (
                   <Skeleton key={cellIndex} className="h-4 w-full" />
                 ))}
               </div>
@@ -279,40 +285,18 @@ export function DataTable<TData, TValue>({
           <ScrollArea className="h-[400px]">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <div key={row.id} className="flex flex-col border-b p-4 gap-2">
-                  <Collapsible open={openRow === row.id} onOpenChange={() => setOpenRow(openRow === row.id ? null : row.id)}>
-                    <CollapsibleTrigger className="w-full group">
-                      {row.getVisibleCells().map((cell, index) => {
-                        if (visibleHeaders.includes(mobileHeaders[index])) {
-                          return (
-                            <div key={cell.id} className="flex justify-between">
-                              <span className="font-normal text-left">{mobileHeaders[index]}:</span>
-                              <span className="font-light text-right">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
-                            </div>
-                          );
-                        }
-                        return null;
-                      })}
-                      {openRow !== row.id && (
-                        <p className="font-light text-center mt-2 group-hover:animate-spin-element">
-                          Развернуть
-                        </p>
-                      )}
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      {row.getVisibleCells().map((cell, index) => {
-                        if (!visibleHeaders.includes(mobileHeaders[index])) {
-                          return (
-                            <div key={cell.id} className="flex justify-between">
-                              <span className="font-normal text-left">{mobileHeaders[index]}:</span>
-                              <span className="font-light text-right">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
-                            </div>
-                          );
-                        }
-                        return null;
-                      })}
-                    </CollapsibleContent>
-                  </Collapsible>
+                <div key={row.id} className="flex flex-col border-b p-4 gap-2" onClick={() => {
+                  setSelectedRow(row.original);
+                  setDialogOpen(true);
+                }}>
+                  {row.getVisibleCells().map((cell, index) => {
+                      return (
+                        <div key={cell.id} className="flex justify-between">
+                          <span className="font-normal text-left">{mobileHeaders[index]}:</span>
+                          <span className="font-light text-right">{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
+                        </div>
+                    );
+                  })}
                 </div>
               ))
             ) : (
@@ -363,7 +347,15 @@ export function DataTable<TData, TValue>({
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      onClick={() => {
+                        setSelectedRow(row.original);
+                        setDialogOpen(true);
+                      }}
+                      className="cursor-pointer hover:bg-muted"
+                    >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -383,7 +375,22 @@ export function DataTable<TData, TValue>({
           )}
         </div>
       )}
-
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-[90vw] w-full">
+          <DialogHeader>
+            <DialogTitle>Список позиций</DialogTitle>
+            <DialogDescription>Список позиций по дневному отчету</DialogDescription>
+          </DialogHeader>
+          {selectedRow && (
+            <PositionDataTable
+              columns={positionColumns}
+              visibleHeaders={positionVisibleHeaders}
+              mobileHeaders={positionMobileHeaders}
+              positionList={selectedRow.positions as Position[]}
+              />
+          )}
+        </DialogContent>
+      </Dialog>
       <DataTablePagination className="mt-4" table={table} />
     </div>
   );

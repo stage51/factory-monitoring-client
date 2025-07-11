@@ -1,8 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { DataTablePagination } from "../table/data-table-pagination";
-import { DatePickerWithRange } from "../date-range-picker"
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,99 +46,51 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton";
-import { getPageModeReports } from "../services/mode-report/position-service";
-
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   visibleHeaders : string[]
   mobileHeaders : string[]
-  taxpayerNumber: string | undefined
+  dataList: any[]
 }
 
-export function DataTable<TData, TValue>({
+export function EmbeddedDataTable<TData, TValue>({
     columns,
     visibleHeaders,
     mobileHeaders,
-    taxpayerNumber
+    dataList
 }: DataTableProps<TData, TValue> & { isLoading?: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize: 10});
   const [data, setData] = React.useState<TData[]>([]);
   const [isMobile, setIsMobile] = React.useState<boolean>(false);
   const [isLoading, setLoading] = React.useState<boolean>(true);
   const [openRow, setOpenRow] = React.useState<string>()
-  const [totalPages, setTotalPages] = React.useState<number>(0)
-  const [totalElements, setTotalElements] = React.useState<number>(0)
-
-  const fetchData = async () => {
-    setLoading(true);
-    const params = {
-      size: pagination.pageSize,
-      number: pagination.pageIndex,
-      sortBy: sorting[0]?.id,
-      sortDirection: sorting[0]?.desc ? "DESC" : "ASC",
-      filters: Object.fromEntries(
-        columnFilters
-          .filter(filter => !["startDate", "endDate"].includes(filter.id))
-          .map(filter => [filter.id, filter.value])
-      ),
-      dateRanges: Object.fromEntries(
-        columnFilters
-          .filter(filter => ["startDate", "endDate"].includes(filter.id))
-          .map(filter => {
-            const from = (filter.value as any)?.from
-              ? new Date((filter.value as any).from).toISOString()
-              : "null";
-            const to = (filter.value as any)?.to
-              ? new Date((filter.value as any).to).toISOString()
-              : "null";
-            return [filter.id, `${from},${to}`];
-          })
-      )
-    };
-
-    try {
-      const response = await getPageModeReports(params, taxpayerNumber);
-      setData(response.content); 
-      setTotalPages(response.totalPages)
-      setTotalElements(response.totalElements)
-    } catch (error) {
-      console.error("Error fetching data", error);
-    }
-    setLoading(false);
-  };
 
   React.useEffect(() => {
-    fetchData();
-  }, [sorting, columnFilters, pagination.pageIndex, pagination.pageSize]);
+    setData(dataList as TData[]);
+    setLoading(false);
+  }, [sorting]);
 
   const table = useReactTable({
     data,
     columns,
-    rowCount: totalElements,
-    pageCount: totalPages,
     manualSorting: true,
     manualFiltering: true,
     manualPagination: true,
     state: {
       sorting,
-      columnFilters,
-      pagination
+      columnFilters
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    //getSortedRowModel: getSortedRowModel(),
-    //getFilteredRowModel: getFilteredRowModel(),
-    //getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   React.useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 1600);
     };
 
     handleResize();
@@ -153,120 +103,11 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex lg:flex-row flex-col items-start py-4 gap-4">
-      <div className="flex flex-col w-full gap-4">
-        <Input
-          placeholder="Код продукта"
-          value={(table.getColumn("product")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("product")?.setFilterValue(event.target.value)
-          }
-          className="w-full"
-        />
-        <Select
-          onValueChange={(value) => {
-            if (value === "all") {
-              table.getColumn("mode")?.setFilterValue(undefined);
-            } else {
-              table.getColumn("mode")?.setFilterValue(value);
-            }
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Режим" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Все</SelectItem>
-            <SelectItem value="001">Промывка</SelectItem>
-            <SelectItem value="002">Калибровка</SelectItem>
-            <SelectItem value="003">Тех. прогон</SelectItem>
-            <SelectItem value="004">Производство</SelectItem>
-            <SelectItem value="005">Остановка</SelectItem>
-            <SelectItem value="006">Прием (возврат)</SelectItem>
-            <SelectItem value="007">Прием</SelectItem>
-            <SelectItem value="008">Внутреннее перемещение</SelectItem>
-            <SelectItem value="009">Отгрузка</SelectItem>
-            <SelectItem value="010">Отгрузка (возврат)</SelectItem>
-            <SelectItem value="011">Другие цели</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          onValueChange={(value) => {
-            if (value === "all") {
-              table.getColumn("status")?.setFilterValue(undefined);
-            } else {
-              table.getColumn("status")?.setFilterValue(value);
-            }
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Статус" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Все</SelectItem>
-            <SelectItem value="Неизвестно">Неизвестно</SelectItem>
-            <SelectItem value="Принято в УТМ">Принято в УТМ</SelectItem>
-            <SelectItem value="Не принято в УТМ">Не принято в УТМ</SelectItem>
-            <SelectItem value="Принято в РАР">Принято в РАР</SelectItem>
-            <SelectItem value="Не принято в РАР">Не принято в РАР</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex flex-col w-full gap-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="hidden md:flex w-full">
-              Колонки
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter(
-                (column) => column.getCanHide()
-              )
-              .map((column, index) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {mobileHeaders.at(index)}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Input
-          placeholder="Номер сенсора"
-          value={(table.getColumn("sensorNumber")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("sensorNumber")?.setFilterValue(event.target.value)
-          }
-          className="w-full"
-        />
-        <DatePickerWithRange
-          value={table.getColumn("startDate")?.getFilterValue() as DateRange | undefined}
-          onChange={(newDateRange) => table.getColumn("startDate")?.setFilterValue(newDateRange)}
-          className="w-full"
-          placeholder="Начальная дата"
-        />
-        <DatePickerWithRange
-          value={table.getColumn("endDate")?.getFilterValue() as DateRange | undefined}
-          onChange={(newDateRange) => table.getColumn("endDate")?.setFilterValue(newDateRange)}
-          className="w-full"
-          placeholder="Конечная дата"
-        />
-      </div>
-      </div>
-
+      <ScrollArea className="h-[600px]">
       {/* Таблица для мобильных устройств */}
       {isMobile ? (
         isLoading ? (
-          <ScrollArea className="h-[400px]">
+          <>
             {[...Array(5)].map((_, index) => (
               <div key={index} className="flex flex-col border-b p-4 gap-2">
                 {[...Array(visibleHeaders.length)].map((_, cellIndex) => (
@@ -274,9 +115,9 @@ export function DataTable<TData, TValue>({
                 ))}
               </div>
             ))}
-          </ScrollArea>
+          </>
         ) : (
-          <ScrollArea className="h-[400px]">
+          <>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <div key={row.id} className="flex flex-col border-b p-4 gap-2">
@@ -320,7 +161,7 @@ export function DataTable<TData, TValue>({
                 <p className="font-light text-gray-500">Нет данных</p>
               </div>
             )}
-          </ScrollArea>
+          </>
         )
       ) : (
         <div className="rounded-md border">
@@ -383,8 +224,7 @@ export function DataTable<TData, TValue>({
           )}
         </div>
       )}
-
-      <DataTablePagination className="mt-4" table={table} />
+      </ScrollArea>
     </div>
   );
 }

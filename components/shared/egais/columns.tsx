@@ -26,9 +26,23 @@ export type Product = {
     productVCode: string
 }
 
-export type egaisReport = {
+export type Sensor = {
     id: number
+    taxpayerNumber: string
     sensorNumber: string
+}
+
+export type DailyReport = {
+    id: number
+    sensor: Sensor
+    positions: Position[]
+    createdAt: Date
+    updatedAt: Date
+    status: "Неизвестно" | "Принято в РАР" | "Не принято в РАР" | "Принято в УТМ" | "Не принято в УТМ"
+}
+
+export type Position = {
+    id: number
     product: Product
     startDate: Date
     endDate: Date
@@ -42,139 +56,61 @@ export type egaisReport = {
     temperature: number
     mode: "Промывка" | "Калибровка" | "Тех. прогон" | "Производство" | 
     "Остановка" | "Прием (возврат)" | "Прием" | "Внутреннее перемещение" | "Отгрузка" | "Отгрузка (возврат)" | "Другие цели",
-    status: "Неизвестно" | "Принято в РАР" | "Не принято в РАР" | "Принято в УТМ" | "Не принято в УТМ"
 }
 
 export const mobileHeaders = [
-    "Начало измерений",
-    "Конец измерений",
+    "Создан в",
+    "Изменен в",
     "Сенсор",
-    "Объем безводнового спирта в начале",
-    "Объем безводного спирта в конце",
-    "Объем готовой продукции в начале",
-    "Объем готовой продукции в конце",
-    "Концентрация спирта",
-    "Кол-во в начале",
-    "Кол-во в конце",
-    "Температура",
-    "Код режима",
-    "Статус",
-    "Продукт"
+    "Статус"
   ];
-export const visibleHeaders = ["Начало измерений", "Конец измерений", "Сенсор", "Код режима", "Статус"];
 
-
-export const columns: ColumnDef<egaisReport>[] = [
+export const columns: ColumnDef<DailyReport>[] = [
     {
-        accessorKey: "startDate",
+        accessorKey: "createdAt",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Начало измерений
+                    Создан в
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
         cell: ({ row }) => {
-            const date = new Date(row.original.startDate);
+            const date = new Date(row.original.createdAt);
             return new ReadableDate(date.getTime()).toReadable();
         }
     },
     {
-        accessorKey: "endDate",
+        accessorKey: "updatedAt",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Конец измерений
+                    Изменен в
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
         cell: ({ row }) => {
-            const date = new Date(row.original.endDate);
+            const date = new Date(row.original.updatedAt);
             return new ReadableDate(date.getTime()).toReadable();
         }
     },
     {
         accessorKey: "sensorNumber",
-        header: "Сенсор"
-    },
-    {
-        accessorKey: "vbsStart",
-        header: "Объем безводного спирта в начале",
-    },
-    {
-        accessorKey: "vbsEnd",
-        header: "Объем безводного спирта в конце",
-    },
-    {
-        accessorKey: "aStart",
-        header: "Объем готовой продукции в начале",
-    },
-    {
-        accessorKey: "aEnd",
-        header: "Объем готовой продукции в конце",
-    },
-    {
-        accessorKey: "percentAlc",
-        header: "Концентрация спирта",
-    },
-    {
-        accessorKey: "bottleCountStart",
-        header: "Кол-во в начале",
-    },
-    {
-        accessorKey: "bottleCountEnd",
-        header: "Кол-во в конце",
-    },
-    {
-        accessorKey: "temperature",
-        header: "Температура",
-    },
-    {
-        accessorKey: "mode",
-        header: "Режим",
+        header: "Сенсор",
+        cell: ({ row }) => {
+            return row.original.sensor.sensorNumber
+        }
     },
     {
         accessorKey: "status",
         header: "Статус",
-    },
-    {
-        id: "product",
-        accessorKey: "product",
-        header: "Продукт",
-        cell: ({ row }) => {
-            const report = row.original;
-            const product = report.product;
-
-            return (
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 group">
-                            <span className="sr-only">Продукт</span>
-                            <Package className="h-4 w-4 flex group-hover:animate-spin-element" />
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent align="end">
-                        <div className="flex flex-col gap-2">
-                            <span className="font-semibold">{product.fullName}</span>
-                            <span className="text-sm text-muted-foreground">{product.shortName}</span>
-                            <span className="text-sm">Код: {product.alcCode}</span>
-                            <span className="text-sm">Объем: {product.capacity} L</span>
-                            <span className="text-sm">Алк. объем: {product.alcVolume} L</span>
-                            <span className="text-sm">Тип: {product.unitType}</span>
-                            <span className="text-sm">Вид: {product.type}</span>
-                            <span className="text-sm">Код продукта: {product.productVCode}</span>
-                        </div>
-                    </PopoverContent>
-                </Popover>
-            );
-        },
-    },
+    }
 ];

@@ -14,6 +14,21 @@ import {
 } from "@/components/ui/popover"
 import { ReadableDate } from "../timezone/date";
 
+export type Sensor = {
+    id: number
+    taxpayerNumber: string
+    sensorNumber: string
+}
+
+export type FiveMinuteReport = {
+    id: number
+    sensor: Sensor
+    position: Position
+    createdAt: Date
+    updatedAt: Date
+    status: "Неизвестно" | "Принято в РАР" | "Не принято в РАР" | "Принято в УТМ" | "Не принято в УТМ"
+}
+
 export type Product = {
     id: number
     unitType: "Фасованная" | "Нефасованная"
@@ -26,9 +41,8 @@ export type Product = {
     productVCode: string
 }
 
-export type askpReport = {
+export type Position = {
     id: number
-    sensorNumber: string
     product: Product
     controlDate: Date
     vbsControl: number
@@ -38,7 +52,6 @@ export type askpReport = {
     temperature: number
     mode: "Промывка" | "Калибровка" | "Тех. прогон" | "Производство" | 
     "Остановка" | "Прием (возврат)" | "Прием" | "Внутреннее перемещение" | "Отгрузка" | "Отгрузка (возврат)" | "Другие цели"
-    status: "Неизвестно" | "Принято в РАР" | "Не принято в РАР" | "Принято в УТМ" | "Не принято в УТМ"
 }
 
 export const mobileHeaders = [
@@ -56,7 +69,7 @@ export const mobileHeaders = [
 export const visibleHeaders = ["Дата/время", "Сенсор", "Объем", "Код режима", "Статус"];
 
 
-export const columns: ColumnDef<askpReport>[] = [
+export const columns: ColumnDef<FiveMinuteReport>[] = [
     {
         accessorKey: "controlDate",
         header: ({ column }) => {
@@ -71,41 +84,65 @@ export const columns: ColumnDef<askpReport>[] = [
             )
         },
         cell: ({ row }) => {
-            const date = new Date(row.original.controlDate);
+            const date = new Date(row.original.position.controlDate);
             return new ReadableDate(date.getTime()).toReadable();
         }
     },
     {
         accessorKey: "sensorNumber",
-        header: "Сенсор"
+        header: "Сенсор",
+        cell: ({ row }) => {
+            return row.original.sensor.sensorNumber
+        }
     },
     {
         accessorKey: "vbsControl",
         header: "Объем спирта",
+        cell: ({ row }) => {
+            return row.original.position.vbsControl
+        }
     },
     {
         accessorKey: "aControl",
         header: "Объем",
+        cell: ({ row }) => {
+            return row.original.position.aControl
+        }
     },
     {
         accessorKey: "percentAlc",
         header: "Концентрация",
+        cell: ({ row }) => {
+            return row.original.position.percentAlc
+        }
     },
     {
         accessorKey: "bottleCountControl",
         header: "Кол-во",
+        cell: ({ row }) => {
+            return row.original.position.bottleCountControl
+        }
     },
     {
         accessorKey: "temperature",
         header: "Температура",
+        cell: ({ row }) => {
+            return row.original.position.temperature
+        }
     },
     {
         accessorKey: "mode",
         header: "Режим",
+        cell: ({ row }) => {
+            return row.original.position.mode
+        }
     },
     {
         accessorKey: "status",
         header: "Статус",
+        cell: ({ row }) => {
+            return row.original.status
+        }
     },
     {
         id: "product",
@@ -113,7 +150,7 @@ export const columns: ColumnDef<askpReport>[] = [
         header: "Продукт",
         cell: ({ row }) => {
           const report = row.original
-          const product = report.product
+          const product = report.position.product
      
           return (
             <Popover>

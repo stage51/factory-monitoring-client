@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { DataTable } from "@/components/shared/asiiu/data-table";
 import { columns, visibleHeaders, mobileHeaders } from "@/components/shared/asiiu/columns";
-import { getPagePositions } from "@/components/shared/services/five-minute-report/position-service";
+import { getPageFiveMinuteReports } from "@/components/shared/services/five-minute-report/five-minute-report-service";
 import "@testing-library/jest-dom";
 
 vi.mock("@/components/shared/services/five-minute-report/position-service", () => ({

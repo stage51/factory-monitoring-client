@@ -1,2 +1,1 @@
-
-export const API_BASE_URL = '/five-minute-report'
+export const API_BASE_URL = '/factory-monitoring/five-minute-report'

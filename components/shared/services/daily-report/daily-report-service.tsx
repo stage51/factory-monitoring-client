@@ -1,10 +1,31 @@
 import { API_BASE_URL } from './url';
-import { ProductRequest } from './product-service.';
 import apiClient from '../auth/api-client';
 
-const API_URL = API_BASE_URL + '/positions';
+const API_URL = API_BASE_URL;
 apiClient.defaults.headers['Content-Type'] = 'application/json';
 
+export type SensorRequest = {
+    taxpayerNumber: string
+    sensorNumber: string
+}
+
+export type DailyReportRequest = {
+    sensor: SensorRequest
+    positions: PositionRequest[]
+    status: string
+}
+
+
+export type ProductRequest = {
+    unitType : string,
+    type : string,
+    fullName : string,
+    shortName : string,
+    alcCode : string,
+    capacity : number,
+    alcVolume : number,
+    productVCode : string
+}
 
 export type PositionRequest = {
     product : ProductRequest,
@@ -19,32 +40,31 @@ export type PositionRequest = {
     bottleCountEnd : number,
     temperature : number,
     mode : string,
-    status : string
 }
 
-export const getPosition = async (id : number) => {
+export const getDailyReport = async (id : number) => {
     const response = await apiClient.get(`${API_URL}/${id}`);
     return response.data;
 };
 
 
-export const createPosition = async (positionRequest : PositionRequest) => {
-    const response = await apiClient.post(API_URL, positionRequest);
+export const createDailyReport = async (dailyReport: DailyReportRequest) => {
+    const response = await apiClient.post(API_URL, dailyReport);
     return response.data;
 };
 
-export const updatePosition = async (id : number, positionRequest : PositionRequest) => {
-    const response = await apiClient.put(`${API_URL}/${id}`, positionRequest);
+export const updateDailyReport = async (id : number, dailyReport: DailyReportRequest) => {
+    const response = await apiClient.put(`${API_URL}/${id}`, dailyReport);
     return response.data;
 };
 
 
-export const deletePosition = async (id : number) => {
+export const deleteDailyReport = async (id : number) => {
     await apiClient.delete(`${API_URL}/${id}`);
 };
 
 
-export const getPagePositions = async (params: any, taxpayerNumber : string) => {
+export const getPageDailyReports = async (params: any, taxpayerNumber : string) => {
     const response = await apiClient.post(`${API_URL}/fetch/${taxpayerNumber}`, params);
     return response.data;
 }

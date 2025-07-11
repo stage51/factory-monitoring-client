@@ -2,8 +2,8 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import { vi } from "vitest";
 import StatusPanel from "@/components/shared/status-panel/status-panel";
 import { userStore } from "@/components/shared/stores/user-store";
-import { checkLines as checkLinesForDaily } from "@/components/shared/services/daily-report/position-service";
-import { checkLines as checkLinesForFiveminute } from "@/components/shared/services/five-minute-report/position-service";
+import { checkLines as checkLinesForDaily } from "@/components/shared/services/daily-report/daily-report-service";
+import { checkLines as checkLinesForFiveminute } from "@/components/shared/services/five-minute-report/five-minute-report-service";
 import "@testing-library/jest-dom";
 
 vi.mock("@/components/shared/services/daily-report/position-service", () => ({

@@ -26,6 +26,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   PaginationState,
+  Row,
 } from "@tanstack/react-table"
 import {
   Collapsible,
@@ -43,7 +44,8 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { EmbeddedDataTable } from "./embedded-data-table";
 
 interface DataTableProps<TData, TValue> {
   children? : React.ReactNode
@@ -51,6 +53,12 @@ interface DataTableProps<TData, TValue> {
   isLoading : boolean
   visibleHeaders : string[]
   defaultHeaders : string[]
+  isEmbedded?: boolean
+  embeddedName?: string
+  embeddedColumns?: ColumnDef<TData, TValue>[]
+  embeddedVisibleHeaders?: string[]
+  embeddedMobileHeaders?: string[]
+  firstCustomAction?: (row: Row<TData>) => React.ReactNode;
   className? : string
   fetchData?: (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => Promise<any>;
 }
@@ -62,6 +70,12 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
     isLoading,
     visibleHeaders,
     defaultHeaders: mobileHeaders,
+    isEmbedded = false,
+    embeddedName,
+    embeddedColumns,
+    embeddedVisibleHeaders,
+    embeddedMobileHeaders,
+    firstCustomAction,
     className,
     fetchData,
 }: DataTableProps<TData, TValue> & { isLoading?: boolean },
@@ -77,6 +91,10 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
   const [totalElements, setTotalElements] = React.useState<number>(0)
   const [data, setData] = React.useState<TData[]>([]);
   
+  const [selectedRow, setSelectedRow] = React.useState<any>(null);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [contextMenuOpen, setContextMenuOpen] = React.useState(false);
+
   const table = useReactTable({
     rowCount: totalElements,
     pageCount: totalPages,
@@ -193,7 +211,14 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
                         </p>
                       )}
                     </CollapsibleTrigger>
-                    <CollapsibleContent>
+                    <CollapsibleContent 
+                    onClick={() => {
+                      if(isEmbedded){
+                        setSelectedRow(row)
+                        setDialogOpen(true)
+                      }
+                    }}
+                    >
                       {row.getVisibleCells().map((cell, index) => {
                         if (index > mobileHeaders.length - 1){
                           return (
@@ -265,7 +290,14 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}
+                    onClick={() => {
+                      if(isEmbedded){
+                        setSelectedRow(row)
+                        setDialogOpen(true)
+                      }
+                    }}
+                    >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -285,6 +317,25 @@ export const DataTable = React.forwardRef(function DataTable<TData, TValue>(
           )}
         </div>
       )}
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-[90vw] w-full">
+          <DialogHeader>
+            <DialogTitle>Дополнительные данные</DialogTitle>
+            <DialogDescription>Дополнительные данные таблицы</DialogDescription>
+          </DialogHeader>
+            {selectedRow && (
+              <EmbeddedDataTable
+                columns={embeddedColumns}
+                visibleHeaders={embeddedVisibleHeaders}
+                mobileHeaders={embeddedMobileHeaders}
+                dataList={
+                  Object.values(selectedRow.original).find(value => Array.isArray(value)) ?? []
+                }
+              />
+            )}
+        </DialogContent>
+      </Dialog>
 
       <DataTablePagination className="mt-4" table={table} />
     </div>

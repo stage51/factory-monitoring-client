@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { DataTable } from "@/components/shared/modes/data-table";
 import { columns, visibleHeaders, mobileHeaders } from "@/components/shared/modes/columns";
-import { getPagePositions } from "@/components/shared/services/mode-report/position-service";
+import { getPageModeReports } from "@/components/shared/services/mode-report/position-service";
 import "@testing-library/jest-dom";
 
 vi.mock("@/components/shared/services/mode-report/position-service", () => ({

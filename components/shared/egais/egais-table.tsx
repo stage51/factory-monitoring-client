@@ -1,7 +1,7 @@
 "use client"
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { visibleHeaders, mobileHeaders } from "./columns";
+import { mobileHeaders } from "./columns";
 import { TableFull } from "@/components/shared/table/table-full";
 import { observer } from "mobx-react-lite";
 import { userStore } from "../stores/user-store";
@@ -34,20 +34,9 @@ const EgaisTable = observer(() => {
     <div className="gap-8 flex flex-col">
       <DataTable
         columns={columns}
-        visibleHeaders={visibleHeaders}
         mobileHeaders={mobileHeaders}
         taxpayerNumber={profile?.organization?.taxpayerNumber}
       />
-      {/*
-      <TableFull className="2xl:flex hidden">
-        <DataTable
-          columns={columns}
-          visibleHeaders={visibleHeaders}
-          mobileHeaders={mobileHeaders}
-          taxpayerNumber={profile?.organization?.taxpayerNumber}
-        />
-      </TableFull>
-      */}
     </div>
   );
 });

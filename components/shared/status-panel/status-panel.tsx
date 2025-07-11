@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { checkLines as checkLinesForDaily } from "../services/daily-report/position-service";
-import { checkLines as checkLinesForFiveminute } from "../services/five-minute-report/position-service";
+import { checkLines as checkLinesForDaily } from "../services/daily-report/daily-report-service";
+import { checkLines as checkLinesForFiveminute } from "../services/five-minute-report/five-minute-report-service";
 import { userStore } from "../stores/user-store";
 import { observer } from "mobx-react-lite";
 import { useToast } from "@/components/hooks/use-toast";

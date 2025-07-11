@@ -2,7 +2,7 @@
 import { testData } from "./test-data";
 import { useState, useEffect, useRef } from "react";
 import { DataTable } from "../../table/data-table";
-import { generateColumnsWithObject } from "../../table/columns";
+import generateColumns, { generateColumnsWithObject } from "../../table/columns";
 import { ColumnDef, ColumnFiltersState, PaginationState, SortingState } from "@tanstack/react-table";
 import InputFilter from "../../table/input-filter";
 import DateFilter from "../../table/date-filter";
@@ -13,56 +13,58 @@ export default function FiveMinuteFilesTable() {
   const [isLoading, setIsLoading] = useState(true);
   const tableRef = useRef<any>(null);
 
-  const headers: Array<{ key: keyof HeadersTypes; label: string; sortable: boolean }> = [
+  const headers: Array<{ key: keyof FiveMinuteReport; label: string; sortable: boolean }> = [
     { key: "id", label: "ID", sortable: false },
-    { key: "taxpayerNumber", label: "ИНН", sortable: false},
-    { key: "sensorNumber", label: "Сенсор", sortable: false},
-    { key: "controlDate", label: "Дата", sortable: true },
-    { key: "vbsControl", label: "Объем спирта", sortable: false },
-    { key: "aControl", label: "Объем", sortable: false },
-    { key: "percentAlc", label: "Концентрация", sortable: false },
-    { key: "bottleCountControl", label: "Кол-во", sortable: false },
-    { key: "temperature", label: "Температура", sortable: false },
-    { key: "mode", label: "Режим", sortable: false },
-    { key: "status", label: "Статус", sortable: false },
-    { key: "product", label: "Продукт", sortable: false }
+    { key: "createdAt", label: "Создан в", sortable: false},
+    { key: "updatedAt", label: "Изменен в", sortable: false},
+    { key: "status", label: "Статус", sortable: false }
   ];
 
   const visibleHeaders = [
     "ID",
-    "Начало",
-    "Конец",
+    "Создан в",
     "Статус"
   ];
 
-  type HeadersTypes = {
-    id: number;
-    taxpayerNumber: string;
-    sensorNumber: string;
-    controlDate: Date;
-    vbsControl: number;
-    aControl: number;
-    percentAlc: number;
-    bottleCountControl: number;
-    temperature: number;
-    mode: string;
-    status: string;
-    product: Product;
-  };
+  type Sensor = {
+      id: number
+      taxpayerNumber: string
+      sensorNumber: string
+  }
+
+  type FiveMinuteReport = {
+      id: number
+      sensor: Sensor
+      position: Position
+      createdAt: Date
+      updatedAt: Date
+      status: "Неизвестно" | "Принято в РАР" | "Не принято в РАР" | "Принято в УТМ" | "Не принято в УТМ"
+  }
 
   type Product = {
-    id: number;
-    unitType: string;
-    type: string;
-    fullName: string;
-    shortName: string;
-    alcCode: string;
-    capacity: number;
-    alcVolume: number;
-    productVCode: string;
-    crotonaldehyde: number;
-    toluene: number
-  };
+      id: number
+      unitType: "Фасованная" | "Нефасованная"
+      type: "Алкогольная продукция" | "Спиртосодержащая пищевая продукция" | "Спиртосодержащая непищевая продукция" | "Этиловый спирт"
+      fullName: string
+      shortName: string
+      alcCode: string
+      capacity: number
+      alcVolume: number
+      productVCode: string
+  }
+
+  type Position = {
+      id: number
+      product: Product
+      controlDate: Date
+      vbsControl: number
+      aControl: number
+      percentAlc: number
+      bottleCountControl: number
+      temperature: number
+      mode: "Промывка" | "Калибровка" | "Тех. прогон" | "Производство" | 
+      "Остановка" | "Прием (возврат)" | "Прием" | "Внутреннее перемещение" | "Отгрузка" | "Отгрузка (возврат)" | "Другие цели"
+  }
 
   const productHeaders: Array<{ key: keyof Product; label: string }> = [
     { key: "id", label: "ID" },
@@ -79,7 +81,7 @@ export default function FiveMinuteFilesTable() {
   const fetchData = async (pagination : PaginationState, sorting : SortingState, columnFilters : ColumnFiltersState) => {
     setIsLoading(true);
     try {
-      const response = await apiClient.post(`/five-minute-report/positions/fetch`, {
+      const response = await apiClient.post(`/factory-monitoring/five-minute-report/fetch`, {
         size: pagination.pageSize,
         number: pagination.pageIndex,
         sortBy: sorting[0]?.id,
@@ -113,7 +115,7 @@ export default function FiveMinuteFilesTable() {
 
   const handleUpdate = async (id : string | number, updatedData : any) => {
     try {
-      const response = await apiClient.put(`/five-minute-report/positions/${id}`, updatedData);
+      const response = await apiClient.put(`/factory-monitoring/five-minute-report/${id}`, updatedData);
       return response.data;
     } catch (error) {
       console.error("Error updating data:", error);
@@ -123,7 +125,7 @@ export default function FiveMinuteFilesTable() {
 
   const handleDelete = async (id : string | number) => {
     try {
-      await apiClient.delete(`/five-minute-report/positions/${id}`);
+      await apiClient.delete(`/factory-monitoring/five-minute-report/${id}`);
     } catch (error) {
       console.error("Error deleting data:", error);
       throw error;
@@ -135,7 +137,7 @@ export default function FiveMinuteFilesTable() {
     <div className="gap-8 flex flex-col">
       <DataTable
         ref={tableRef}
-        columns={generateColumnsWithObject<HeadersTypes, Product>({ headers, editable: true, objectHeaders: productHeaders, handleUpdate, handleDelete}) as ColumnDef<unknown, unknown>[]}
+        columns={generateColumns<FiveMinuteReport>({ headers, editable: false}) as ColumnDef<unknown, unknown>[]}
         fetchData={fetchData}
         isLoading={isLoading}
         visibleHeaders={visibleHeaders}

@@ -1,3 +1,1 @@
-
-
-export const API_BASE_URL = '/daily-report'
+export const API_BASE_URL = '/factory-monitoring/daily-report'

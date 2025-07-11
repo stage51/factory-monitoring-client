@@ -1,3 +1,1 @@
-
-
-export const API_BASE_URL = '/mode-report'
+export const API_BASE_URL = '/factory-monitoring//mode-report'

@@ -11,7 +11,7 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable, SortingState, Vi
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getPagePositions } from "../services/five-minute-report/position-service";
+import { getPageFiveMinuteReports } from "../services/five-minute-report/five-minute-report-service";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -77,7 +77,7 @@ export function DataTable<TData, TValue>({
     };
 
     try {
-      const response = await getPagePositions(params, taxpayerNumber);
+      const response = await getPageFiveMinuteReports(params, taxpayerNumber);
       setData(response.content); 
       setTotalPages(response.totalPages)
       setTotalElements(response.totalElements)

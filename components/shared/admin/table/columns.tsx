@@ -325,30 +325,40 @@ export function generateColumnsWithObject<HeadersTypes, ObjectHeaders>({ headers
     return columns;
 }
 
+function defaultColumnIcon(){
+    return (
+        <MoreHorizontal className="h-4 w-4" />
+    )
+}
+
 export function generateColumnsWithCustomActions<HeadersTypes>({
     headers,
     title,
     description,
     renderCustomActions,
+    columnName = "Действия",
+    columnIcon = defaultColumnIcon
 }: {
     headers : Array<{ key: keyof HeadersTypes; label: string; sortable?: boolean }>;
     title: string;
     description: string;
     renderCustomActions: (row: HeadersTypes) => React.ReactNode;
+    columnName?: string
+    columnIcon?: () => React.ReactNode
 }) {
     const columns = generateColumns<HeadersTypes>({headers, editable : false})
 
     columns.push({
         id: "actions" as keyof HeadersTypes,
         accessorKey: "actions" as keyof HeadersTypes,
-        header: () => "Действия",
+        header: () => columnName,
         cell: ({ row }) => {
             return (
                 <Dialog>
                         <DialogTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0">
                                 <span className="sr-only">Открыть диалог</span>
-                                <MoreHorizontal className="h-4 w-4" />
+                                {columnIcon()}
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[600px]">
@@ -367,4 +377,54 @@ export function generateColumnsWithCustomActions<HeadersTypes>({
     });
 
     return columns;
+
+}
+
+export function generateColumnsWithDropdown<HeadersTypes>({
+    headers,
+    title,
+    description,
+    renderCustomActions,
+    columnName = "Действия",
+    columnIcon = defaultColumnIcon
+}: {
+    headers : Array<{ key: keyof HeadersTypes; label: string; sortable?: boolean }>;
+    title: string;
+    description: string;
+    renderCustomActions: (row: HeadersTypes) => React.ReactNode;
+    columnName?: string
+    columnIcon?: () => React.ReactNode
+}) {
+    const columns = generateColumns<HeadersTypes>({headers, editable : false})
+
+    columns.push({
+        id: "actions" as keyof HeadersTypes,
+        accessorKey: "actions" as keyof HeadersTypes,
+        header: () => columnName,
+        cell: ({ row }) => {
+            return (
+                <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Открыть диалог</span>
+                                {columnIcon()}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[600px]">
+                            <DialogHeader className="gap-2">
+                                <DialogTitle>{title}</DialogTitle>
+                                <DialogDescription>{description}</DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter className="justify-between gap-2">
+                                {renderCustomActions(row.original)}
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+            ) as HeadersTypes[keyof HeadersTypes]
+        },
+        filterFn: (row, columnId, filterValue) => true,
+    });
+
+    return columns;
+
 }
